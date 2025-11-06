@@ -44,7 +44,7 @@ const LabTestCategoriesScreen = () => {
   const handleCategorySelect = (category: string) => {
     // Navigate to LabTestsList with the selected category
     navigation.navigate('LabTestsList', { 
-      category: category // Removed invalid `showAllTests` param
+      category: category 
     });
   };
   const renderItem = ({ item }: { item: typeof categories[0] }) => (    <TouchableOpacity
@@ -82,7 +82,8 @@ const LabTestCategoriesScreen = () => {
           onChangeText={setSearch}
         />
       </View>
-      {/* Category Grid */}      <FlatList
+      {/* Category Grid */}      
+      <FlatList
         data={filteredCategories}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}

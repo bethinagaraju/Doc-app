@@ -120,7 +120,7 @@ const MedicalRecordsScreen = () => {
     <TouchableOpacity
       key={index}
       style={tw`bg-green-50 rounded-2xl mb-4 shadow-md border border-green-100 overflow-hidden`}
-      onPress={() => {/* Handle record press */}}
+      onPress={() => console.log('Handle record press')}
       activeOpacity={0.7}
     >
       <View style={tw`p-4`}>
@@ -178,13 +178,13 @@ const MedicalRecordsScreen = () => {
           <View style={tw`flex-row gap-2`}>
             <TouchableOpacity 
               style={tw`p-2 rounded-xl bg-green-100`}
-              onPress={() => {/* Handle download */}}
+              onPress={() => console.log('Download pressed')}
             >
               <Download size={18} color="#059669" />
             </TouchableOpacity>
             <TouchableOpacity 
               style={tw`p-2 rounded-xl bg-green-100`}
-              onPress={() => {/* Handle share */}}
+              onPress={() => console.log('Share pressed')}
             >
               <Share2 size={18} color="#059669" />
             </TouchableOpacity>
@@ -297,7 +297,7 @@ const MedicalRecordsScreen = () => {
         <ScrollView
           style={tw`px-4`}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={tw`pb-24`} // Added extra padding at bottom to prevent FAB overlap
+          contentContainerStyle={tw`pb-24`}  
         >
           {filteredRecords.length > 0 ? (
             filteredRecords.map((item, index) => renderRecordCard(item, index))
@@ -308,16 +308,16 @@ const MedicalRecordsScreen = () => {
             </View>
           )}
         </ScrollView>
-      </View>      {/* FAB - Add New Record */}
+      </View>     
       <TouchableOpacity
         style={[
           tw`absolute right-6 bg-[#202b6d] w-14 h-14 rounded-full items-center justify-center shadow-lg`,
           { 
             bottom: Platform.OS === 'ios' ? 90 : 70,
-            right: Platform.OS === 'ios' ? 24 : 20 // Use platform-specific positioning
+            right: Platform.OS === 'ios' ? 24 : 20
           }
         ]}
-        onPress={() => {/* Handle add new record */}}
+        onPress={() => console.log('Add new record')}
       >
         <Plus size={24} color="#fff" />
       </TouchableOpacity>

@@ -11,7 +11,7 @@ import { ArrowLeft, Search } from 'lucide-react-native';
 import { useNavigation, RouteProp, NavigationProp, useRoute } from '@react-navigation/native';
 import tw from 'twrnc';
 import PageHeader from '../../components/PageHeader';
-
+3
 const specialties = [
   { name: 'General Physician', image: require('../Images/PopUpICons/general_physician.png') },
   { name: 'Cardiologist', image: require('../Images/PopUpICons/cardiology.png') },
@@ -88,7 +88,7 @@ const AllSpecialtiesScreen = () => {
     <View style={tw`flex-1 bg-green-50`}>
       <PageHeader title="All Specialties" backgroundColor="#16a34a" textColor="#fff" onBackPress={() => navigation.goBack()} />
       {/* Search Bar */}
-      <View style={tw`flex-row items-center bg-green-50 rounded-3.5xl px-3 py-2.5 mb-5 shadow-sm elevation-3 mx-4 mt-4`}>
+      <View style={tw`flex-row items-center bg-green-50 rounded-3xl px-3 py-2.5 mb-5 shadow-sm elevation-3 mx-4 mt-4`}>
         <Search size={20} color="#999" style={tw`mr-2`} />
         <TextInput
           placeholder="Search specialties"
@@ -97,7 +97,7 @@ const AllSpecialtiesScreen = () => {
           onChangeText={setSearchQuery}
           placeholderTextColor="#aaa"
         />
-      </View>      {/* Specialties List */}      
+      </View>            
       <FlatList
         data={filtered}
         keyExtractor={(item, index) => index.toString()}

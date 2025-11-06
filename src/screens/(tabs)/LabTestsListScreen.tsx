@@ -121,7 +121,8 @@ const LabTestsListScreen = () => {
   const [selectedTestId, setSelectedTestId] = useState<string | null>(null);  const [cart, setCart] = useState<typeof mockTests>([]);
   const [cartVisible, setCartVisible] = useState(false);
   const [showAllTests, setShowAllTests] = useState(initialShowAllTests);
-  const flatListRef = React.useRef<FlatList>(null);// Get the category value from the selected category name
+  const flatListRef = React.useRef<FlatList>(null);
+  // Get the category value from the selected category name
   const getSelectedCategoryValue = (categoryName: string) => {
     const found = categories.find(cat => cat.name === categoryName);
     return found?.category || '';
@@ -376,6 +377,7 @@ const LabTestsListScreen = () => {
   );
 
   // Main render
+
   return (
     <View style={tw`flex-1 bg-green-50`}>
       <PageHeader
@@ -406,7 +408,8 @@ const LabTestsListScreen = () => {
             </TouchableOpacity>
           )}
         </View>
-      </View>      <FlatList
+      </View>      
+      <FlatList
         ref={flatListRef}
         data={filteredTests}
         keyExtractor={(item) => item.id}
@@ -491,7 +494,7 @@ const LabTestsListScreen = () => {
                   </View>
                   <TouchableOpacity
                     style={tw`py-4 rounded-xl bg-[#202b6d] items-center`}
-                    onPress={() => {/* handle checkout */}}
+                    onPress={() => console.log('Handle checkout')}
                   >
                     <Text style={tw`text-white font-bold text-base`}>Proceed to Book Tests</Text>
                   </TouchableOpacity>

@@ -29,7 +29,7 @@ const LabTestScreen = () => {
               <TouchableOpacity
                 style={tw`bg-green-600 px-8 py-3 rounded-xl`}
                 activeOpacity={0.85}
-                onPress={() => {/* handle booking or add to cart here */}}
+                onPress={() => { console.log('handle booking or add to cart here ') }}
               >
                 <Text style={tw`text-white text-lg font-semibold`}>Book Now</Text>
               </TouchableOpacity>

@@ -15,6 +15,7 @@ import DoctorsPrimeScreen from '../screens/DoctorsPrimeScreen';
 import DoctorReportsScreen from '../screens/DoctorReportsScreen';
 import DoctorCalendarScreen from '../screens/DoctorCalendarScreen';
 import DoctorPatientsScreen from '../screens/DoctorPatientsScreen';
+import AppointmentManagementScreen from '../screens/AppointmentManagementScreen';
 import PersonalInfoScreen from '../screens/PersonalInfoScreen';
 import SpecializationsScreen from '../screens/SpecializationsScreen';
 import AvailabilityScreen from '../screens/AvailabilitySetScreen';
@@ -65,6 +66,7 @@ const DoctorNavigator = () => {
       <Stack.Screen name="DoctorReports" component={DoctorReportsScreen} />
       <Stack.Screen name="DoctorCalendar" component={DoctorCalendarScreen} />
       <Stack.Screen name="DoctorPatients" component={DoctorPatientsScreen} />
+      <Stack.Screen name="AppointmentManagement" component={AppointmentManagementScreen} />
       <Stack.Screen name="EditDoctorProfile" component={EditDoctorProfile} />
       <Stack.Screen name="PersonalInfo" component={PersonalInfoScreen} />
       <Stack.Screen name="Specializations" component={SpecializationsScreen} />

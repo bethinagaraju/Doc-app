@@ -158,7 +158,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Button, Text, TextInput } from 'react-native';
 import { RTCView } from 'react-native-webrtc';
-import { useCall } from 'D:/CRMTOOL/DOCAPP/DocApp-CLI/src/Doctor/screens/CallContext.tsx';
+// import { useCall } from 'D:/CRMTOOL/DOCAPP/DocApp-CLI/src/Doctor/screens/CallContext.tsx';
+import { useCall } from '../../Doctor/screens/CallContext';
 
 export default function ReceiverScreen() {
   const { startLocalStream, createPeerConnection, pc, localStream, remoteStream } = useCall();

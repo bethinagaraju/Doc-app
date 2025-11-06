@@ -1,8 +1,9 @@
+
+
 import React, { useEffect, useRef, useState } from 'react';
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { UserProvider, useUser } from './src/screens/contexts/UserContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Keyboard, StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Footer from './src/screens/(tabs)/Footer';
@@ -57,8 +58,8 @@ import AppointmentBooking from './src/screens/(tabs)/AppointemntBooking';
 import DoctorProfileScreen from './src/screens/doctor profile/[id]';
 import AppoinmentPaymentScreen from './src/screens/(tabs)/AppoinmentPaymentScreen';
 import DoctorNavigator from './src/Doctor/navigation/DoctorNavigator';
-
 import { CallProvider } from './src/Doctor/screens/CallContext';
+
 const Stack = createStackNavigator();
 
 const AUTH_SCREENS = [
@@ -106,13 +107,7 @@ function RootNavigator() {
     <NavigationContainer ref={navigationRef} onReady={handleStateChange} onStateChange={handleStateChange}>
       <Stack.Navigator
         initialRouteName={isLoggedIn ? 'TabsLayout' : 'Login'}
-        screenOptions={{
-          headerShown: false,
-          cardStyle: { backgroundColor: '#f0fdf4' }, // Tailwind green-50
-          headerStyle: { backgroundColor: '#16a34a' }, // Tailwind green-600
-          headerTintColor: '#fff', // Tailwind white
-          headerTitleStyle: { color: '#fff' },
-        }}
+        screenOptions={{ headerShown: false }}
       >
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Signup" component={SignupScreen} />
@@ -157,6 +152,7 @@ function RootNavigator() {
         <Stack.Screen name="MyPayments" component={MyPaymentsScreen} />
         <Stack.Screen name="Wallet" component={WalletScreen} />
         <Stack.Screen name="Cart" component={CartScreen} />
+        {/* The duplicate line that was here has been removed. */}
         <Stack.Screen name="AppointmentBooking" component={AppointmentBooking} />
         <Stack.Screen name="DoctorProfile" component={DoctorProfileScreen} />
         <Stack.Screen name="AppoinmentPaymentScreen" component={AppoinmentPaymentScreen} />
@@ -170,17 +166,21 @@ function RootNavigator() {
 
 export default function App() {
   return (
+    
     <GestureHandlerRootView style={{ flex: 1 }}>
       <UserProvider>
         <LoadingProvider>
           <SafeAreaProvider>
             <View style={{ flex: 1, backgroundColor: '#16a34a' }}>
               <StatusBar backgroundColor="#16a34a" barStyle="light-content" translucent />
+              <CallProvider>
               <RootNavigator />
+              </CallProvider>
             </View>
           </SafeAreaProvider>
         </LoadingProvider>
       </UserProvider>
     </GestureHandlerRootView>
+    
   );
 }

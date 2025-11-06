@@ -96,13 +96,19 @@ const DoctorDashboardScreen = () => {
       icon: <Users size={24} color="#16a34a" />,
       route: 'DoctorPatients' as const,
     },
+    {
+      id: 11,
+      title: 'Appointment Management',
+      icon: <Calendar size={24} color="#16a34a" />,
+      route: 'AppointmentManagement' as const,
+    },
   ];
 
   return (
     <SafeAreaView style={tw`flex-1 bg-green-50`}>
       <StatusBar backgroundColor="#059669" barStyle="light-content" />
       <DoctorHeader title="DASHBOARD" showDoctorInfo />
-      {/* Dashboard Grid */}
+      
       <ScrollView 
         style={tw`flex-1 bg-green-50`}
         contentContainerStyle={tw`p-4`}

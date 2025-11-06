@@ -223,6 +223,9 @@ if (consultationMode) {
                   <Text style={tw`text-green-600`}>
                     {item.specialization || 'Specialty Unknown'}
                   </Text>
+                  <Text style={tw`text-green-600`}>
+                    {item.id || 'Specialty Unknown'}
+                  </Text>
                   <View style={tw`flex-row items-center mt-1`}>
                     <Clock size={14} color="#666" />
                     <Text style={tw`text-green-600 ml-1`}>

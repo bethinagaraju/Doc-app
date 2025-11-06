@@ -7,7 +7,8 @@ type DecodedToken = {
   id: string;
   email: string;
   name?: string;
-  profileImage?: string;
+  role?: string;
+  phone_number?: string;
   exp?: number;
   iat?: number;
 };
@@ -29,11 +30,11 @@ export default function useLoadUser() {
         }
 
         setUser({
-          id: decoded.id,
+          id: parseInt(decoded.id, 10), // Convert to number
           email: decoded.email,
-          name: decoded.name ?? '',
-          profileImage: decoded.profileImage ?? '',
-          token,
+          role: decoded.role || 'general_user', // Default role if not in token
+          username: decoded.name || '', // Map name to username
+          phone_number: decoded.phone_number || '',
         });
       } catch (error) {
         console.error('Error loading user from token:', error);

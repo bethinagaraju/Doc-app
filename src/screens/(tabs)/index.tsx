@@ -59,6 +59,10 @@ import tw from 'twrnc'; // Import twrnc
 import Modal from 'react-native-modal'; // or 'react-native' if you use the built-in Modal
 import Footer from './Footer';
 
+
+
+import { useUser } from '../contexts/UserContext';
+
 const { width: screenWidth } = Dimensions.get('window');
 
 // Define your stack param list for navigation typing
@@ -85,6 +89,10 @@ export type RootStackParamList = {
 };
 
 const HomeScreen = () => {
+
+  const [userData, setUserData] = useState<any>(null);
+
+  const user = useUser();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const profileImageUri = 'https://randomuser.me/api/portraits/men/4.jpg';
   const [selectedLanguage, setSelectedLanguage] = useState('English');
@@ -302,7 +310,8 @@ const [showLocationModal, setShowLocationModal] = useState(false);
             <Text style={tw`text-green-700 font-bold`}>Close</Text>
           </TouchableOpacity>
         </View>
-      </Modal>      {/* Language & Notification */}
+      </Modal>      
+      
       <View style={tw`flex-row items-center`}>
         <TouchableOpacity 
           onPress={() => setShowLanguageModal(true)} 
@@ -378,8 +387,11 @@ const [showLocationModal, setShowLocationModal] = useState(false);
   {/* Quick Actions Grid - Images only */}
 <View style={tw`flex-row flex-wrap justify-between mx-4 mt-6 gap-2`}>
   {/* Online Consultation */}
-  <TouchableOpacity 
-    onPress={() => navigation.navigate('AllSpecialtiesScreen', { mode: 'video' })}
+  <TouchableOpacity
+    onPress={() => {
+      user.setConsultationMode('online');
+      navigation.navigate('AllSpecialtiesScreen', { mode: 'video' });
+    }}
     style={tw`relative`}
   >
     <Image
@@ -394,8 +406,11 @@ const [showLocationModal, setShowLocationModal] = useState(false);
   </TouchableOpacity>
 
   {/* In-Clinic Consultation */}
-  <TouchableOpacity 
-    onPress={() => navigation.navigate('AllSpecialtiesScreen', { mode: 'inclinic' })}
+  <TouchableOpacity
+    onPress={() => {
+      user.setConsultationMode('offline');
+      navigation.navigate('AllSpecialtiesScreen', { mode: 'inclinic' });
+    }}
     style={tw`relative`}
   >
     <Image
@@ -441,7 +456,7 @@ const [showLocationModal, setShowLocationModal] = useState(false);
             {banners.map((source, index) => (
               <View
                 key={index}
-                style={tw`w-[${screenWidth - 32}px] h-40 rounded-4xl overflow-hidden mr-4 shadow-sm`}
+                style={tw`w-[${screenWidth - 32}px] h-40 rounded-3xl overflow-hidden mr-4 shadow-sm`}
               >
                 <Image
                   source={typeof source === 'string' ? { uri: source } : source}
@@ -518,7 +533,7 @@ const [showLocationModal, setShowLocationModal] = useState(false);
             {hospitals.map((hospital) => (
               <TouchableOpacity
                 key={hospital.id}
-                style={tw`w-[${screenWidth - 150}px] h-40 rounded-4xl overflow-hidden mr-6 shadow-sm`}
+                style={tw`w-[${screenWidth - 150}px] h-40 rounded-3xl overflow-hidden mr-6 shadow-sm`}
                 activeOpacity={0.8}
                 onPress={() => navigation.navigate('HospitalDetailsScreen', { id: hospital.id, name: hospital.name, location: hospital.location, image: hospital.image })}
               >
@@ -562,7 +577,7 @@ const [showLocationModal, setShowLocationModal] = useState(false);
             {pharmacies.map((pharmacy) => (
               <TouchableOpacity
                 key={pharmacy.id}
-                style={tw`w-[${screenWidth - 150}px] h-40 rounded-4xl overflow-hidden mr-6 shadow-sm`}
+                style={tw`w-[${screenWidth - 150}px] h-40 rounded-3xl overflow-hidden mr-6 shadow-sm`}
                 activeOpacity={0.8}
                 onPress={() => navigation.navigate('PharmacyDetailsScreen', { id: pharmacy.id, name: pharmacy.name, location: pharmacy.location, image: pharmacy.image })}
               >
