@@ -110,20 +110,22 @@ const HomeScreen = () => {
   ];
 
   const banners = [
-    require('../Images/Banner1.jpg'),
-    require('../Images/Banner2.jpg'),
-    require('../Images/Banner3.jpg'),
+    require('../../assets/images/unnamed.webp'),
+    require('../../assets/images/unnamed-banner.webp'),
+     require('../../assets/images/9786325ef35b05c91053c663067481ff_screen.jpg'),
+    // require('../Images/Banner3.jpg'),
   ];
 
   const specialties = [
-    { name: 'General Physician', image: require('../Images/Labtests.jpg') },
-    { name: 'Skin & Hair', image: require('../Images/Labtests.jpg') },
-    { name: "Women's Health", image: require('../Images/Labtests.jpg') },
-    { name: 'Dental Care', image: require('../Images/Labtests.jpg') },
-    { name: 'Child Specialist', image: require('../Images/Labtests.jpg') },
-    { name: 'ENT', image: require('../Images/Labtests.jpg') },
-    { name: 'Mental Health', image: require('../Images/Labtests.jpg') },
-    { name: 'Orthopedic', image: require('../Images/Labtests.jpg') },
+    { name: 'General Physician', image: require('../Images/PopUpICons/general_physician.png') },
+    { name: 'Skin & Hair', image: require('../Images/PopUpICons/spots.png') },
+    { name: "Women's Health", image: require('../Images/PopUpICons/prenatal-care.png') },
+    { name: 'Dental Care', image: require('../Images/PopUpICons/tooth.png') },
+    { name: 'Cardiologist', image: require('../Images/PopUpICons/cardiology.png') },
+    // { name: 'Child Specialist', image: require('../Images/PopUpICons/skincare.png') },
+    { name: 'ENT', image: require('../Images/PopUpICons/medical.png') },
+    { name: 'Mental Health', image: require('../Images/PopUpICons/brain.png') },
+    { name: 'Orthopedic', image: require('../Images/PopUpICons/arthritis.png') },
   ];
 const cityList = [
   'Bangalore',
@@ -151,19 +153,19 @@ const [showLocationModal, setShowLocationModal] = useState(false);
       id: 1,
       name: 'Apollo Hospital',
       location: 'Delhi, India',
-      image: 'https://images.unsplash.com/photo-1584438784894-089d6a62b8c3',
+      image: require('../../assets/images/Logo-medicover.png'),
     },
     {
       id: 2,
       name: 'Fortis Healthcare',
       location: 'Mumbai, India',
-      image: 'https://images.unsplash.com/photo-1576765607924-9d7ae228f1b9',
+      image: require('../../assets/images/Logo-medicover.png'),
     },
     {
       id: 3,
       name: 'AIIMS',
       location: 'New Delhi, India',
-      image: 'https://images.unsplash.com/photo-1589758438368-56d6c9a3e1ab',
+      image: require('../../assets/images/Logo-medicover.png'),
     },
   ];
 
@@ -231,7 +233,7 @@ const [showLocationModal, setShowLocationModal] = useState(false);
           {image ? (
             <Image
               source={image}
-              style={tw`w-[120%] h-[120%]`}
+              style={tw`w-[80%] h-[80%]`}
               resizeMode="contain"
             />
           ) : (
@@ -395,14 +397,14 @@ const [showLocationModal, setShowLocationModal] = useState(false);
     style={tw`relative`}
   >
     <Image
-      source={require('../Images/onlineconsultations.jpg')}
+      source={require('../../assets/images/13234650_5183184.jpg')}
       style={tw`w-[${(screenWidth - 48) / 2}px] h-30 rounded-3xl`}
       resizeMode="cover"
     />
-    <View style={tw`absolute bottom-2 left-2`}>
+    {/* <View style={tw`absolute bottom-2 left-2`}>
       <Text style={tw`text-white font-bold text-lg`}>Video Consult</Text>
       <Text style={tw`text-white text-sm`}>Consult Online Now</Text>
-    </View>
+    </View> */}
   </TouchableOpacity>
 
   {/* In-Clinic Consultation */}
@@ -414,19 +416,19 @@ const [showLocationModal, setShowLocationModal] = useState(false);
     style={tw`relative`}
   >
     <Image
-      source={require('../Images/onlineconsultations.jpg')}
+      source={require('../../assets/images/18706987_TaeAugust07.jpg')}
       style={tw`w-[${(screenWidth - 48) / 2}px] h-30 rounded-3xl`}
       resizeMode="cover"
     />
-    <View style={tw`absolute bottom-2 left-2`}>
+    {/* <View style={tw`absolute bottom-2 left-2`}>
       <Text style={tw`text-white font-bold text-lg`}>Visit Clinic</Text>
       <Text style={tw`text-white text-sm`}>Book Appointment</Text>
-    </View>
+    </View> */}
   </TouchableOpacity>
 
   <TouchableOpacity onPress={() => navigation.navigate('LabTestCategoriesScreen')}>
     <Image
-      source={require('../Images/Labtests.jpg')}
+      source={require('../../assets/images/2148958363.jpg')}
       style={tw`w-[${(screenWidth - 48) / 2}px] h-30 rounded-3xl`}
       resizeMode="cover"
     />
@@ -434,7 +436,7 @@ const [showLocationModal, setShowLocationModal] = useState(false);
 
   <TouchableOpacity onPress={() => navigation.navigate('pharmacytestcategories')}>
     <Image
-      source={require('../Images/Pharmacy.jpg')}
+      source={require('../../assets/images/images.jpg')}
       style={tw`w-[${(screenWidth - 48) / 2}px] h-30 rounded-3xl`}
       resizeMode="cover"
     />
@@ -530,6 +532,8 @@ const [showLocationModal, setShowLocationModal] = useState(false);
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={tw`px-2`}
           >
+
+
             {hospitals.map((hospital) => (
               <TouchableOpacity
                 key={hospital.id}
@@ -538,10 +542,16 @@ const [showLocationModal, setShowLocationModal] = useState(false);
                 onPress={() => navigation.navigate('HospitalDetailsScreen', { id: hospital.id, name: hospital.name, location: hospital.location, image: hospital.image })}
               >
                 <Image
-                  source={require('../Images/apllo1.jpg')}
-                  style={tw`w-full h-full absolute top-0 left-0`}
+                  source={require('../../assets/images/Logo-medicover.png')}
+                  style={tw`w-full h-full absolute top-0 left-0 bg-white`}
                   resizeMode="cover"
                 />
+
+            {/* <Image
+            source={{ uri: hospital.image }}
+            style={tw`w-full h-full absolute top-0 left-0 bg-white`}
+            resizeMode="cover"
+          /> */}
                 <View style={tw`absolute bottom-0 left-0 right-0 bg-black/50 py-1.5 px-2`}>
                   <Text style={tw`text-sm font-bold text-white`}>{hospital.name}</Text>
                   <View style={tw`flex-row items-center mt-0.5`}>
@@ -549,8 +559,11 @@ const [showLocationModal, setShowLocationModal] = useState(false);
                     <Text style={tw`text-xs text-green-100 ml-1`}>{hospital.location}</Text>
                   </View>
                 </View>
-              </TouchableOpacity>
+              </TouchableOpacity> 
             ))}
+
+
+            
           </ScrollView>
         </View>
 
@@ -600,6 +613,7 @@ const [showLocationModal, setShowLocationModal] = useState(false);
 
         {/* Bottom Banners */}
         <View style={tw`mt-6 px-6`}>
+          
           <View style={tw`flex-row justify-between items-center mb-2`}>
             <Text style={tw`text-lg font-semibold text-gray-900 flex-1 text-left`}>
               Special Offers
@@ -613,6 +627,7 @@ const [showLocationModal, setShowLocationModal] = useState(false);
               </Text>
             </TouchableOpacity>
           </View>
+
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -626,7 +641,7 @@ const [showLocationModal, setShowLocationModal] = useState(false);
               >
                 <Image
                   source={imgSrc}
-                  style={tw`w-full h-full rounded-3xl`}
+                  style={tw`w-full h-full rounded-3xl`}f
                   resizeMode="cover"
                 />
               </TouchableOpacity>

@@ -2268,19 +2268,14 @@ const PaymentScreen = () => {
       console.log('📥 Appointment Response:', data);
 
       if (response.ok && data?.createdAppointment?.id) {
-        Alert.alert('✅ Success', 'Appointment scheduled successfully!', [
-          {
-            text: 'OK',
-            onPress: () =>
-              navigation.navigate('AppointmentSuccess', {
-                appointmentId: data.createdAppointment.id,
-                doctor,
-                slot,
-                date,
-                consultationType,
-              }),
-          },
-        ]);
+        navigation.navigate('RazorpayPaymentScreen', {
+          appointmentId: data.createdAppointment.id,
+          doctor,
+          slot,
+          date,
+          consultationType,
+          amount,
+        });
       } else {
         Alert.alert('❌ Failed', data?.message || 'Could not schedule appointment.');
       }
@@ -2306,7 +2301,7 @@ const PaymentScreen = () => {
           <TouchableOpacity onPress={() => navigation.goBack()} style={tw`p-2`}>
             <ArrowLeft size={24} color="#374151" />
           </TouchableOpacity>
-          <Text style={tw`ml-2 text-lg font-semibold`}>Appointment Detailses</Text>
+          <Text style={tw`ml-2 text-lg font-semibold`}>Appointment Details</Text>
         </View>
 
         {/* Doctor Info */}

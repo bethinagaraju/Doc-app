@@ -57,8 +57,11 @@ import CartScreen from './src/screens/(tabs)/CartScreen';
 import AppointmentBooking from './src/screens/(tabs)/AppointemntBooking';
 import DoctorProfileScreen from './src/screens/doctor profile/[id]';
 import AppoinmentPaymentScreen from './src/screens/(tabs)/AppoinmentPaymentScreen';
+import RazorpayPaymentScreen from './src/screens/(tabs)/RazorpayPaymentScreen';
 import DoctorNavigator from './src/Doctor/navigation/DoctorNavigator';
 import { CallProvider } from './src/Doctor/screens/CallContext';
+import AdminHomeScreen from './src/screens/AdminHomeScreen';
+import DoctorApprovalsScreen from './src/screens/DoctorApprovalsScreen';
 
 const Stack = createStackNavigator();
 
@@ -156,7 +159,10 @@ function RootNavigator() {
         <Stack.Screen name="AppointmentBooking" component={AppointmentBooking} />
         <Stack.Screen name="DoctorProfile" component={DoctorProfileScreen} />
         <Stack.Screen name="AppoinmentPaymentScreen" component={AppoinmentPaymentScreen} />
+        <Stack.Screen name="RazorpayPaymentScreen" component={RazorpayPaymentScreen} />
         <Stack.Screen name="DoctorNavigator" component={DoctorNavigator} />
+        <Stack.Screen name="AdminHome" component={AdminHomeScreen} />
+        <Stack.Screen name="DoctorApprovals" component={DoctorApprovalsScreen} />
       </Stack.Navigator>
 
       {!isDoctorNavigatorActive() && !AUTH_SCREENS.includes(currentRoute || '') && !isKeyboardVisible && <Footer />}

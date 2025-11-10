@@ -229,7 +229,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [role, setRole] = useState<'general_user' | 'doctor'>('general_user');
+  const [role, setRole] = useState<'general_user' | 'doctor' | 'admin'>('general_user');
 
   const { setIsLoggedIn } = useUser();
   const navigation = useNavigation();
@@ -240,14 +240,15 @@ const Login = () => {
         return;
     }
     try {
-      const res = await fetch('https://landing.docapp.co.in/api/auth/login', {
+      const apiUrl = role === 'admin' ? 'https://landing.docapp.co.in/api/admin/login' : 'https://landing.docapp.co.in/api/auth/login';
+      const res = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
           email,
           password,
-          role,
+          ...(role === 'admin' ? {} : { role }),
         }),
       });
 
@@ -260,7 +261,7 @@ const Login = () => {
         throw new Error(`Server error: ${res.status} ${res.statusText}`);
       }
 
-      if (!res.ok || data?.message !== 'Login Success') {
+      if (!res.ok || (role === 'admin' ? data?.message !== 'Login successful' : data?.message !== 'Login Success')) {
         throw new Error(data?.message || 'Login failed');
       }
 
@@ -270,7 +271,7 @@ const Login = () => {
       navigation.reset({
         index: 0,
         routes: [
-          { name: role === 'doctor' ? 'DoctorNavigator' : 'TabsLayout' },
+          { name: role === 'doctor' ? 'DoctorNavigator' : role === 'admin' ? 'AdminHome' : 'TabsLayout' },
         ],
       });
     } catch (err: any) {
@@ -400,6 +401,23 @@ const Login = () => {
             ]}
           >
             Doctor
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.roleButton,
+            role === 'admin' && styles.selectedRole,
+          ]}
+          onPress={() => setRole('admin')}
+        >
+          <Text
+            style={[
+              styles.roleText,
+              role === 'admin' && styles.selectedRoleText,
+            ]}
+          >
+            Admin
           </Text>
         </TouchableOpacity>
       </View>

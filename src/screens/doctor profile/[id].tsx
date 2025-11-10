@@ -998,17 +998,9 @@ const DoctorProfileScreen = () => {
           });
         }
 
-        // ✅ Filter slots based on consultationMode
-        let filteredSlots = parsedSlots;
-        if (consultationMode !== 'hybrid') {
-          filteredSlots = parsedSlots.filter(
-            (slot) => slot.mode?.toLowerCase() === consultationMode?.toLowerCase()
-          );
-        }
-
-        // ✅ Group filtered slots by date
+        // ✅ Display all slots without filters
         const grouped: { [key: string]: { mode: string; slots: string[] } } = {};
-        filteredSlots.forEach((slot) => {
+        parsedSlots.forEach((slot) => {
           const date = slot.date;
           const mode = slot.mode || 'unknown';
           if (!grouped[date]) grouped[date] = { mode, slots: [] };
