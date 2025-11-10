@@ -94,6 +94,14 @@ interface User {
   role: string;
   username?: string;
   phone_number?: string;
+  generalUser?: {
+    id: number;
+    date_of_birth: string;
+    gender: string;
+    profile_picture: string;
+    createdAt: string;
+    updatedAt: string;
+  };
 }
 
 interface UserContextType {

@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Image, Dimensions } from 'react-native';
 import { useNavigation, useRoute, RouteProp, NavigationProp } from '@react-navigation/native';
-import { Home, Video } from 'lucide-react-native';
+import { Home, Video, Stethoscope } from 'lucide-react-native';
 import tw from 'twrnc';
 import PageLayout from '../components/PageLayout';
 

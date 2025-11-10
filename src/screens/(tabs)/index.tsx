@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -94,9 +94,42 @@ const HomeScreen = () => {
 
   const user = useUser();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const profileImageUri = 'https://randomuser.me/api/portraits/men/4.jpg';
+  const profileImageUri = userData?.generalUser?.profile_picture || 'https://randomuser.me/api/portraits/men/4.jpg';
   const [selectedLanguage, setSelectedLanguage] = useState('English');
   const [showLanguageModal, setShowLanguageModal] = useState(false);
+
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch('https://landing.docapp.co.in/api/auth/get-user-data', {
+          method: 'GET',
+          headers: {
+            'Authorization': `bearer ${user?.token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          console.error('Fetch failed:', result);
+          return;
+        }
+
+        if (result?.userData) {
+          setUserData(result.userData);
+          console.log('User Data in HomeScreen:', result.userData);
+        } else {
+          console.log('No user data found');
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, [user?.token]);
 
   const languages = [
     { name: 'English', code: 'en' },
