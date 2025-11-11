@@ -434,10 +434,10 @@ const [showLocationModal, setShowLocationModal] = useState(false);
       style={tw`w-[${(screenWidth - 48) / 2}px] h-30 rounded-3xl`}
       resizeMode="cover"
     />
-    {/* <View style={tw`absolute bottom-2 left-2`}>
+    <View style={tw`absolute bottom-2 left-2 bg-black/30 p-2 rounded-lg`}>
       <Text style={tw`text-white font-bold text-lg`}>Video Consult</Text>
       <Text style={tw`text-white text-sm`}>Consult Online Now</Text>
-    </View> */}
+    </View>
   </TouchableOpacity>
 
   {/* In-Clinic Consultation */}
@@ -453,10 +453,10 @@ const [showLocationModal, setShowLocationModal] = useState(false);
       style={tw`w-[${(screenWidth - 48) / 2}px] h-30 rounded-3xl`}
       resizeMode="cover"
     />
-    {/* <View style={tw`absolute bottom-2 left-2`}>
+    <View style={tw`absolute bottom-2 left-2 bg-black/30 p-2 rounded-lg`}>
       <Text style={tw`text-white font-bold text-lg`}>Visit Clinic</Text>
       <Text style={tw`text-white text-sm`}>Book Appointment</Text>
-    </View> */}
+    </View>
   </TouchableOpacity>
 
   <TouchableOpacity onPress={() => navigation.navigate('LabTestCategoriesScreen')}>
