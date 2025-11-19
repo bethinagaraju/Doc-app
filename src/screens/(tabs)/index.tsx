@@ -516,7 +516,7 @@ const [showLocationModal, setShowLocationModal] = useState(false);
         {/* Specialties */}
         <View style={tw`mt-6 px-6`}>
           <Text style={tw`text-lg font-semibold text-gray-900 flex-1 text-left`}>
-            Find a Doctor for your Health Problem
+            Find a Doctor for your Health Problems
           </Text>
           <View style={tw`mt-2`}>
             <View style={tw`flex-row flex-wrap justify-between`}>

@@ -42,7 +42,7 @@ export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [role] = useState('general_user');
+  const [role, setRole] = useState<'general_user' | 'doctor' | 'admin' | 'hospital_organisation'>('general_user');
 
   const { setUser } = useUser();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -141,10 +141,41 @@ export default function Signup() {
           style={tw`w-20 h-20 mb-4 rounded-full bg-gray-200`}
         />
         <Text style={tw`font-bold text-3xl text-blue-700 mb-1`}>Create Account</Text>
-        <Text style={tw`text-base text-gray-500`}>Sign up to get started</Text>
-      </View>
+      <Text style={tw`text-base text-gray-500`}>Sign up to get started</Text>
+    </View>
 
-      {/* Error message */}
+    {/* Role Selection */}
+    <View style={tw`mb-4`}>
+      <Text style={tw`text-base text-gray-700 mb-2`}>Select Role</Text>
+      <View style={tw`flex-row justify-between`}>
+        <TouchableOpacity
+          style={tw`flex-1 p-3 mx-1 rounded-lg border ${role === 'general_user' ? 'bg-blue-500 border-blue-500' : 'bg-white border-gray-300'}`}
+          onPress={() => setRole('general_user')}
+        >
+          <Text style={tw`${role === 'general_user' ? 'text-white' : 'text-gray-700'} text-center font-medium`}>Patient</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={tw`flex-1 p-3 mx-1 rounded-lg border ${role === 'doctor' ? 'bg-blue-500 border-blue-500' : 'bg-white border-gray-300'}`}
+          onPress={() => setRole('doctor')}
+        >
+          <Text style={tw`${role === 'doctor' ? 'text-white' : 'text-gray-700'} text-center font-medium`}>Doctor</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={tw`flex-1 p-3 mx-1 rounded-lg border ${role === 'admin' ? 'bg-blue-500 border-blue-500' : 'bg-white border-gray-300'}`}
+          onPress={() => setRole('admin')}
+        >
+          <Text style={tw`${role === 'admin' ? 'text-white' : 'text-gray-700'} text-center font-medium`}>Admin</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={tw`flex-1 p-3 mx-1 rounded-lg border ${role === 'hospital_organisation' ? 'bg-blue-500 border-blue-500' : 'bg-white border-gray-300'}`}
+          onPress={() => setRole('hospital_organisation')}
+        >
+          <Text style={tw`${role === 'hospital_organisation' ? 'text-white' : 'text-gray-700'} text-center font-medium text-xs`}>Hospital Org</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+
+    {/* Error message */}
       {errorMessage ? (
         <View style={tw`bg-red-100 border border-red-400 rounded-lg p-3 mb-4`}>
           <Text style={tw`text-red-700 text-center`}>{errorMessage}</Text>

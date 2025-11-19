@@ -2250,7 +2250,7 @@ const PaymentScreen = () => {
         start: slot.split('-')[0]?.trim() || '09:00',
         end: slot.split('-')[1]?.trim() || '09:30',
         type: consultationType === 'video' ? 'online' : 'offline',
-        payment_mode: 'online',
+        payment_mode: 'card',
       };
 
       console.log('📤 Sending Appointment Payload:', payload);
@@ -2267,18 +2267,36 @@ const PaymentScreen = () => {
       const data = await response.json();
       console.log('📥 Appointment Response:', data);
 
-      if (response.ok && data?.createdAppointment?.id) {
-        navigation.navigate('RazorpayPaymentScreen', {
-          appointmentId: data.createdAppointment.id,
-          doctor,
-          slot,
-          date,
-          consultationType,
-          amount,
-        });
-      } else {
-        Alert.alert('❌ Failed', data?.message || 'Could not schedule appointment.');
-      }
+      // if (response.ok && data?.createdAppointment?.id) {
+      //   navigation.navigate('RazorpayPaymentScreen', {
+      //     appointmentId: data.createdAppointment.id,
+      //     doctor,
+      //     slot,
+      //     date,
+      //     consultationType,
+      //     amount,
+      //   });
+      // } else {
+      //   Alert.alert('❌ Failed', data?.message || 'Could not schedule appointment.');
+      // }
+
+
+      if (response.ok && data?.success === true) {
+  navigation.navigate('RazorpayPaymentScreen', {
+    appointmentId: data?.appointment_id || null, // if your backend returns it later
+    doctor,
+    slot,
+    date,
+    consultationType,
+    amount,
+  });
+} else {
+  Alert.alert('❌ Failed', data?.message || 'Could not schedule appointment.');
+}
+
+
+
+
     } catch (error: any) {
       console.error('🚨 API Error:', error);
       Alert.alert('Error', 'Failed to create appointment. Please try again.');

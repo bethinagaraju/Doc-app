@@ -35,6 +35,7 @@ const AppointmentConfirmationScreen = ({ route, navigation }) => {
           start: start.trim(),
           end: end.trim(),
           type: 'offline',
+          
         }),
       });
       

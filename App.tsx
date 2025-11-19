@@ -62,6 +62,9 @@ import DoctorNavigator from './src/Doctor/navigation/DoctorNavigator';
 import { CallProvider } from './src/Doctor/screens/CallContext';
 import AdminHomeScreen from './src/screens/AdminHomeScreen';
 import DoctorApprovalsScreen from './src/screens/DoctorApprovalsScreen';
+import HospitalAdminScreen from './src/screens/HospitalAdminScreen';
+import HospitalProfileScreen from './src/screens/HospitalProfileScreen';
+import DoctorManagementScreen from './src/screens/DoctorManagementScreen';
 
 const Stack = createStackNavigator();
 
@@ -163,6 +166,9 @@ function RootNavigator() {
         <Stack.Screen name="DoctorNavigator" component={DoctorNavigator} />
         <Stack.Screen name="AdminHome" component={AdminHomeScreen} />
         <Stack.Screen name="DoctorApprovals" component={DoctorApprovalsScreen} />
+        <Stack.Screen name="HospitalAdmin" component={HospitalAdminScreen} />
+        <Stack.Screen name="HospitalProfile" component={HospitalProfileScreen} />
+        <Stack.Screen name="DoctorManagement" component={DoctorManagementScreen} />
       </Stack.Navigator>
 
       {!isDoctorNavigatorActive() && !AUTH_SCREENS.includes(currentRoute || '') && !isKeyboardVisible && <Footer />}

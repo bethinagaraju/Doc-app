@@ -51,7 +51,7 @@ const RazorpayPaymentScreen = () => {
   const createOrder = async () => {
     try {
       const payload = {
-        user_id: 1, // Replace with actual logged-in user ID
+        user_id: 33, // Replace with actual logged-in user ID
         amount: amount,
         appointmentId: appointmentId,
         patientName: 'John Doe', // Replace with actual user name

@@ -46,7 +46,7 @@ const PrivacySecurityScreen = () => {
   return (
     <PageLayout
       title="Privacy & Security"
-      headerBackgroundColor="#2E3192"
+      headerBackgroundColor="#2e9233ff"
       scrollable={true}
     >
       {/* Two-Factor Authentication */}
