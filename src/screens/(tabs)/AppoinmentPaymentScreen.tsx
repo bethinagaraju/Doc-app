@@ -2283,7 +2283,8 @@ const PaymentScreen = () => {
 
       if (response.ok && data?.success === true) {
   navigation.navigate('RazorpayPaymentScreen', {
-    appointmentId: data?.appointment_id || null, // if your backend returns it later
+    // appointmentId: data?.appointment_id || null, // if your backend returns it later
+    appointmentId: data?.createdAppointment?.id,
     doctor,
     slot,
     date,

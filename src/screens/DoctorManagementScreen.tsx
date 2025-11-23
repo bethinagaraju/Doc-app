@@ -274,6 +274,31 @@ const DoctorManagementScreen = () => {
     );
   };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
   const confirmRemoveDoctor = async (doctorId: number) => {
     try {
       setRemoving(doctorId);
@@ -302,91 +327,7 @@ const DoctorManagementScreen = () => {
     }
   };
 
-//   const handleAddDoctors = async () => {
-//     const emails = emailInput
-//       .split(',')
-//       .map(e => e.trim())
-//       .filter(e => e.length > 0);
 
-//     if (emails.length === 0) {
-//       Alert.alert('Error', 'Please enter at least one email');
-//       return;
-//     }
-
-//     try {
-//       setAdding(true);
-//       const response = await fetch('https://landing.docapp.co.in/api/hospital/create-accounts', {
-//         method: 'PUT',
-//         headers: {
-//           'Content-Type': 'application/json',
-//           // 'Authorization': `Bearer ${user?.token}`,
-//         },
-//         body: JSON.stringify({ email: emails }),
-//       });
-
-//       const result = await response.json();
-
-//       if (response.ok) {
-//         Alert.alert('Success', 'Doctors added successfully');
-//         setEmailInput('');
-//         loadDoctors();
-//       } else {
-//         Alert.alert('Error', result.message || 'Failed to add doctors');
-//       }
-//     } catch (error) {
-//       console.error('Error adding doctors:', error);
-//       Alert.alert('Error', 'Failed to add doctors');
-//     } finally {
-//       setAdding(false);
-//     }
-//   };
-
-// const handleAddDoctors = async () => {
-//   const emails = emailInput
-//     .split(',')
-//     .map(e => e.trim())
-//     .filter(e => e.length > 0);
-
-//   if (emails.length === 0) {
-//     Alert.alert('Error', 'Please enter at least one email');
-//     return;
-//   }
-
-//   try {
-//     setAdding(true);
-//     const response = await fetch('https://landing.docapp.co.in/api/hospital/create-accounts', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         // 'Authorization': `Bearer ${user?.token}`,
-//       },
-//       body: JSON.stringify({ email: emails }),
-//     });
-
-//     // 🧩 Try reading response safely
-//     const text = await response.text();
-//     let result;
-//     try {
-//       result = JSON.parse(text);
-//     } catch (e) {
-//       console.log('Non-JSON response received:', text);
-//       throw new Error('Invalid JSON response from server');
-//     }
-
-//     if (response.ok) {
-//       Alert.alert('Success', 'Doctors added successfully');
-//       setEmailInput('');
-//       loadDoctors();
-//     } else {
-//       Alert.alert('Error', result.message || 'Failed to add doctors');
-//     }
-//   } catch (error) {
-//     console.error('Error adding doctors:', error);
-//     Alert.alert('Error', 'Failed to add doctors. Check console for details.');
-//   } finally {
-//     setAdding(false);
-//   }
-// };
 
 
 

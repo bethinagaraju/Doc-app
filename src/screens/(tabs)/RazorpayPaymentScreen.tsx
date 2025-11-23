@@ -191,7 +191,7 @@ const RazorpayPaymentScreen = () => {
       order_id: order.id,
       prefill: {
         email: 'john@example.com',
-        contact: '9999999999',
+        contact: '9515619058',
         name: 'John Doe',
       },
       theme: { color: '#00A0E3' },
