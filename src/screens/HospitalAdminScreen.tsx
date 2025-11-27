@@ -131,7 +131,11 @@ const HospitalAdminScreen = () => {
               key={item.id}
               style={tw`w-[31%] bg-green-100 rounded-2xl p-4 mb-4 shadow-sm items-center justify-center`}
               onPress={() => {
-                if (item.route === 'HospitalProfile' || item.route === 'DoctorManagement') {
+                if (
+                  item.route === 'HospitalProfile' ||
+                  item.route === 'DoctorManagement' ||
+                  item.route === 'HospitalAppointments'
+                ) {
                   navigation.navigate(item.route);
                 } else {
                   // For now, just show an alert. In future, navigate to specific screens
