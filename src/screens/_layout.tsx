@@ -5,6 +5,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { View, StyleSheet } from 'react-native';
 
 import { UserProvider } from '../screens/contexts/UserContext';
+import HospitalAppointmentsScreen from './HospitalAppointmentsScreen';
+import HospitalAdminScreen from './HospitalAdminScreen';
 // Import your screens here
 // import TabsScreen from './TabsScreen';
 // import NotFoundScreen from './NotFoundScreen';
@@ -28,11 +30,10 @@ export default function RootLayout() {
         <View style={styles.gradient}>
           <NavigationContainer className="bg-green-500">
             <Stack.Navigator screenOptions={{ headerShown: false }}>
-              {/* Replace these with your actual components */}
-              {/* <Stack.Screen name="Tabs" component={TabsScreen} /> */}
-              {/* <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} /> */}
-              {/* <Stack.Screen name="DoctorAvailability" component={DoctorAvailability} /> */}
-              {/* <Stack.Screen name="ConsultOptionsScreen" component={ConsultOptionsScreen} /> */}
+              {/* App routes */}
+              <Stack.Screen name="HospitalAdmin" component={HospitalAdminScreen} />
+              <Stack.Screen name="HospitalAppointments" component={HospitalAppointmentsScreen} />
+              {/* Add other screens here as needed */}
             </Stack.Navigator>
           </NavigationContainer>
         </View>
