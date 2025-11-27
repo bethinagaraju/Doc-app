@@ -77,12 +77,15 @@ const DoctorSettingsScreen = () => {
       action: () => console.log('Inviting friends...'),
       rightIcon: 'chevron-right',
     },
+
     {
       title: 'Rate us on Playstore',
       icon: 'star-outline',
       action: () => console.log('Opening Play Store...'),
       rightIcon: 'chevron-right',
     },
+
+
     {
       title: 'Privacy Policy',
       icon: 'shield-outline',
@@ -90,12 +93,15 @@ const DoctorSettingsScreen = () => {
       rightIcon: 'chevron-right',
     },
     
+    
     {
       title: 'Open-source licences',
       icon: 'file-document-outline',
       action: () => navigation.navigate('OpenSourceLicenses'),
       rightIcon: 'chevron-right',
     },
+
+
     {
       title: 'Logout',
       icon: 'logout',

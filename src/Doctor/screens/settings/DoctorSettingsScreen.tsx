@@ -87,12 +87,16 @@ const DoctorSettingsScreen = () => {
       action: () => navigation.navigate('PrivacyPolicy'),
       rightIcon: 'chevron-right',
     },
+
+    
     {
       title: 'Open-source licences',
       icon: 'file-document-outline',
       action: () => navigation.navigate('OpenSourceLicenses'),
       rightIcon: 'chevron-right',
     },
+
+
     {
       title: 'Logout',
       icon: 'logout',
