@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity, TextInput } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import tw from 'twrnc';
 import PageLayout from '../../components/PageLayout';
+import VideoCall from './VideoCall';
 
 type RootStackParamList = {
   Wallet: undefined;
@@ -19,6 +20,8 @@ const PaymentMethods: React.FC = () => {
 
   return (
     <PageLayout sectionTitle="Payment Options" title="Payment Methods">
+
+       <VideoCall />
       <View style={tw`flex-1 bg-green-50 p-4`}>
         <Text style={tw`text-xl font-bold text-green-900 mb-2`}>Payment Methods</Text>
         <Text style={tw`text-sm text-green-800 mb-1`}>Card Number</Text>
@@ -33,6 +36,8 @@ const PaymentMethods: React.FC = () => {
         <TouchableOpacity style={tw`bg-green-50 px-4 py-4 flex-row justify-between items-center mt-4`} onPress={() => navigation.navigate('Wallet')} accessibilityRole="button">
           <Text style={tw`text-green-800 text-base`}>Go to Wallet</Text>
         </TouchableOpacity>
+
+       
       </View>
     </PageLayout>
   );
