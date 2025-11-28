@@ -88,11 +88,11 @@ const DoctorSettingsScreen = () => {
       rightIcon: 'chevron-right',
     },
 
-    
+
     {
       title: 'Open-source licences',
       icon: 'file-document-outline',
-      action: () => navigation.navigate('OpenSourceLicenses'),
+      action: () => navigation.navigate('PrivacySecurityHospital'),
       rightIcon: 'chevron-right',
     },
 

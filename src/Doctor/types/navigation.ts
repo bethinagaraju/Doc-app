@@ -26,4 +26,5 @@ export type DoctorStackParamList = {
   CashlessSettings: undefined;
   PrivacyPolicy: undefined;
   OpenSourceLicenses: undefined;
+  PrivacySecurityHospital: undefined;
 };

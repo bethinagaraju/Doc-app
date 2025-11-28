@@ -288,7 +288,7 @@ const AppointmentManagementScreen = () => {
   return (
     <SafeAreaView style={tw`flex-1 bg-green-50`}>
       <StatusBar backgroundColor="#059669" barStyle="light-content" />
-      <DoctorHeader title="APPOINTMENT MANAGEMENT" showDoctorInfo />
+      <DoctorHeader title="APPOINTMENT MANAGEMENT" />
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={tw`flex-1`}>
         <ScrollView style={tw`p-4`}>

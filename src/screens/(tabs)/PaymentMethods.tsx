@@ -19,10 +19,17 @@ const PaymentMethods: React.FC = () => {
   };
 
   return (
-    <PageLayout sectionTitle="Payment Options" title="Payment Methods">
+    <PageLayout sectionTitle="Payment Options" title="Payment Methodses">
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <View>
+        <VideoCall />
+      </View>
 
-       <VideoCall />
-      <View style={tw`flex-1 bg-green-50 p-4`}>
+      {/* <View style={tw`flex-1 bg-green-50 p-4`}>
         <Text style={tw`text-xl font-bold text-green-900 mb-2`}>Payment Methods</Text>
         <Text style={tw`text-sm text-green-800 mb-1`}>Card Number</Text>
         <TextInput style={tw`bg-green-100 rounded-lg px-4 py-2 text-base border border-green-200 text-green-800 mb-2`} placeholder="Enter card number" placeholderTextColor="#6ee7b7" />
@@ -35,10 +42,10 @@ const PaymentMethods: React.FC = () => {
         </TouchableOpacity>
         <TouchableOpacity style={tw`bg-green-50 px-4 py-4 flex-row justify-between items-center mt-4`} onPress={() => navigation.navigate('Wallet')} accessibilityRole="button">
           <Text style={tw`text-green-800 text-base`}>Go to Wallet</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
        
-      </View>
+      {/* </View> */}
     </PageLayout>
   );
 };

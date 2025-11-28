@@ -25,6 +25,7 @@ import {
   ClipboardList,
   UserCheck,
   TrendingUp,
+  LogOut,
 } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -115,9 +116,23 @@ const HospitalAdminScreen = () => {
       <StatusBar backgroundColor="#059669" barStyle="light-content" />
 
       {/* Header */}
-      <View style={tw`bg-green-600 p-4 mt-8`}>
+      {/* <View style={tw`bg-green-600 p-4 mt-8`}>
         <Text style={tw`text-white text-xl font-bold text-center`}>Hospital Admin Dashboard</Text>
         <Text style={tw`text-green-100 text-center mt-1`}>Manage your hospital operations</Text>
+      </View> */}
+
+      <View style={tw`bg-green-600 p-4 mt-8 flex-row justify-between items-center`}>
+        <View style={tw`flex-1`}>
+          <Text style={tw`text-white text-xl font-bold text-center`}>Hospital Admin Dashboard</Text>
+          <Text style={tw`text-green-100 text-center mt-1`}>Manage your hospital operations</Text>
+        </View>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Login')}
+          style={tw`p-2`}
+          accessibilityLabel="Logout"
+        >
+          <LogOut size={24} color="white" />
+        </TouchableOpacity>
       </View>
 
       <ScrollView
