@@ -1988,7 +1988,7 @@
 //         </TouchableOpacity>
 //         <TouchableOpacity 
 //             style={[styles.actionButton, styles.rejectButton]} 
-//             onPress={() => handleReject(item.id, 'org')}
+//             onPress={() => handleReject(item.user_id, 'org')}
 //             disabled={actionLoading}
 //         >
 //           <Text style={styles.buttonText}>Reject</Text>
@@ -2209,7 +2209,7 @@ interface UnverifiedDoctor {
 }
 
 interface UnverifiedOrganisation {
-  id: number;
+  user_id: number;
   organisation_name: string | null;
   organisation_type: string;
   regestration_number: string | null;
@@ -2479,14 +2479,14 @@ const DoctorApprovalsScreen = () => {
       <View style={styles.actionButtons}>
         <TouchableOpacity 
             style={[styles.actionButton, styles.approveButton]} 
-            onPress={() => handleApproveOrg(item.id)}
+            onPress={() => handleApproveOrg(item.user_id)}
             disabled={actionLoading}
         >
           <Text style={styles.buttonText}>Approve Org</Text>
         </TouchableOpacity>
         <TouchableOpacity 
             style={[styles.actionButton, styles.rejectButton]} 
-            onPress={() => handleReject(item.id, 'org')}
+            onPress={() => handleReject(item.user_id, 'org')}
             disabled={actionLoading}
         >
           <Text style={styles.buttonText}>Reject</Text>
@@ -2530,7 +2530,7 @@ const DoctorApprovalsScreen = () => {
           <FlatList
             data={data.unverified_organisations}
             renderItem={renderOrganisationItem}
-            keyExtractor={(item) => `org-${item.id}`}
+            keyExtractor={(item) => `org-${item.user_id}`}
             scrollEnabled={false}
           />
         ) : (

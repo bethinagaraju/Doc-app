@@ -1345,14 +1345,14 @@ const HospitalProfileScreen = () => {
       setUploading(true);
 
       const formData = new FormData();
-      formData.append('profile_picture', {
+      formData.append('image', {
         uri: image.uri,
         name: image.fileName || 'hospital.jpg',
         type: image.type || 'image/jpeg',
       } as any);
 
-      const uploadResponse = await fetch(API_IMAGE_UPDATE, {
-        method: 'PUT',
+      const uploadResponse = await fetch('https://landing.docapp.co.in/api/auth/upload-photo', {
+        method: 'POST',
         headers: { 'Content-Type': 'multipart/form-data' },
         body: formData,
       });
@@ -1361,7 +1361,7 @@ const HospitalProfileScreen = () => {
 
       if (uploadResponse.ok) {
         Alert.alert('Success', 'Profile picture updated!');
-        setProfileData((p) => ({ ...p, org_image: uploadResult.profile_picture }));
+        setProfileData((p) => ({ ...p, org_image: uploadResult.profile_picture || uploadResult.image_url }));
       } else {
         Alert.alert('Error', uploadResult.message || 'Failed to upload image');
       }
@@ -1502,14 +1502,14 @@ const HospitalProfileScreen = () => {
                 label="Organization Name *"
                 placeholder="Enter organization name"
                 value={profileData.org_name}
-                onChangeText={(text) => setProfileData((p) => ({ ...p, org_name: text }))}
+                onChangeText={(text: string) => setProfileData((p) => ({ ...p, org_name: text }))}
               />
 
               <InputField
                 label="License Number *"
                 placeholder="Enter license number"
                 value={profileData.org_license}
-                onChangeText={(text) => setProfileData((p) => ({ ...p, org_license: text }))}
+                onChangeText={(text: string) => setProfileData((p) => ({ ...p, org_license: text }))}
               />
 
               <InputField
@@ -1517,14 +1517,14 @@ const HospitalProfileScreen = () => {
                 placeholder="e.g., 1980"
                 keyboardType="numeric"
                 value={profileData.org_establishment}
-                onChangeText={(text) => setProfileData((p) => ({ ...p, org_establishment: text }))}
+                onChangeText={(text: string) => setProfileData((p) => ({ ...p, org_establishment: text }))}
               />
 
               <InputField
                 label="Website URL"
                 placeholder="https://example.com"
                 value={profileData.org_url}
-                onChangeText={(text) => setProfileData((p) => ({ ...p, org_url: text }))}
+                onChangeText={(text: string) => setProfileData((p) => ({ ...p, org_url: text }))}
               />
 
               {/* Ambulance Toggle */}
@@ -1614,7 +1614,7 @@ const HospitalProfileScreen = () => {
                   label="Street / Area"
                   placeholder="e.g. MG Road, Near Park"
                   value={addressForm.street}
-                  onChangeText={(t) => setAddressForm({ ...addressForm, street: t })}
+                  onChangeText={(t: string) => setAddressForm({ ...addressForm, street: t })}
                 />
 
                 <View style={tw`flex-row justify-between`}>
@@ -1623,7 +1623,7 @@ const HospitalProfileScreen = () => {
                       label="City"
                       placeholder="e.g. Mumbai"
                       value={addressForm.city}
-                      onChangeText={(t) => setAddressForm({ ...addressForm, city: t })}
+                      onChangeText={(t: string) => setAddressForm({ ...addressForm, city: t })}
                     />
                   </View>
                   <View style={tw`flex-1 ml-2`}>
@@ -1632,7 +1632,7 @@ const HospitalProfileScreen = () => {
                       placeholder="e.g. 400001"
                       value={addressForm.pincode}
                       keyboardType="number-pad"
-                      onChangeText={(t) => setAddressForm({ ...addressForm, pincode: t })}
+                      onChangeText={(t: string) => setAddressForm({ ...addressForm, pincode: t })}
                     />
                   </View>
                 </View>
@@ -1641,7 +1641,7 @@ const HospitalProfileScreen = () => {
                   label="State"
                   placeholder="e.g. Maharashtra"
                   value={addressForm.state}
-                  onChangeText={(t) => setAddressForm({ ...addressForm, state: t })}
+                  onChangeText={(t: string) => setAddressForm({ ...addressForm, state: t })}
                 />
 
                 <TouchableOpacity 

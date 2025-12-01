@@ -68,6 +68,7 @@ import DoctorManagementScreen from './src/screens/DoctorManagementScreen';
 import AddDoctorScreen from './src/screens/AddDoctorScreen';
 import ViewDoctorsScreen from './src/screens/ViewDoctorsScreen';
 import HospitalAppointmentsScreen from './src/screens/HospitalAppointmentsScreen';
+import FollowUpAppointmentScreen from './src/screens/FollowUpAppointmentScreen';
 
 const Stack = createStackNavigator();
 
@@ -175,6 +176,7 @@ function RootNavigator() {
         <Stack.Screen name="AddDoctor" component={AddDoctorScreen} />
         <Stack.Screen name="ViewDoctors" component={ViewDoctorsScreen} />
         <Stack.Screen name="HospitalAppointments" component={HospitalAppointmentsScreen} />
+        <Stack.Screen name="FollowUpAppointment" component={FollowUpAppointmentScreen} />
       </Stack.Navigator>
 
       {!isDoctorNavigatorActive() && !AUTH_SCREENS.includes(currentRoute || '') && !isKeyboardVisible && <Footer />}

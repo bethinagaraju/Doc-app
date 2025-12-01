@@ -12,6 +12,7 @@ const API_ENDPOINTS = {
   updateAppointment: `${BASE_URL}/api/appointment/update-appointment`,
   deleteAppointment: `${BASE_URL}/api/appointment/delete-appointment`,
   listAppointments: `${BASE_URL}/api/appointment/list-appointments`,
+  scheduleCheckupAppointment: `${BASE_URL}/api/appointment/schedule-checkup-appointment`,
    
   // Future endpoint (incomplete)
   // rescheduleAppointment: `${BASE_URL}/api/appointment/reschedule-appointment`, 
