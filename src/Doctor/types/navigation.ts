@@ -11,6 +11,7 @@ export type DoctorStackParamList = {
   DoctorCalendar: undefined;
   DoctorPatients: undefined;
   AppointmentManagement: undefined;
+  LiveLocation: undefined;
   DoctorSettings: undefined;
   DoctorNotifications: undefined;
   EditDoctorProfile: undefined;

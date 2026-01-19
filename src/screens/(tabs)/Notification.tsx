@@ -11,6 +11,7 @@ import {
 } from 'lucide-react-native';
 import tw from 'twrnc';
 import PageLayout from '../../components/PageLayout';
+import VideoCall from './VideoCall';
 
 type Notification = {
   id: string;
@@ -132,6 +133,15 @@ const NotificationsScreen = () => {
           contentContainerStyle={tw`py-4`}
         />
       )}
+
+      <VideoCall
+                      embeddedRole="doctor" 
+                      embeddedApptId="72" 
+                   />
+
+      
+                   <View style={tw`mt-4`}/><View style={tw`mt-4`}/><View style={tw`mt-4`}/>
+                   <View style={tw`mt-4`}/><View style={tw`mt-4`}/><View style={tw`mt-4`}/>
     </PageLayout>
   );
 };

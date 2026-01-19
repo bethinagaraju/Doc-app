@@ -93,15 +93,12 @@ const PaymentMethods: React.FC = () => {
            <View style={tw`bg-black rounded-xl overflow-hidden shadow-xl border border-gray-300`}>
              {/* We pass props because we aren't using navigation.navigate here */}
 
-             <VideoCall 
-                embeddedRole="doctor" 
-                embeddedApptId="101" 
-             />
+             
 
-             {/* <VideoCall 
+             <VideoCall 
                 embeddedRole="patient" 
-                embeddedApptId="101" 
-             /> */}
+                embeddedApptId="72" 
+             />
            </View>
         </View>
 

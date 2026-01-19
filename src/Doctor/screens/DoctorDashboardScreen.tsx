@@ -21,6 +21,7 @@ import {
   FileText,
   Crown,
   BadgeDollarSign,
+  MapPin,
 } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -101,6 +102,12 @@ const DoctorDashboardScreen = () => {
       title: 'Appointment Management',
       icon: <Calendar size={24} color="#16a34a" />,
       route: 'AppointmentManagement' as const,
+    },
+    {
+      id: 12,
+      title: 'Live Location',
+      icon: <MapPin size={24} color="#16a34a" />,
+      route: 'LiveLocation' as const,
     },
   ];
 

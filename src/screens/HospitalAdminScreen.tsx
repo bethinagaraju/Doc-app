@@ -26,8 +26,10 @@ import {
   UserCheck,
   TrendingUp,
   LogOut,
+  MapPin,
 } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
+
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import tw from 'twrnc';
 
@@ -35,6 +37,7 @@ type HospitalAdminNavigationProp = NativeStackNavigationProp<any>;
 
 const HospitalAdminScreen = () => {
   const navigation = useNavigation<HospitalAdminNavigationProp>();
+  const rootNavigation = navigation.getParent() as any;
 
   const menuItems = [
     {
@@ -97,18 +100,28 @@ const HospitalAdminScreen = () => {
       icon: <Bell size={24} color="#16a34a" />,
       route: 'HospitalNotifications' as const,
     },
+
     {
       id: 11,
       title: 'Settings',
       icon: <Settings size={24} color="#16a34a" />,
       route: 'HospitalSettings' as const,
     },
+
     {
       id: 12,
       title: 'Performance',
       icon: <TrendingUp size={24} color="#16a34a" />,
       route: 'HospitalPerformance' as const,
     },
+
+    {
+      id: 13,
+      title: 'Location',
+      icon: <MapPin size={24} color="#16a34a" />,
+      route: 'HospitalLocation' as const,
+    },
+    
   ];
 
   return (
@@ -149,9 +162,10 @@ const HospitalAdminScreen = () => {
                 if (
                   item.route === 'HospitalProfile' ||
                   item.route === 'DoctorManagement' ||
-                  item.route === 'HospitalAppointments'
+                  item.route === 'HospitalAppointments' ||
+                  item.route === 'HospitalSettings'
                 ) {
-                  navigation.navigate(item.route);
+                  (rootNavigation || navigation).navigate(item.route);
                 } else {
                   // For now, just show an alert. In future, navigate to specific screens
                   Alert.alert('Feature Coming Soon', `${item.title} - This feature is under development!`);

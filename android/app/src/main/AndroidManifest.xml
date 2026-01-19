@@ -26,9 +26,15 @@
 </manifest> -->
 
 
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<!-- <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- 🌐 Internet permission -->
+
+    <uses-permission android:name="android.permission.INTERNET" /> -->
+
+    <manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.mynewapp">
+
     <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- 📂 File access permissions -->
@@ -46,6 +52,9 @@
 <uses-permission android:name="android.permission.RECORD_AUDIO" />
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:name=".MainApplication"

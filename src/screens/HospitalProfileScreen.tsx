@@ -1137,7 +1137,7 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import tw from 'twrnc';
-import { ArrowLeft, Save, Camera, MapPin, Building2, Plus } from 'lucide-react-native';
+import { ArrowLeft, Save, Camera, MapPin, Building2, Plus, Trash } from 'lucide-react-native';
 import { useUser } from './contexts/UserContext';
 
 // ======================= API CONSTANTS =======================
@@ -1147,10 +1147,12 @@ const API_PROFILE_UPDATE = `${API_BASE}/api/auth/profile/complete/hospital_organ
 const API_IMAGE_UPDATE = `${API_BASE}/api/auth/profile/update/profile-picture/organisation`;
 const API_ADD_ADDRESS = `${API_BASE}/api/address/addAddress`;
 const API_GET_ALL_ADDRESS = `${API_BASE}/api/address/getAllAddress`;
+const API_DELETE_PROFILE_PIC = `${API_BASE}/api/auth/delete-profile-pic`;
 
 type HospitalProfileNavigationProp = NativeStackNavigationProp<any>;
 
 // ======================= TYPES =======================
+
 interface HospitalProfileData {
   org_type: string;
   org_name: string;
@@ -1373,6 +1375,39 @@ const HospitalProfileScreen = () => {
     }
   };
 
+  // ======================= DELETE PROFILE PIC =======================
+  const handleDeleteProfilePic = async () => {
+    Alert.alert(
+      'Delete Profile Picture',
+      'Are you sure you want to delete your profile picture?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const response = await fetch(API_DELETE_PROFILE_PIC, {
+                method: 'DELETE',
+              });
+              const result = await response.json();
+
+              if (response.ok) {
+                Alert.alert('Success', 'Profile picture deleted!');
+                setProfileData((p) => ({ ...p, org_image: '' }));
+              } else {
+                Alert.alert('Error', result.message || 'Failed to delete profile picture');
+              }
+            } catch (error) {
+              console.error('Delete error:', error);
+              Alert.alert('Error', 'Failed to delete profile picture');
+            }
+          },
+        },
+      ]
+    );
+  };
+
   // ======================= SAVE PROFILE =======================
   const handleSave = async () => {
     if (!profileData.org_name.trim() || !profileData.org_license.trim() || !profileData.org_establishment.trim()) {
@@ -1488,11 +1523,26 @@ const HospitalProfileScreen = () => {
                   }}
                   style={tw`w-28 h-28 rounded-full border-4 border-green-500`}
                 />
-                <View style={tw`mt-3 bg-green-600 p-2 rounded-full flex-row items-center`}>
-                  <Camera size={18} color="white" />
-                  <Text style={tw`text-white ml-2`}>
-                    {uploading ? 'Uploading...' : 'Change Photo'}
-                  </Text>
+                <View style={tw`mt-3 flex-row items-center`}>
+                  <TouchableOpacity
+                    onPress={handleImageUpload}
+                    style={tw`bg-green-600 p-2 rounded-full flex-row items-center mr-2`}
+                    disabled={uploading}
+                  >
+                    <Camera size={18} color="white" />
+                    <Text style={tw`text-white ml-2`}>
+                      {uploading ? 'Uploading...' : 'Change Photo'}
+                    </Text>
+                  </TouchableOpacity>
+                  {profileData.org_image ? (
+                    <TouchableOpacity
+                      onPress={handleDeleteProfilePic}
+                      style={tw`bg-red-600 p-2 rounded-full flex-row items-center`}
+                    >
+                      <Trash size={18} color="white" />
+                      <Text style={tw`text-white ml-2`}>Delete</Text>
+                    </TouchableOpacity>
+                  ) : null}
                 </View>
               </TouchableOpacity>
 

@@ -81,7 +81,7 @@ android {
     namespace "com.mynewapp"
     defaultConfig {
         // applicationId "com.mynewapp"
-        applicationId "landing.docapp.co.in"
+        applicationId "com.mynewapp "
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

@@ -1,19 +1,8 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { View, StyleSheet } from 'react-native';
 
 import { UserProvider } from '../screens/contexts/UserContext';
-import HospitalAppointmentsScreen from './HospitalAppointmentsScreen';
-import HospitalAdminScreen from './HospitalAdminScreen';
-// Import your screens here
-// import TabsScreen from './TabsScreen';
-// import NotFoundScreen from './NotFoundScreen';
-// import DoctorAvailability from './DoctorAvailability';
-// import ConsultOptionsScreen from './ConsultOptionsScreen';
-
-const Stack = createNativeStackNavigator();
 
 const styles = StyleSheet.create({
   gradient: {
@@ -21,23 +10,18 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function RootLayout() {
-  // Remove useFrameworkReady if not needed outside Expo
-
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <UserProvider>
       <SafeAreaProvider>
         <View style={styles.gradient}>
-          <NavigationContainer className="bg-green-500">
-            <Stack.Navigator screenOptions={{ headerShown: false }}>
-              {/* App routes */}
-              <Stack.Screen name="HospitalAdmin" component={HospitalAdminScreen} />
-              <Stack.Screen name="HospitalAppointments" component={HospitalAppointmentsScreen} />
-              {/* Add other screens here as needed */}
-            </Stack.Navigator>
-          </NavigationContainer>
+          {children}
         </View>
       </SafeAreaProvider>
     </UserProvider>
   );
 }
+
+// Export screens for use in other navigators
+export { default as HospitalAppointmentsScreen } from './HospitalAppointmentsScreen';
+export { default as HospitalAdminScreen } from './HospitalAdminScreen';

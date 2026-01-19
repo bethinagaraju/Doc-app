@@ -63,6 +63,7 @@ import { CallProvider } from './src/Doctor/screens/CallContext';
 import AdminHomeScreen from './src/screens/AdminHomeScreen';
 import DoctorApprovalsScreen from './src/screens/DoctorApprovalsScreen';
 import HospitalAdminScreen from './src/screens/HospitalAdminScreen';
+import HospitalSettingsScreen from './src/screens/HospitalSettingsScreen';
 import HospitalProfileScreen from './src/screens/HospitalProfileScreen';
 import DoctorManagementScreen from './src/screens/DoctorManagementScreen';
 import AddDoctorScreen from './src/screens/AddDoctorScreen';
@@ -171,12 +172,8 @@ function RootNavigator() {
         <Stack.Screen name="AdminHome" component={AdminHomeScreen} />
         <Stack.Screen name="DoctorApprovals" component={DoctorApprovalsScreen} />
         <Stack.Screen name="HospitalAdmin" component={HospitalAdminScreen} />
+        <Stack.Screen name="HospitalSettings" component={HospitalSettingsScreen} />
         <Stack.Screen name="HospitalProfile" component={HospitalProfileScreen} />
-        <Stack.Screen name="DoctorManagement" component={DoctorManagementScreen} />
-        <Stack.Screen name="AddDoctor" component={AddDoctorScreen} />
-        <Stack.Screen name="ViewDoctors" component={ViewDoctorsScreen} />
-        <Stack.Screen name="HospitalAppointments" component={HospitalAppointmentsScreen} />
-        <Stack.Screen name="FollowUpAppointment" component={FollowUpAppointmentScreen} />
       </Stack.Navigator>
 
       {!isDoctorNavigatorActive() && !AUTH_SCREENS.includes(currentRoute || '') && !isKeyboardVisible && <Footer />}
