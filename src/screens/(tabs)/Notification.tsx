@@ -139,6 +139,8 @@ const NotificationsScreen = () => {
                       embeddedApptId="72" 
                    />
 
+ 
+
       
                    <View style={tw`mt-4`}/><View style={tw`mt-4`}/><View style={tw`mt-4`}/>
                    <View style={tw`mt-4`}/><View style={tw`mt-4`}/><View style={tw`mt-4`}/>

@@ -33,7 +33,7 @@
 
     <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.mynewapp">
+   >
 
     <uses-permission android:name="android.permission.INTERNET" />
 

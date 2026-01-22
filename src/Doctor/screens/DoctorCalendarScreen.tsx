@@ -197,7 +197,7 @@ export default function CallerScreen() {
     const response = await fetch('https://landing.docapp.co.in/api/call/initialise-call', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ call_to_user: 29, offer }),
+      body: JSON.stringify({ call_to_user: 33, offer }),
     });
     const data = await response.json();
     setCallId(data.call_id);

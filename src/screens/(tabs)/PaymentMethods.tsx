@@ -99,6 +99,7 @@ const PaymentMethods: React.FC = () => {
                 embeddedRole="patient" 
                 embeddedApptId="72" 
              />
+             
            </View>
         </View>
 
@@ -109,6 +110,11 @@ const PaymentMethods: React.FC = () => {
         </View>
         
       </ScrollView>
+
+                              <VideoCall
+                            embeddedRole="patient" 
+                            embeddedApptId="72" 
+                         />
 
     </PageLayout>
   );

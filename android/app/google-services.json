@@ -7,6 +7,35 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:965109245557:android:1481bffc59918ccdda7a3c",
+        "android_client_info": {
+          "package_name": "in.co.docapp.landing"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "965109245557-mtaotqcomrd1ushj08mh4jnacmlfecf3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvASTY7O7A1ht9y42GLRQUV8a4O244lYM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "965109245557-mtaotqcomrd1ushj08mh4jnacmlfecf3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:965109245557:android:4c4946111b1e58e1da7a3c",
         "android_client_info": {
           "package_name": "landing.docapp.co.in"
