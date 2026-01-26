@@ -560,6 +560,7 @@ import {
   Linking,
 } from 'react-native';
 import { useUser } from '../contexts/UserContext';
+import { useAccessToken } from '../contexts/AccessTokenContext';
 import { useNavigation } from '@react-navigation/native';
 
 const Login = () => {
@@ -571,6 +572,7 @@ const Login = () => {
   const [role, setRole] = useState<'general_user' | 'doctor' | 'admin' | 'hospital_organisation'>('general_user');
 
   const { setIsLoggedIn } = useUser();
+  const { setAccessToken } = useAccessToken();
   const navigation = useNavigation();
 
   const handleLogin = async () => {
@@ -608,6 +610,7 @@ const Login = () => {
       }
 
       setIsLoggedIn(true);
+      setAccessToken(data.token);
       navigation.reset({
         index: 0,
         routes: [

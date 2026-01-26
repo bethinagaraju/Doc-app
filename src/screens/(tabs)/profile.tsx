@@ -1382,10 +1382,12 @@ import { launchImageLibrary } from 'react-native-image-picker';
 
 import PageLayout from '../../components/PageLayout';
 import { useUser } from '../contexts/UserContext';
+import { useAccessToken } from '../contexts/AccessTokenContext';
 
 export default function ProfileScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const { logout, user, setUser } = useUser();
+  const { clearAccessToken } = useAccessToken();
   const [loading, setLoading] = useState(true);
 
   // Fetch user data
@@ -1580,6 +1582,7 @@ export default function ProfileScreen() {
         onPress: async () => {
           try {
             await logout();
+            clearAccessToken();
             navigation.reset({
               index: 0,
               routes: [{ name: 'Login' }],

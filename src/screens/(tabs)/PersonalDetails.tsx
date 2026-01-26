@@ -1802,6 +1802,7 @@ import {
 } from 'react-native';
 import tw from 'twrnc';
 import PageLayout from '../../components/PageLayout';
+import { useAccessToken } from '../contexts/AccessTokenContext';
 
 const API_GET_USER = 'https://landing.docapp.co.in/api/auth/get-user-data';
 const API_ADD_ADDRESS = 'https://landing.docapp.co.in/api/address/addAddress';
@@ -1813,6 +1814,8 @@ const PersonalDetailsScreen = () => {
   const [loading, setLoading] = useState(true);
 
   const [allAddresses, setAllAddresses] = useState([]);
+
+  const { accessToken } = useAccessToken();
 
   // Address Form
   const [addressForm, setAddressForm] = useState({
@@ -1848,8 +1851,10 @@ const PersonalDetailsScreen = () => {
     try {
       const response = await fetch(API_GET_USER, {
         method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
       });
 
       const data = await response.json();
@@ -1870,7 +1875,9 @@ const PersonalDetailsScreen = () => {
     try {
       const response = await fetch(API_GET_ALL_ADDRESS, {
         method: 'GET',
-        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
       });
 
       const data = await response.json();
@@ -1894,8 +1901,10 @@ const PersonalDetailsScreen = () => {
     try {
       const response = await fetch(API_ADD_ADDRESS, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
         body: JSON.stringify(addressForm),
       });
 
@@ -1917,8 +1926,10 @@ const PersonalDetailsScreen = () => {
     try {
       const response = await fetch(API_UPDATE_ADDRESS, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
         body: JSON.stringify(editForm),
       });
 

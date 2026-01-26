@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { UserProvider, useUser } from './src/screens/contexts/UserContext';
+import { AccessTokenProvider } from './src/screens/contexts/AccessTokenContext';
 import { View, Keyboard, StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Footer from './src/screens/(tabs)/Footer';
@@ -185,18 +186,20 @@ export default function App() {
   return (
     
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <UserProvider>
-        <LoadingProvider>
-          <SafeAreaProvider>
-            <View style={{ flex: 1, backgroundColor: '#16a34a' }}>
-              <StatusBar backgroundColor="#16a34a" barStyle="light-content" translucent />
-              <CallProvider>
-              <RootNavigator />
-              </CallProvider>
-            </View>
-          </SafeAreaProvider>
-        </LoadingProvider>
-      </UserProvider>
+      <AccessTokenProvider>
+        <UserProvider>
+          <LoadingProvider>
+            <SafeAreaProvider>
+              <View style={{ flex: 1, backgroundColor: '#16a34a' }}>
+                <StatusBar backgroundColor="#16a34a" barStyle="light-content" translucent />
+                <CallProvider>
+                <RootNavigator />
+                </CallProvider>
+              </View>
+            </SafeAreaProvider>
+          </LoadingProvider>
+        </UserProvider>
+      </AccessTokenProvider>
     </GestureHandlerRootView>
     
   );

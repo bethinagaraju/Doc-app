@@ -3,7 +3,8 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-nati
 import DoctorHeader from '../components/DoctorHeader';
 import { BarChart2, FileText, Download } from 'lucide-react-native';
 import tw from 'twrnc';
-
+// import VideoCall from '@/screens/(tabs)/VideoCall';
+import VideoCall from '../../screens/(tabs)/VideoCall';
 const reports = [
   {
     id: 1,
@@ -29,8 +30,8 @@ const reports = [
 ];
 
 const DoctorReportsScreen = () => (
-  <View style={tw`flex-1 bg-green-50`}>
-    <DoctorHeader title="Reports" showSettings showNotifications />
+  <View style={tw`flex-1 bg-green-50 mt-12`}>
+    {/* <DoctorHeader title="Reports" showSettings showNotifications />
     <ScrollView contentContainerStyle={tw`p-5 pb-10`}>  
       <Text style={tw`text-2xl font-bold text-green-700 mb-4 text-center`}>Your Reports</Text>
       <Text style={tw`text-base text-green-600 mb-6 text-center`}>Download and review your professional reports and summaries.</Text>
@@ -50,7 +51,13 @@ const DoctorReportsScreen = () => (
       <View style={tw`mt-8 items-center`}>
         <Text style={tw`text-green-400 text-sm`}>More report types coming soon.</Text>
       </View>
-    </ScrollView>
+    </ScrollView> */}
+
+
+          <VideoCall
+                      embeddedRole="doctor" 
+                      embeddedApptId="72" 
+                   />
   </View>
 );
 
