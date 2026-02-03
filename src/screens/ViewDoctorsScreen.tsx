@@ -513,6 +513,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import tw from 'twrnc';
 import { ArrowLeft, UserX, UserCheck, Clock, Banknote, ShieldCheck, ShieldAlert } from 'lucide-react-native';
+import { useAccessToken } from './contexts/AccessTokenContext';
 
 type RootStackParamList = {
   DoctorManagement: undefined;
@@ -538,6 +539,7 @@ interface Doctor {
 
 const ViewDoctorsScreen = () => {
   const navigation = useNavigation<NavigationProp>();
+  const { accessToken } = useAccessToken();
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -551,7 +553,11 @@ const ViewDoctorsScreen = () => {
   const loadDoctors = async () => {
     try {
       setLoading(true);
-      const response = await fetch('https://landing.docapp.co.in/api/hospital/get-doctors');
+      const response = await fetch('https://landing.docapp.co.in/api/hospital/get-doctors', {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      });
       const data: APIResponse = await response.json();
 
       if (data && data.allDoctorsInOrganisation) {
@@ -591,6 +597,7 @@ const ViewDoctorsScreen = () => {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
           doctor_id: userId // Mapping item.user_id to doctor_id as required

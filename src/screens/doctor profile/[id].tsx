@@ -963,6 +963,7 @@
 // import tw from 'twrnc';
 // import PageHeader from '../../components/PageHeader';
 // import { useUser } from '../contexts/UserContext';
+// import { useAccessToken } from '../contexts/AccessTokenContext';
 
 // const DoctorProfileScreen = () => {
 //   const route = useRoute();
@@ -1224,6 +1225,7 @@ import { Briefcase, IndianRupee, ShieldCheck } from 'lucide-react-native';
 import tw from 'twrnc';
 import PageHeader from '../../components/PageHeader';
 import { useUser } from '../contexts/UserContext';
+import { useAccessToken } from '../contexts/AccessTokenContext';
 
 const DoctorProfileScreen = () => {
   const route = useRoute();
@@ -1238,11 +1240,16 @@ const DoctorProfileScreen = () => {
   const [selectedTab, setSelectedTab] = useState<'Availability' | 'Reviews' | 'About'>('Availability');
 
   const { consultationMode } = useUser(); // online or offline
+  const { accessToken } = useAccessToken();
 
   useEffect(() => {
     const fetchSlots = async () => {
       try {
-        const response = await fetch(`https://landing.docapp.co.in/api/auth/show-slots/${doctor.user_id}`);
+        const response = await fetch(`https://landing.docapp.co.in/api/auth/show-slots/${doctor.user_id}`, {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+          },
+        });
         const data = await response.json();
         let parsedSlots: any[] = [];
 

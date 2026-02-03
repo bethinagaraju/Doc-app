@@ -446,6 +446,7 @@ import { DoctorStackParamList } from '../types/navigation';
 import DoctorHeader from '../components/DoctorHeader';
 import tw from 'twrnc';
 import { launchImageLibrary } from 'react-native-image-picker';
+import { useAccessToken } from '../../screens/contexts/AccessTokenContext';
 
 type DoctorNavigationProp = NativeStackNavigationProp<DoctorStackParamList>;
 
@@ -470,6 +471,7 @@ interface Address {
 
 const PersonalInfoScreen = () => {
   const navigation = useNavigation<DoctorNavigationProp>();
+  const { accessToken } = useAccessToken();
   const [personalInfo, setPersonalInfo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   
@@ -510,6 +512,9 @@ const PersonalInfoScreen = () => {
     try {
       const response = await fetch(API_GET_USER, {
         method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
         credentials: 'include',
       });
 
@@ -560,6 +565,9 @@ const PersonalInfoScreen = () => {
       setAddressLoading(true);
       const response = await fetch(API_GET_ALL_ADDRESS, {
         method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
         credentials: 'include',
       });
       const data = await response.json();
@@ -604,7 +612,10 @@ const PersonalInfoScreen = () => {
       setLoading(true);
       const res = await fetch(API_UPLOAD_PHOTO, {
         method: 'POST',
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers: { 
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${accessToken}`,
+        },
         credentials: 'include',
         body: formData,
       });
@@ -636,7 +647,10 @@ const PersonalInfoScreen = () => {
 
       const response = await fetch(API_UPDATE_PROFILE, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
         credentials: 'include',
         body: JSON.stringify(payload),
       });
@@ -678,7 +692,10 @@ const PersonalInfoScreen = () => {
 
       const response = await fetch(API_UPLOAD_BANK, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
         credentials: 'include',
         body: JSON.stringify(payload),
       });
@@ -720,7 +737,10 @@ const PersonalInfoScreen = () => {
 
       const response = await fetch(API_ADD_ADDRESS, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
         credentials: 'include',
         body: JSON.stringify(payload),
       });
@@ -759,6 +779,9 @@ const PersonalInfoScreen = () => {
               setLoading(true);
               const res = await fetch(`${API_BASE}/api/auth/delete-profile-pic`, {
                 method: "DELETE",
+                headers: {
+                  'Authorization': `Bearer ${accessToken}`,
+                },
                 credentials: "include",
               });
               const data = await res.json();

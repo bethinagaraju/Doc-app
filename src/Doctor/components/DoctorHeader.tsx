@@ -85,6 +85,7 @@ import tw from 'twrnc';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { DoctorStackParamList } from '../types/navigation';
+import { useAccessToken } from '../../screens/contexts/AccessTokenContext';
 
 type DoctorHeaderProps = {
   title: string;
@@ -97,6 +98,10 @@ type UserData = {
   username: string;
   email: string;
   role: string;
+  doctorProfile?: {
+    specialization?: string;
+    profile_picture?: string;
+  };
 };
 
 const DoctorHeader: React.FC<DoctorHeaderProps> = ({
@@ -106,6 +111,7 @@ const DoctorHeader: React.FC<DoctorHeaderProps> = ({
   showDoctorInfo = false,
 }) => {
   const navigation = useNavigation<NativeStackNavigationProp<DoctorStackParamList>>();
+  const { accessToken } = useAccessToken();
 
   const normalizedTitle = title?.toString().trim().toLowerCase();
   const showBack = normalizedTitle !== 'dashboard' && normalizedTitle !== 'home';
@@ -117,6 +123,9 @@ const DoctorHeader: React.FC<DoctorHeaderProps> = ({
     try {
       const response = await fetch('https://landing.docapp.co.in/api/auth/get-user-data', {
         method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
         credentials: 'include',
       });
 
@@ -176,7 +185,7 @@ const DoctorHeader: React.FC<DoctorHeaderProps> = ({
       {showDoctorInfo && (
         <View style={tw`mt-4 flex-row items-center`}>
           <Image
-            source={{ uri: 'https://randomuser.me/api/portraits/men/1.jpg' }}
+            source={{ uri: doctor?.doctorProfile?.profile_picture || 'https://randomuser.me/api/portraits/men/1.jpg' }}
             style={tw`w-12 h-12 rounded-full`}
           />
           <View style={tw`ml-3`}>
@@ -187,7 +196,7 @@ const DoctorHeader: React.FC<DoctorHeaderProps> = ({
                 <Text style={tw`text-white text-lg font-bold`}>
                   {doctor?.username ? `Dr. ${doctor.username}` : 'Unknown Doctor'}
                 </Text>
-                <Text style={tw`text-[#1d9be3]`}>{doctor?.role || 'Doctor'}</Text>
+                <Text style={tw`text-[#1d9be3]`}>{doctor?.doctorProfile?.specialization || 'Doctor'}</Text>
               </>
             )}
           </View>

@@ -15,6 +15,7 @@ import tw from "twrnc";
 import PageLayout from "../../components/PageLayout";
 import { launchImageLibrary } from "react-native-image-picker";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { useAccessToken } from "../contexts/AccessTokenContext";
 
 type PrescriptionItem = {
   drug: string;
@@ -61,6 +62,7 @@ type RootStackParamList = {
 
 export default function AppointmentsScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const { accessToken } = useAccessToken();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTab, setSelectedTab] = useState<string>("Upcoming");
@@ -101,7 +103,12 @@ export default function AppointmentsScreen() {
     try {
       const response = await fetch(
         "https://landing.docapp.co.in/api/appointment/list-appointments",
-        { credentials: "include" }
+        {
+          credentials: "include",
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+          },
+        }
       );
       const data = await response.json();
       setAppointments(data.appointments || []);
@@ -138,7 +145,13 @@ export default function AppointmentsScreen() {
     try {
       const response = await fetch(
         `https://landing.docapp.co.in/api/appointment/delete-appointment?appointment_id=${id}`,
-        { method: "DELETE", credentials: "include" }
+        {
+          method: "DELETE",
+          credentials: "include",
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+          },
+        }
       );
       const data = await response.json();
       if (data.message?.toLowerCase().includes("deleted")) {
@@ -170,7 +183,10 @@ export default function AppointmentsScreen() {
         "https://landing.docapp.co.in/api/appointment/doctor-update-appointment",
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${accessToken}`,
+          },
           credentials: "include",
           body: JSON.stringify({
             appointment_id: currentAppointmentId,
@@ -234,6 +250,9 @@ export default function AppointmentsScreen() {
             {
               method: "POST",
               credentials: "include",
+              headers: {
+                'Authorization': `Bearer ${accessToken}`,
+              },
               body: formData,
               // do not set Content-Type; fetch will set multipart boundary
             }
@@ -263,7 +282,12 @@ export default function AppointmentsScreen() {
     try {
       const response = await fetch(
         `https://landing.docapp.co.in/api/appointment/get-document-for/${appointmentId}`,
-        { credentials: "include" }
+        {
+          credentials: "include",
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+          },
+        }
       );
       const data = await response.json();
       if (Array.isArray(data)) {

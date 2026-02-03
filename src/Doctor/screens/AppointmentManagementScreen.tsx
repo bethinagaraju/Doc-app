@@ -19,6 +19,7 @@ import tw from 'twrnc';
 import DoctorHeader from '../components/DoctorHeader';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { useAccessToken } from '../../screens/contexts/AccessTokenContext';
 
 interface ScheduleItem {
   day: string;
@@ -38,6 +39,7 @@ interface ParsedScheduleItem {
 
 const AppointmentManagementScreen = () => {
   const navigation = useNavigation();
+  const { accessToken } = useAccessToken();
   const [activeView, setActiveView] = useState('cards'); // 'cards' or 'schedule'
   const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
   const [consultationFee, setConsultationFee] = useState('');
@@ -60,7 +62,13 @@ const AppointmentManagementScreen = () => {
 
   const fetchDoctorData = async () => {
     try {
-      const response = await fetch('https://landing.docapp.co.in/api/auth/get-user-data');
+      const response = await fetch('https://landing.docapp.co.in/api/auth/get-user-data', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+        credentials: 'include',
+      });
       const data = await response.json();
 
       if (response.ok && data?.userData?.doctorProfile) {
@@ -258,7 +266,10 @@ const AppointmentManagementScreen = () => {
         'https://landing.docapp.co.in/api/auth/profile/complete/extra-doc-info',
         {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+          },
           body: JSON.stringify(payload),
         }
       );

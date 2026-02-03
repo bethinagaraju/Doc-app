@@ -1139,6 +1139,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import tw from 'twrnc';
 import { ArrowLeft, Save, Camera, MapPin, Building2, Plus, Trash } from 'lucide-react-native';
 import { useUser } from './contexts/UserContext';
+import { useAccessToken } from './contexts/AccessTokenContext';
 
 // ======================= API CONSTANTS =======================
 const API_BASE = 'https://landing.docapp.co.in';
@@ -1177,6 +1178,7 @@ interface Address {
 const HospitalProfileScreen = () => {
   const navigation = useNavigation<HospitalProfileNavigationProp>();
   const { user } = useUser();
+  const { accessToken } = useAccessToken();
   
   // 🔀 Tab State
   const [activeTab, setActiveTab] = useState<'profile' | 'address'>('profile');
@@ -1238,7 +1240,11 @@ const HospitalProfileScreen = () => {
   const loadProfileData = async () => {
     try {
       setLoading(true);
-      const response = await fetch(API_GET_USER);
+      const response = await fetch(API_GET_USER, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      });
       const data = await response.json();
 
       if (response.ok && data.userData?.organisationProfile) {
@@ -1283,6 +1289,9 @@ const HospitalProfileScreen = () => {
       const response = await fetch(API_GET_ALL_ADDRESS, {
         method: 'GET',
         credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
       });
       const data = await response.json();
       
@@ -1314,7 +1323,10 @@ const HospitalProfileScreen = () => {
 
       const response = await fetch(API_ADD_ADDRESS, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
         credentials: 'include',
         body: JSON.stringify(payload),
       });
@@ -1355,7 +1367,9 @@ const HospitalProfileScreen = () => {
 
       const uploadResponse = await fetch('https://landing.docapp.co.in/api/auth/upload-photo', {
         method: 'POST',
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
         body: formData,
       });
 
@@ -1389,6 +1403,9 @@ const HospitalProfileScreen = () => {
             try {
               const response = await fetch(API_DELETE_PROFILE_PIC, {
                 method: 'DELETE',
+                headers: {
+                  'Authorization': `Bearer ${accessToken}`,
+                },
               });
               const result = await response.json();
 
@@ -1429,7 +1446,10 @@ const HospitalProfileScreen = () => {
 
       const response = await fetch(API_PROFILE_UPDATE, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
         body: JSON.stringify(payload),
       });
 

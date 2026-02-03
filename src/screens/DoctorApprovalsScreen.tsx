@@ -2170,6 +2170,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useAccessToken } from './contexts/AccessTokenContext';
 
 // --- Interfaces ---
 
@@ -2234,6 +2235,7 @@ const DoctorApprovalsScreen = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const navigation = useNavigation();
+  const { accessToken } = useAccessToken();
 
   useEffect(() => {
     fetchUnverifiedAccounts();
@@ -2249,6 +2251,7 @@ const DoctorApprovalsScreen = () => {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
           },
           credentials: 'include',
         }
@@ -2281,12 +2284,13 @@ const DoctorApprovalsScreen = () => {
               setActionLoading(true);
               const response = await fetch('https://landing.docapp.co.in/api/admin/approve-doctor', {
                 method: 'PUT',
-                headers: { 
-                  'Content-Type': 'application/json' 
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${accessToken}`,
                 },
                 credentials: 'include',
-                body: JSON.stringify({ 
-                  doctor_id: doctorId 
+                body: JSON.stringify({
+                  doctor_id: doctorId
                 }),
               });
 
@@ -2326,9 +2330,12 @@ const DoctorApprovalsScreen = () => {
               // Updated Endpoint and Body key based on request
               const response = await fetch('https://landing.docapp.co.in/api/admin/approve-hospital', {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${accessToken}`,
+                },
                 credentials: 'include',
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     org_id: orgId  // Changed from organisation_id to org_id
                 }),
               });

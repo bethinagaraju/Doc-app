@@ -23,6 +23,7 @@ import {
   SlidersHorizontal,
 } from 'lucide-react-native';
 import PageHeader from '../../components/PageHeader';
+import { useAccessToken } from '../contexts/AccessTokenContext';
 
 const locations = ['Hyderabad', 'Bangalore', 'Mumbai', 'Chennai', 'Delhi'];
 const departments = ['Cardiologist', 'Dermatologist', 'Dentist', 'Neurologist'];
@@ -32,6 +33,7 @@ const FindDoctorsScreen = () => {
  const route = useRoute<RouteProp<{ params: { specialty?: string; mode?: string } }, 'params'>>();
 const initialSpecialty = route.params?.specialty || '';
 const initialMode = route.params?.mode || '';
+  const { accessToken } = useAccessToken();
 
   const [search, setSearch] = useState(initialSpecialty);
   const [location, setLocation] = useState('Hyderabad');
@@ -80,7 +82,11 @@ useEffect(() => {
   const fetchDoctors = async () => {
     setLoading(true);
     try {
-      const res = await fetch('https://landing.docapp.co.in/api/filter/filter-doctors?page=1');
+      const res = await fetch('https://landing.docapp.co.in/api/filter/filter-doctors', {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      });
       const json = await res.json();
       const doctorsData = json?.doctors || [];
       setDoctors(doctorsData);

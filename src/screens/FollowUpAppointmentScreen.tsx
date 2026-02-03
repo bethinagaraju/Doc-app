@@ -14,6 +14,7 @@ import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ArrowLeft } from "lucide-react-native";
 import tw from "twrnc";
+import { useAccessToken } from "./contexts/AccessTokenContext";
 
 type Appointment = {
   id: number;
@@ -46,6 +47,7 @@ const FollowUpAppointmentScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<FollowUpAppointmentScreenRouteProp>();
   const { parentAppointment } = route.params;
+  const { accessToken } = useAccessToken();
 
   // Slots state
   const [slotsByDate, setSlotsByDate] = useState<{ [date: string]: { mode: string; slots: string[] } }>({});
@@ -62,7 +64,12 @@ const FollowUpAppointmentScreen: React.FC = () => {
       try {
         setLoadingSlots(true);
         const response = await fetch(
-          `https://landing.docapp.co.in/api/auth/show-slots/${parentAppointment.doctor_id}`
+          `https://landing.docapp.co.in/api/auth/show-slots/${parentAppointment.doctor_id}`,
+          {
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+            },
+          }
         );
         const data = await response.json();
         let parsedSlots: any[] = [];
@@ -183,7 +190,10 @@ const FollowUpAppointmentScreen: React.FC = () => {
         "https://landing.docapp.co.in/api/appointment/schedule-checkup-appointment",
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${accessToken}`,
+          },
           credentials: "include",
           body: JSON.stringify({
             date: selectedDate,

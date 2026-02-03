@@ -26,11 +26,13 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import tw from 'twrnc';
+import { useAccessToken } from './contexts/AccessTokenContext';
 
 type HospitalSettingsNavigationProp = NativeStackNavigationProp<any>;
 
 const HospitalSettingsScreen = () => {
   const navigation = useNavigation<HospitalSettingsNavigationProp>();
+  const { accessToken } = useAccessToken();
 
   const [notifications, setNotifications] = useState({
     appointmentReminders: true,
@@ -162,6 +164,7 @@ const HospitalSettingsScreen = () => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
         },
         body: JSON.stringify({ newPassword }),
       });
