@@ -23,6 +23,7 @@ import {
   BadgeDollarSign,
   MapPin,
 } from 'lucide-react-native';
+import { Bot } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import tw from 'twrnc';
@@ -112,6 +113,28 @@ const DoctorDashboardScreen = () => {
   ];
 
   return (
+    <>
+    {/* 🤖 Sticky AI Bot Button */}
+<TouchableOpacity
+  onPress={() => navigation.navigate('AIDoctorChat')}
+  activeOpacity={0.8}
+  style={tw`
+    absolute
+    bottom-24
+    right-6
+    bg-green-600
+    w-16
+    h-16
+    rounded-full
+    items-center
+    justify-center
+    shadow-lg
+    z-50
+  `}
+>
+  <Bot size={32} color="#ffffff" />
+</TouchableOpacity>
+
     <SafeAreaView style={tw`flex-1 bg-green-50`}>
       <StatusBar backgroundColor="#059669" barStyle="light-content" />
       <DoctorHeader title="DASHBOARD" showDoctorInfo />
@@ -160,7 +183,7 @@ const DoctorDashboardScreen = () => {
             <View style={tw`flex-row justify-between`}>
               <View>
                 <Text style={tw`text-green-600`}>This Month's Earnings</Text>
-                <Text style={tw`text-2xl font-bold text-green-700`}>₹45,000</Text>
+                <Text style={tw`text-2xl font-bold text-green-700`}>₹46,000</Text>
               </View>
               <View>
                 <Text style={tw`text-green-600`}>Rating</Text>
@@ -188,6 +211,7 @@ const DoctorDashboardScreen = () => {
         </View>
       </ScrollView>
     </SafeAreaView>
+    </>
   );
 };
 

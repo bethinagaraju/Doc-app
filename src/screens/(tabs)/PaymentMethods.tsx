@@ -111,10 +111,10 @@ const PaymentMethods: React.FC = () => {
         
       </ScrollView>
 
-                              <VideoCall
+                              {/* <VideoCall
                             embeddedRole="patient" 
                             embeddedApptId="72" 
-                         />
+                         /> */}
 
     </PageLayout>
   );

@@ -1166,6 +1166,7 @@ import { useLoading } from '../../components/LoadingOverlay';
 type RootStackParamList = {
   Home: undefined;
   MedicalRecords: undefined;
+  AIPatientChat: undefined;
   Profile: undefined;
   ConsultOptionsScreen: { specialty: string };
 };
@@ -1251,7 +1252,7 @@ const Footer = () => {
 
         <TouchableOpacity
           style={tw`flex-1 items-center`}
-          onPress={() => navigation.navigate('MedicalRecords')}
+          onPress={() => navigation.navigate('AIPatientChat')}
         >
           <FileText size={22} color={'#6B7280'} />
           <Text style={tw`text-[10px] mt-0.5 text-green-700`}>

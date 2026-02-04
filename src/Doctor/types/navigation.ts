@@ -28,4 +28,5 @@ export type DoctorStackParamList = {
   PrivacyPolicy: undefined;
   OpenSourceLicenses: undefined;
   PrivacySecurityHospital: undefined;
+  AIDoctorChat: undefined;
 };

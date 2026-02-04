@@ -44,6 +44,7 @@ import PharmacyScreen from './src/screens/(tabs)/pharmacy';
 import PersonalDetailsScreen from './src/screens/(tabs)/PersonalDetails';
 import PaymentMethodsScreen from './src/screens/(tabs)/PaymentMethods';
 import MedicalRecordsScreen from './src/screens/(tabs)/MedicalRecords';
+import AIPatientChat from './src/screens/AIPatientChat';
 import LabTestsListScreen from './src/screens/(tabs)/LabTestsListScreen';
 import LabTestScreen from './src/screens/(tabs)/LabTestScreen';
 import DoctorAvailabilityScreen from './src/screens/(tabs)/DoctorAvailability';
@@ -153,6 +154,7 @@ function RootNavigator() {
         <Stack.Screen name="PersonalDetails" component={PersonalDetailsScreen} />
         <Stack.Screen name="PaymentMethods" component={PaymentMethodsScreen} />
         <Stack.Screen name="MedicalRecords" component={MedicalRecordsScreen} />
+        <Stack.Screen name="AIPatientChat" component={AIPatientChat} />
         <Stack.Screen name="LabTestsList" component={LabTestsListScreen} />
         <Stack.Screen name="LabTest" component={LabTestScreen} />
         <Stack.Screen name="DoctorAvailability" component={DoctorAvailabilityScreen} />
