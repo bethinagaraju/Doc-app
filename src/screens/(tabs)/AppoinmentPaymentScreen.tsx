@@ -2207,6 +2207,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import tw from 'twrnc';
 import { ArrowLeft, Calendar, Clock } from 'lucide-react-native';
+import { useAccessToken } from '../contexts/AccessTokenContext';
 
 type Doctor = {
   id?: number | string;
@@ -2241,6 +2242,7 @@ const PaymentScreen = () => {
   const route = useRoute<RouteProp<RootStackParamList, 'AppoinmentPaymentScreen'>>();
   const { doctor, slot, date, consultationType, amount, doctorId } = route.params;
   const [isProcessing, setIsProcessing] = useState(false);
+  const { accessToken } = useAccessToken();
 
   const createAppointment = async () => {
     try {
@@ -2259,7 +2261,10 @@ const PaymentScreen = () => {
         'https://landing.docapp.co.in/api/appointment/create-appointment',
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+          },
           body: JSON.stringify(payload),
         }
       );

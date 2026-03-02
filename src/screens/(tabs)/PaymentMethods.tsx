@@ -99,6 +99,10 @@ const PaymentMethods: React.FC = () => {
                 embeddedRole="patient" 
                 embeddedApptId="72" 
              />
+
+            <view>
+              <text></text>
+            </view>
              
            </View>
         </View>

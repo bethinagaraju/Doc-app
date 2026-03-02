@@ -4195,14 +4195,27 @@ export default function VideoCall({
           />
         )}
 
-        {localStream && (
+        {/* {localStream && (
           <RTCView
             streamURL={localStream.toURL()}
             style={styles.localVideo}
             objectFit="cover"
             mirror
           />
-        )}
+        )} */}
+
+
+{localStream && (
+  <RTCView
+    streamURL={localStream.toURL()}
+    style={styles.localVideo}
+    objectFit="cover"
+    mirror={userRole === 'patient'}
+    zOrder={1}
+    zOrderMediaOverlay={true}
+  />
+)}
+
 
         {status === 'calling' && !remoteStream && (
           <ActivityIndicator color="#fff" size="large" />

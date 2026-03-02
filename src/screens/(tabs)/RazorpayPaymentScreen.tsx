@@ -1,3 +1,21 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // import React, { useState } from 'react';
 // import {
 //   View,
@@ -15,19 +33,14 @@
 
 // type Doctor = {
 //   id?: number | string;
-//   name?: string;
-//   clinic?: string;
-//   image?: string;
+//   specialization?: string;
+//   consultation_fee?: number;
 //   profile_picture?: string;
 //   user?: {
-//     id?: number | string;
 //     username?: string;
 //     email?: string;
 //     phone_number?: string;
 //   };
-//   consultation_fee?: number;
-//   experience_years?: number;
-//   specialization?: string;
 // };
 
 // type RootStackParamList = {
@@ -43,191 +56,181 @@
 
 // const RazorpayPaymentScreen = () => {
 //   const navigation = useNavigation<any>();
-//   const route = useRoute<RouteProp<RootStackParamList, 'RazorpayPaymentScreen'>>();
-//   const { appointmentId, doctor, slot, date, consultationType, amount } = route.params;
+//   const route =
+//     useRoute<RouteProp<RootStackParamList, 'RazorpayPaymentScreen'>>();
+
+//   const { appointmentId, doctor, slot, date, amount } = route.params;
+
 //   const [isProcessing, setIsProcessing] = useState(false);
 
-//   // Step 1: Create Razorpay Order
+//   const token = 'JWT_TOKEN_HERE'; // 🔴 Replace with auth context / secure storage
+
+//   /* ------------------ CREATE ORDER ------------------ */
 //   const createOrder = async () => {
 //     try {
 //       const payload = {
-//         user_id: 33, // Replace with actual logged-in user ID
-//         amount: amount,
-//         appointmentId: appointmentId,
-//         patientName: 'John Doe', // Replace with actual user name
-//         patientEmail: 'john@example.com', // Replace with actual user email
-//         patientPhone: '9999999999', // Replace with actual user phone
-//         doctorName: doctor?.user?.username || 'Dr. Unknown',
+//         amount,
+//         appointmentId,
+//         doctorId: Number(doctor?.id),
+//         patientName: 'John Doe',
+//         patientEmail: 'john@example.com',
 //         appointmentDate: date,
 //         appointmentTime: slot,
 //       };
-
-//       console.log('📤 Creating Razorpay Order with payload:', payload);
 
 //       const response = await fetch(
 //         'https://landing.docapp.co.in/api/payment/create-order',
 //         {
 //           method: 'POST',
-//           headers: { 'Content-Type': 'application/json' },
+//           headers: {
+//             'Content-Type': 'application/json',
+//             Authorization: `Bearer ${token}`,
+//           },
 //           body: JSON.stringify(payload),
 //         }
 //       );
 
 //       const data = await response.json();
-//       console.log('📥 Create Order Response:', data);
 
 //       if (!response.ok || !data?.order?.id) {
 //         throw new Error(data?.message || 'Order creation failed');
 //       }
 
 //       return data.order;
-//     } catch (err) {
-//       console.error('❌ Error creating order:', err);
-//       Alert.alert('Error', 'Failed to create payment order.');
+//     } catch (error) {
+//       console.error('❌ Create order error:', error);
+//       Alert.alert('Error', 'Unable to create payment order');
 //       return null;
 //     }
 //   };
 
-  
-//   const verifyPayment = async (orderId: string, paymentId: string, signature: string) => {
-//   try {
-//     const payload = {
-//       razorpay_order_id: orderId,
-//       razorpay_payment_id: paymentId,
-//       razorpay_signature: signature,
-//     };
-//     console.log('📤 Verifying Payment with payload:', payload);
+//   /* ------------------ VERIFY PAYMENT ------------------ */
+//   const verifyPayment = async (
+//     orderId: string,
+//     paymentId: string,
+//     signature: string
+//   ) => {
+//     try {
+//       const response = await fetch(
+//         'https://landing.docapp.co.in/api/verify-payment',
+//         {
+//           method: 'POST',
+//           headers: {
+//             'Content-Type': 'application/json',
+//             Authorization: `Bearer ${token}`,
+//           },
+//           body: JSON.stringify({
+//             razorpay_order_id: orderId,
+//             razorpay_payment_id: paymentId,
+//             razorpay_signature: signature,
+//           }),
+//         }
+//       );
 
-//     const response = await fetch('https://landing.docapp.co.in/api/payment/verify', {
-//       method: 'POST',
-//       headers: { 'Content-Type': 'application/json' },
-//       body: JSON.stringify(payload),
-//     });
+//       const data = await response.json();
 
-//     const data = await response.json();
-//     console.log('📥 Verify Payment Response:', data);
-
-//     // ✅ Accept both success types
-//     if (data.success || data.message === 'Payment verified successfully') {
-//       Alert.alert('Success', 'Payment successful and verified!');
-//       // navigation.navigate('AppointmentSuccess', {
-//       //   doctor,
-//       //   slot,
-//       //   date,
-//       //   consultationType,
-//       //   appointmentId: appointmentId.toString(),
-//       // });
-//     } else {
-//       Alert.alert('Verification Failed', 'Payment verification failed.');
+//       if (data.success) {
+//         Alert.alert('Success', 'Payment successful!');
+//         // navigation.replace('AppointmentSuccess');
+//       } else {
+//         throw new Error('Verification failed');
+//       }
+//     } catch (error) {
+//       console.error('❌ Verify error:', error);
+//       Alert.alert('Error', 'Payment verification failed');
 //     }
-//   } catch (err) {
-//     console.error('❌ Payment verification error:', err);
-//     Alert.alert('Error', 'Payment verification failed.');
-//   }
-// };
+//   };
 
-
-
-
+//   /* ------------------ HANDLE PAYMENT ------------------ */
 //   const handlePayment = async () => {
-//   if (isProcessing) return;
-//   setIsProcessing(true);
+//     if (isProcessing) return;
+//     setIsProcessing(true);
 
-//   try {
-//     const order = await createOrder();
-//     if (!order?.id) throw new Error('Failed to create Razorpay order.');
+//     try {
+//       const order = await createOrder();
+//       if (!order) throw new Error('Order not created');
 
-//     const options = {
-//       description: 'Doctor Consultation Payment',
-//       image: 'https://your-logo-url.com/logo.png',
-//       currency: order.currency || 'INR',
-//       key: order.key, // ✅ Correct key from backend
-//       amount: order.amount, // ✅ Already in paise from backend
-//       name: 'DocApp',
-//       order_id: order.id,
-//       prefill: {
-//         email: 'john@example.com',
-//         contact: '9515619058',
-//         name: 'John Doe',
-//       },
-//       theme: { color: '#00A0E3' },
-//     };
+//       const options = {
+//         key: order.key,
+//         order_id: order.id,
+//         amount: order.amount,
+//         currency: 'INR',
+//         name: 'DocApp',
+//         description: 'Doctor Consultation Fee',
+//         prefill: {
+//           name: 'John Doe',
+//           email: 'john@example.com',
+//           contact: '9999999999',
+//         },
+//         theme: { color: '#00A0E3' },
+//       };
 
-//     RazorpayCheckout.open(options)
-//       .then(async (data: any) => {
-//         console.log('✅ Razorpay Success:', data);
-//         await verifyPayment(order.id, data.razorpay_payment_id, data.razorpay_signature);
-//       })
-//       .catch((error: any) => {
-//         console.log('❌ Razorpay Error:', error);
-//         Alert.alert('Payment Failed', error.description || 'Try again.');
-//       })
-//       .finally(() => setIsProcessing(false));
-//   } catch (err: any) {
-//     console.error('🚨 Payment flow error:', err);
-//     Alert.alert('Error', err.message || 'Something went wrong.');
-//     setIsProcessing(false);
-//   }
-// };
+//       RazorpayCheckout.open(options)
+//         .then((data: any) => {
+//           verifyPayment(
+//             order.id,
+//             data.razorpay_payment_id,
+//             data.razorpay_signature
+//           );
+//         })
+//         .catch((err: any) => {
+//           Alert.alert('Payment Failed', err.description || 'Cancelled');
+//         })
+//         .finally(() => setIsProcessing(false));
+//     } catch (error: any) {
+//       Alert.alert('Error', error.message || 'Something went wrong');
+//       setIsProcessing(false);
+//     }
+//   };
 
-
+//   /* ------------------ UI ------------------ */
 //   return (
 //     <SafeAreaView style={tw`flex-1 bg-white`}>
 //       <ScrollView contentContainerStyle={tw`p-4`}>
-//         {/* Header */}
 //         <View style={tw`flex-row items-center mb-4`}>
-//           <TouchableOpacity onPress={() => navigation.goBack()} style={tw`p-2`}>
-//             <ArrowLeft size={24} color="#374151" />
+//           <TouchableOpacity onPress={() => navigation.goBack()}>
+//             <ArrowLeft size={24} />
 //           </TouchableOpacity>
-//           <Text style={tw`ml-2 text-lg font-semibold`}>Payment Details</Text>
+//           <Text style={tw`ml-2 text-lg font-semibold`}>
+//             Payment Details
+//           </Text>
 //         </View>
 
-//         {/* Doctor Info */}
-//         <View style={tw`bg-white rounded-lg p-4 shadow-sm mb-4`}>
-//           <View style={tw`flex-row items-center mb-4`}>
+//         <View style={tw`bg-white p-4 rounded-lg shadow mb-4`}>
+//           <View style={tw`flex-row items-center mb-3`}>
 //             <Image
-//               source={{ uri: doctor?.profile_picture || 'https://via.placeholder.com/150' }}
+//               source={{
+//                 uri:
+//                   doctor?.profile_picture ||
+//                   'https://via.placeholder.com/150',
+//               }}
 //               style={tw`w-16 h-16 rounded-full mr-3`}
 //             />
-//             <View style={tw`flex-1`}>
-//               <Text style={tw`font-bold text-gray-900`}>
+//             <View>
+//               <Text style={tw`font-bold`}>
 //                 {doctor?.user?.username || 'Doctor'}
 //               </Text>
-//               <Text style={tw`text-gray-600`}>
-//                 {doctor?.specialization || 'General Physician'}
-//               </Text>
-//               <Text style={tw`text-green-700 mt-1`}>
-//                 Fee: ₹{doctor?.consultation_fee || amount}
+//               <Text>{doctor?.specialization}</Text>
+//               <Text style={tw`text-green-700`}>
+//                 ₹{doctor?.consultation_fee || amount}
 //               </Text>
 //             </View>
 //           </View>
 
-//           <View style={tw`flex-row items-center mb-2`}>
-//             <Calendar size={18} color="#4B5563" />
-//             <Text style={tw`ml-2 text-gray-700 font-medium`}>{date}</Text>
+//           <View style={tw`flex-row items-center mb-1`}>
+//             <Calendar size={16} />
+//             <Text style={tw`ml-2`}>{date}</Text>
 //           </View>
-
 //           <View style={tw`flex-row items-center`}>
-//             <Clock size={18} color="#4B5563" />
-//             <Text style={tw`ml-2 text-gray-700 font-medium`}>{slot}</Text>
+//             <Clock size={16} />
+//             <Text style={tw`ml-2`}>{slot}</Text>
 //           </View>
 //         </View>
 
-//         {/* Total */}
-//         <View style={tw`bg-white p-4 rounded-lg shadow-sm`}>
-//           <View style={tw`flex-row justify-between`}>
-//             <Text style={tw`text-gray-900 font-bold`}>Total Amount</Text>
-//             <Text style={tw`text-gray-900 font-bold`}>₹{amount}</Text>
-//           </View>
-//         </View>
-
-//         {/* Pay Button */}
 //         <TouchableOpacity
-//           style={tw`mt-6 mb-6 bg-[#00A0E3] py-4 rounded-xl items-center ${
-//             isProcessing ? 'opacity-50' : ''
-//           }`}
-//           onPress={handlePayment}
 //           disabled={isProcessing}
+//           onPress={handlePayment}
+//           style={tw`bg-[#00A0E3] py-4 rounded-xl items-center`}
 //         >
 //           <Text style={tw`text-white font-bold text-lg`}>
 //             {isProcessing ? 'Processing...' : `Pay ₹${amount}`}
@@ -239,19 +242,6 @@
 // };
 
 // export default RazorpayPaymentScreen;
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -272,6 +262,8 @@ import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import tw from 'twrnc';
 import { ArrowLeft, Calendar, Clock } from 'lucide-react-native';
 import RazorpayCheckout from 'react-native-razorpay';
+import { useUser } from '../contexts/UserContext';
+import { useAccessToken } from '../contexts/AccessTokenContext';
 
 type Doctor = {
   id?: number | string;
@@ -302,86 +294,85 @@ const RazorpayPaymentScreen = () => {
     useRoute<RouteProp<RootStackParamList, 'RazorpayPaymentScreen'>>();
 
   const { appointmentId, doctor, slot, date, amount } = route.params;
+  const { user } = useUser();
+
+  const { accessToken } = useAccessToken();
 
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const token = 'JWT_TOKEN_HERE'; // 🔴 Replace with auth context / secure storage
-
   /* ------------------ CREATE ORDER ------------------ */
+  // const createOrder = async () => {
+  //   try {
+  //     const payload = {
+  //       amount,
+  //       appointmentId,
+  //       doctorId: Number(doctor?.id),
+  //     };
+
+  //     const response = await fetch(
+  //       'https://landing.docapp.co.in/api/payment/order',
+  //       {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           credentials: 'include',
+  //         } as any,
+  //         body: JSON.stringify(payload),
+  //       }
+  //     );
+
+  //     const data = await response.json();
+
+  //     if (!response.ok || !data?.orderId) {
+  //       throw new Error(data?.message || 'Order creation failed');
+  //     }
+
+  //     return data;
+  //   } catch (error) {
+  //     console.error('❌ Create order error:', error);
+  //     Alert.alert('Error', 'Unable to create payment order');
+  //     return null;
+  //   }
+  // };
+
   const createOrder = async () => {
-    try {
-      const payload = {
-        amount,
-        appointmentId,
-        doctorId: Number(doctor?.id),
-        patientName: 'John Doe',
-        patientEmail: 'john@example.com',
-        appointmentDate: date,
-        appointmentTime: slot,
-      };
+  try {
+    const payload = {
+      amount,
+      appointmentId,
+      doctorId: Number(doctor?.id),
+    };
 
-      const response = await fetch(
-        'https://landing.docapp.co.in/api/payment/create-order',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(payload),
-        }
-      );
+    console.log('📤 Payload:', payload);
 
-      const data = await response.json();
+    const response = await fetch(
+      'https://landing.docapp.co.in/api/payment/order',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        },
+        credentials: 'include',
+        body: JSON.stringify(payload),
+      } as any
+    );
 
-      if (!response.ok || !data?.order?.id) {
-        throw new Error(data?.message || 'Order creation failed');
-      }
+    const data = await response.json();
 
-      return data.order;
-    } catch (error) {
-      console.error('❌ Create order error:', error);
-      Alert.alert('Error', 'Unable to create payment order');
-      return null;
+    console.log('📥 Order API Response:', data);
+
+    if (!response.ok || !data?.orderId) {
+      throw new Error(data?.message || 'Order creation failed');
     }
-  };
 
-  /* ------------------ VERIFY PAYMENT ------------------ */
-  const verifyPayment = async (
-    orderId: string,
-    paymentId: string,
-    signature: string
-  ) => {
-    try {
-      const response = await fetch(
-        'https://landing.docapp.co.in/api/verify-payment',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            razorpay_order_id: orderId,
-            razorpay_payment_id: paymentId,
-            razorpay_signature: signature,
-          }),
-        }
-      );
+    return data;
+  } catch (error) {
+    console.log('❌ Create order error:', error);
+    return null;
+  }
+};
 
-      const data = await response.json();
-
-      if (data.success) {
-        Alert.alert('Success', 'Payment successful!');
-        // navigation.replace('AppointmentSuccess');
-      } else {
-        throw new Error('Verification failed');
-      }
-    } catch (error) {
-      console.error('❌ Verify error:', error);
-      Alert.alert('Error', 'Payment verification failed');
-    }
-  };
 
   /* ------------------ HANDLE PAYMENT ------------------ */
   const handlePayment = async () => {
@@ -394,26 +385,23 @@ const RazorpayPaymentScreen = () => {
 
       const options = {
         key: order.key,
-        order_id: order.id,
+        order_id: order.orderId,
         amount: order.amount,
         currency: 'INR',
         name: 'DocApp',
         description: 'Doctor Consultation Fee',
         prefill: {
-          name: 'John Doe',
-          email: 'john@example.com',
-          contact: '9999999999',
+          name: user?.username || 'Patient',
+          email: user?.email || '',
+          contact: user?.phone_number || '',
         },
         theme: { color: '#00A0E3' },
       };
 
       RazorpayCheckout.open(options)
-        .then((data: any) => {
-          verifyPayment(
-            order.id,
-            data.razorpay_payment_id,
-            data.razorpay_signature
-          );
+        .then(() => {
+          Alert.alert('Success', 'Payment completed');
+          navigation.replace('AppointmentSuccess');
         })
         .catch((err: any) => {
           Alert.alert('Payment Failed', err.description || 'Cancelled');
