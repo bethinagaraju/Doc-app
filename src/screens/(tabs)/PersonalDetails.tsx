@@ -1802,6 +1802,8 @@ import {
 } from 'react-native';
 import tw from 'twrnc';
 import PageLayout from '../../components/PageLayout';
+import { sendEmailOtp, verifyEmailOtp } from '../../api/verify';
+import { completeGeneralUserProfile } from '../../api/profile';
 import { useAccessToken } from '../contexts/AccessTokenContext';
 
 const API_GET_USER = 'https://landing.docapp.co.in/api/auth/get-user-data';
@@ -1837,6 +1839,16 @@ const PersonalDetailsScreen = () => {
     landmark: '',
     houseNo: '',
   });
+  // Email OTP states
+  const [otpModalVisible, setOtpModalVisible] = useState(false);
+  const [otpValue, setOtpValue] = useState('');
+  const [isOtpSending, setIsOtpSending] = useState(false);
+  // Edit profile modal
+  const [editProfileVisible, setEditProfileVisible] = useState(false);
+  const [editDob, setEditDob] = useState<Date | undefined>();
+  const [editGender, setEditGender] = useState<'Male' | 'Female' | 'Others' | ''>('');
+  const [editLoading, setEditLoading] = useState(false);
+  const [showEditDatePicker, setShowEditDatePicker] = useState(false);
 
   const handleChange = (field, value) => {
     setAddressForm({ ...addressForm, [field]: value });
@@ -1947,6 +1959,75 @@ const PersonalDetailsScreen = () => {
     }
   };
 
+  // Send Email OTP
+  const handleSendEmailOtp = async () => {
+    setIsOtpSending(true);
+    try {
+      const res = await sendEmailOtp(accessToken);
+      if (res.ok) {
+        Alert.alert('Success', res.data?.message || 'OTP sent to your email');
+        setOtpModalVisible(true);
+      } else {
+        Alert.alert('Error', res.data?.message || 'Failed to send OTP');
+      }
+    } catch (err) {
+      Alert.alert('Error', 'Network error while sending OTP');
+    } finally {
+      setIsOtpSending(false);
+    }
+  };
+
+  // Verify Email OTP
+  const handleVerifyEmailOtp = async () => {
+    if (!otpValue) {
+      Alert.alert('Error', 'Please enter the OTP');
+      return;
+    }
+    try {
+      const res = await verifyEmailOtp(otpValue, userData.email, accessToken);
+      if (res.ok) {
+        Alert.alert('Success', res.data?.message || 'Email verified');
+        setOtpModalVisible(false);
+        setOtpValue('');
+        fetchUserData();
+      } else {
+        Alert.alert('Error', res.data?.message || 'Invalid OTP');
+      }
+    } catch (err) {
+      Alert.alert('Error', 'Network error while verifying OTP');
+    }
+  };
+
+  // Edit profile submit
+  const handleEditProfileSubmit = async () => {
+    // basic validation
+    if (!editDob || !editGender) {
+      Alert.alert('Error', 'Please provide date of birth and gender');
+      return;
+    }
+
+    setEditLoading(true);
+    try {
+      const payload = {
+        date_of_birth: editDob.toISOString().split('T')[0],
+        gender: editGender,
+      };
+
+      const res = await completeGeneralUserProfile(payload, accessToken);
+      if (res.ok) {
+        Alert.alert('Success', res.data?.message || 'Profile updated');
+        setEditProfileVisible(false);
+        fetchUserData();
+      } else {
+        Alert.alert('Error', res.data?.message || 'Failed to update profile');
+      }
+    } catch (err) {
+      Alert.alert('Error', 'Network error while updating profile');
+    } finally {
+      setEditLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchUserData();
     fetchAllAddresses();
@@ -1997,6 +2078,15 @@ const PersonalDetailsScreen = () => {
 
           <View style={tw`mt-4`}>
             <Detail label="Email" value={userData.email} />
+            <View style={tw`mt-2`}> 
+              <TouchableOpacity
+                style={tw`bg-blue-600 py-2 px-4 rounded-lg self-start`}
+                onPress={handleSendEmailOtp}
+                disabled={isOtpSending}
+              >
+                <Text style={tw`text-white font-semibold`}>{isOtpSending ? 'Sending...' : 'Send Email OTP'}</Text>
+              </TouchableOpacity>
+            </View>
             <Detail label="Phone" value={userData.phone_number} />
             <Detail label="Gender" value={general.gender} />
             <Detail label="Date of Birth" value={general.date_of_birth?.split("T")[0]} />
@@ -2028,7 +2118,7 @@ const PersonalDetailsScreen = () => {
         {/* ----------------------------- */}
         {allAddresses.length > 0 && (
           <View style={[tw`bg-green-50 rounded-xl p-4 mx-4 mt-6`, { elevation: 1 }]}>
-            <Text style={tw`text-lg font-bold text-green-900 mb-3`}>Your Addresses</Text>
+            <Text style={tw`text-lg font-bold text-green-900 mb-3`}>Your Address</Text>
 
             {allAddresses.map((item) => (
               <View key={item.id} style={tw`p-3 bg-white rounded-lg mb-3 border`}>
@@ -2078,6 +2168,77 @@ const PersonalDetailsScreen = () => {
               </TouchableOpacity>
 
               <TouchableOpacity style={tw`bg-red-600 py-3 rounded-lg mt-2`} onPress={() => setEditModalVisible(false)}>
+                <Text style={tw`text-center text-white font-bold`}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
+        {/* OTP VERIFY MODAL */}
+        <Modal visible={otpModalVisible} transparent animationType="slide">
+          <View style={styles.modalContainer}>
+            <View style={styles.modalBox}>
+              <Text style={tw`text-lg font-bold text-green-800 mb-3`}>Enter OTP</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter OTP"
+                keyboardType="numeric"
+                value={otpValue}
+                onChangeText={setOtpValue}
+              />
+              <TouchableOpacity style={tw`bg-green-600 py-3 rounded-lg mt-3`} onPress={handleVerifyEmailOtp}>
+                <Text style={tw`text-center text-white font-bold`}>Verify OTP</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={tw`bg-red-600 py-3 rounded-lg mt-2`} onPress={() => { setOtpModalVisible(false); setOtpValue(''); }}>
+                <Text style={tw`text-center text-white font-bold`}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
+        {/* EDIT PROFILE MODAL */}
+        <Modal visible={editProfileVisible} transparent animationType="slide">
+          <View style={styles.modalContainer}>
+            <View style={styles.modalBox}>
+              <Text style={tw`text-lg font-bold text-green-800 mb-3`}>Edit Profile</Text>
+
+              <TouchableOpacity
+                onPress={() => setShowEditDatePicker(true)}
+                style={tw`bg-white px-4 py-3 rounded-lg border border-gray-200 mb-3`}
+              >
+                <Text>{editDob ? editDob.toDateString() : 'Select Date of Birth'}</Text>
+              </TouchableOpacity>
+              {showEditDatePicker && (
+                <DateTimePicker
+                  value={editDob || new Date(2000, 0, 1)}
+                  mode="date"
+                  maximumDate={new Date()}
+                  display={Platform.OS === 'ios' ? 'inline' : 'default'}
+                  onChange={(e, d) => {
+                    setShowEditDatePicker(Platform.OS === 'ios');
+                    if (d) setEditDob(d);
+                  }}
+                />
+              )}
+
+              <View style={tw`flex-row justify-between mb-3`}> 
+                {['Male', 'Female', 'Others'].map((g) => (
+                  <TouchableOpacity
+                    key={g}
+                    onPress={() => setEditGender(g as any)}
+                    style={tw`flex-1 mx-1 py-2 rounded-lg border ${editGender === g ? 'bg-green-600 border-green-600' : 'bg-white border-gray-200'}`}
+                  >
+                    <Text style={tw`${editGender === g ? 'text-white' : 'text-gray-700'} text-center`}>{g}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              <TouchableOpacity style={tw`bg-green-600 py-3 rounded-lg mt-1`} onPress={handleEditProfileSubmit} disabled={editLoading}>
+                <Text style={tw`text-center text-white font-bold`}>{editLoading ? 'Saving...' : 'Save'}</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={tw`bg-red-600 py-3 rounded-lg mt-2`} onPress={() => setEditProfileVisible(false)}>
                 <Text style={tw`text-center text-white font-bold`}>Cancel</Text>
               </TouchableOpacity>
             </View>

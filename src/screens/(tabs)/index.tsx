@@ -62,6 +62,7 @@ import Footer from './Footer';
 
 
 import { useUser } from '../contexts/UserContext';
+import { useAccessToken } from '../contexts/AccessTokenContext';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -93,6 +94,7 @@ const HomeScreen = () => {
   const [userData, setUserData] = useState<any>(null);
 
   const user = useUser();
+  const { accessToken } = useAccessToken();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const profileImageUri = userData?.generalUser?.profile_picture || 'https://randomuser.me/api/portraits/men/4.jpg';
   const [selectedLanguage, setSelectedLanguage] = useState('English');
@@ -105,7 +107,7 @@ const HomeScreen = () => {
         const response = await fetch('https://landing.docapp.co.in/api/auth/get-user-data', {
           method: 'GET',
           headers: {
-            'Authorization': `bearer ${user?.token}`,
+            ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
             'Content-Type': 'application/json',
           },
         });

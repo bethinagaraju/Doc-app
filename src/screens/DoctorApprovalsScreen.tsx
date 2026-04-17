@@ -2300,6 +2300,7 @@ const DoctorApprovalsScreen = () => {
                 Alert.alert('Success', result.message || 'Doctor verified successfully');
                 fetchUnverifiedAccounts();
               } else {
+                console.error('Approval failed:', result);
                 Alert.alert('Error', result.message || 'Failed to approve doctor');
               }
             } catch (error) {

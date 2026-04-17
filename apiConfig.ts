@@ -1,4 +1,4 @@
-const BASE_URL = 'http://3.108.233.123:5000';
+const BASE_URL = 'https://landing.docapp.co.in';
 
 const API_ENDPOINTS = {
   // Auth
@@ -16,6 +16,9 @@ const API_ENDPOINTS = {
    
   // Future endpoint (incomplete)
   // rescheduleAppointment: `${BASE_URL}/api/appointment/reschedule-appointment`, 
+  // Verification
+  sendEmailOtp: `${BASE_URL}/api/verify/sendEmailOtp`,
+  verifyEmail: `${BASE_URL}/api/verify/verifyEmail`,
 };
 
 export default {

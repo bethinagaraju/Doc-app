@@ -131,17 +131,23 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useAccessToken } from './contexts/AccessTokenContext';
 
 const AdminHomeScreen = () => {
   const navigation = useNavigation();
 
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { accessToken } = useAccessToken();
 
-  // Fetch stats API
+  // Fetch stats API (send Bearer token when available)
   const fetchStats = async () => {
     try {
-      const response = await fetch("https://landing.docapp.co.in/api/admin/stats");
+      const response = await fetch("https://landing.docapp.co.in/api/admin/stats", {
+        headers: {
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        },
+      });
       const data = await response.json();
 
       if (data.stats) {
@@ -155,8 +161,10 @@ const AdminHomeScreen = () => {
   };
 
   useEffect(() => {
-    fetchStats();
-  }, []);
+    if (accessToken !== undefined) {
+      fetchStats();
+    }
+  }, [accessToken]);
 
   const handleLogout = () => {
     navigation.reset({

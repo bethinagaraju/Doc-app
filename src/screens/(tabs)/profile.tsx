@@ -1352,6 +1352,9 @@
 // 🚀 Profile Screen (FINAL)
 // =========================
 
+
+
+
 import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
@@ -1386,29 +1389,35 @@ import { useAccessToken } from '../contexts/AccessTokenContext';
 
 export default function ProfileScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const { logout, user, setUser } = useUser();
-  const { clearAccessToken } = useAccessToken();
+  const { logout, user, setUser, checkingLogin } = useUser();
+  const { accessToken, clearAccessToken } = useAccessToken();
   const [loading, setLoading] = useState(true);
 
   // Fetch user data
   const fetchUserData = async () => {
     try {
-      if (!user?.token) {
+      if (!accessToken) {
         setLoading(false);
         return;
       }
 
       setLoading(true);
 
+      console.log('Profile fetch with accessToken:', accessToken);
+
       const response = await fetch('https://landing.docapp.co.in/api/auth/get-user-data', {
         method: 'GET',
         headers: {
-          Authorization: `Bearer ${user.token}`,
+          Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
         },
       });
 
+      console.log('Profile fetch response status:', response.status);
+
       const result = await response.json();
+
+      console.log('Profile fetch result:', result);
 
       if (!response.ok) {
         Alert.alert('Error', result?.message || 'Failed to fetch user data.');
@@ -1438,10 +1447,8 @@ export default function ProfileScreen() {
       let isActive = true;
 
       const getData = async () => {
-        if (isActive && user?.token) {
+        if (isActive && accessToken) {
           await fetchUserData();
-        } else {
-          setLoading(false);
         }
       };
 
@@ -1450,14 +1457,14 @@ export default function ProfileScreen() {
       return () => {
         isActive = false;
       };
-    }, [user?.token])
+    }, [accessToken])
   );
 
   useEffect(() => {
-    if (user?.token) {
+    if (accessToken) {
       fetchUserData();
     }
-  }, [user?.token]);
+  }, [accessToken]);
 
   // ===========================
   // 🚀 Upload Photo Integration
@@ -1487,7 +1494,7 @@ export default function ProfileScreen() {
         method: 'POST',
         headers: {
           'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${user.token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
         body: formData,
       });
@@ -1538,7 +1545,7 @@ export default function ProfileScreen() {
                 {
                   method: 'DELETE',
                   headers: {
-                    Authorization: `Bearer ${user.token}`,
+                    Authorization: `Bearer ${accessToken}`,
                     'Content-Type': 'application/json',
                   },
                 }

@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useRef, useState } from 'react';
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -165,8 +163,8 @@ function RootNavigator() {
         <Stack.Screen name="HelpCenter" component={HelpCenterScreen} />
         <Stack.Screen name="MyPayments" component={MyPaymentsScreen} />
         <Stack.Screen name="Wallet" component={WalletScreen} />
+        <Stack.Screen name="HospitalAppointments" component={HospitalAppointmentsScreen} />
         <Stack.Screen name="Cart" component={CartScreen} />
-        {/* The duplicate line that was here has been removed. */}
         <Stack.Screen name="AppointmentBooking" component={AppointmentBooking} />
         <Stack.Screen name="DoctorProfile" component={DoctorProfileScreen} />
         <Stack.Screen name="AppoinmentPaymentScreen" component={AppoinmentPaymentScreen} />
@@ -177,6 +175,9 @@ function RootNavigator() {
         <Stack.Screen name="HospitalAdmin" component={HospitalAdminScreen} />
         <Stack.Screen name="HospitalSettings" component={HospitalSettingsScreen} />
         <Stack.Screen name="HospitalProfile" component={HospitalProfileScreen} />
+        <Stack.Screen name="DoctorManagement" component={DoctorManagementScreen} />
+        <Stack.Screen name="ViewDoctors" component={ViewDoctorsScreen} />
+        <Stack.Screen name="AddDoctor" component={AddDoctorScreen} />
       </Stack.Navigator>
 
       {!isDoctorNavigatorActive() && !AUTH_SCREENS.includes(currentRoute || '') && !isKeyboardVisible && <Footer />}

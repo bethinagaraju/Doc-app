@@ -268,6 +268,7 @@
 
 
 import React, { useState } from 'react';
+import { useAccessToken } from '../screens/contexts/AccessTokenContext';
 import {
   View,
   Text,
@@ -292,6 +293,7 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const AddDoctorScreen = () => {
   const navigation = useNavigation<NavigationProp>();
+  const { accessToken } = useAccessToken();
   const [isLoading, setIsLoading] = useState(false);
   
   // State now handles an array of emails strings
@@ -340,17 +342,21 @@ const AddDoctorScreen = () => {
       const apiPayload = {
         email: validEmails
       };
+      console.log('Submitting doctor emails:', apiPayload);
 
       // 4. Call API
       const response = await fetch('https://landing.docapp.co.in/api/hospital/create-accounts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(accessToken ? { 'Authorization': `Bearer ${accessToken}` } : {}),
         },
         body: JSON.stringify(apiPayload),
       });
+      console.log('API response status:', response.status);
 
       const data = await response.json();
+      console.log('API response data:', data);
       setIsLoading(false);
 
       if (response.ok) {
@@ -384,7 +390,7 @@ const AddDoctorScreen = () => {
 
     } catch (error) {
       setIsLoading(false);
-      console.error(error);
+      console.error('AddDoctorScreen error:', error);
       Alert.alert('Error', 'Network request failed. Please check your connection.');
     }
   };
