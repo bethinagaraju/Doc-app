@@ -1810,6 +1810,7 @@ const API_GET_USER = 'https://landing.docapp.co.in/api/auth/get-user-data';
 const API_ADD_ADDRESS = 'https://landing.docapp.co.in/api/address/addAddress';
 const API_GET_ALL_ADDRESS = 'https://landing.docapp.co.in/api/address/getAllAddress';
 const API_UPDATE_ADDRESS = 'https://landing.docapp.co.in/api/address/updateAddress';
+const API_DELETE_ADDRESS = 'https://landing.docapp.co.in/api/address/deleteAddress';
 
 const PersonalDetailsScreen = () => {
   const [userData, setUserData] = useState(null);
@@ -1863,7 +1864,7 @@ const PersonalDetailsScreen = () => {
     try {
       const response = await fetch(API_GET_USER, {
         method: 'GET',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${accessToken}`,
         },
@@ -1913,7 +1914,7 @@ const PersonalDetailsScreen = () => {
     try {
       const response = await fetch(API_ADD_ADDRESS, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${accessToken}`,
         },
@@ -1938,7 +1939,7 @@ const PersonalDetailsScreen = () => {
     try {
       const response = await fetch(API_UPDATE_ADDRESS, {
         method: 'PUT',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${accessToken}`,
         },
@@ -1957,6 +1958,44 @@ const PersonalDetailsScreen = () => {
     } catch (error) {
       Alert.alert('Error', 'Failed to update address');
     }
+  };
+
+  // Delete Address
+  const handleDeleteAddress = async (addressId) => {
+    Alert.alert(
+      "Delete Address",
+      "Are you sure you want to delete this address?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              const response = await fetch(API_DELETE_ADDRESS, {
+                method: 'DELETE',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${accessToken}`,
+                },
+                body: JSON.stringify({ addressId }),
+              });
+
+              const data = await response.json();
+
+              if (response.ok) {
+                Alert.alert('Success', data.message || 'Address deleted successfully');
+                fetchAllAddresses();
+              } else {
+                Alert.alert('Error', data.message || 'Failed to delete address');
+              }
+            } catch (error) {
+              Alert.alert('Error', 'Network error while deleting address');
+            }
+          }
+        }
+      ]
+    );
   };
 
   // Send Email OTP
@@ -2078,7 +2117,7 @@ const PersonalDetailsScreen = () => {
 
           <View style={tw`mt-4`}>
             <Detail label="Email" value={userData.email} />
-            <View style={tw`mt-2`}> 
+            <View style={tw`mt-2`}>
               <TouchableOpacity
                 style={tw`bg-blue-600 py-2 px-4 rounded-lg self-start`}
                 onPress={handleSendEmailOtp}
@@ -2118,31 +2157,40 @@ const PersonalDetailsScreen = () => {
         {/* ----------------------------- */}
         {allAddresses.length > 0 && (
           <View style={[tw`bg-green-50 rounded-xl p-4 mx-4 mt-6`, { elevation: 1 }]}>
-            <Text style={tw`text-lg font-bold text-green-900 mb-3`}>Your Address</Text>
+            <Text style={tw`text-lg font-bold text-green-900 mb-3`}>Your Addresss</Text>
 
             {allAddresses.map((item) => (
               <View key={item.id} style={tw`p-3 bg-white rounded-lg mb-3 border`}>
                 <Text style={tw`text-green-900 font-bold`}>{item.street}, {item.city}</Text>
                 <Text style={tw`text-green-700`}>{item.state} - {item.pincode}</Text>
 
-                <TouchableOpacity
-                  style={tw`bg-blue-600 py-2 px-4 rounded-lg mt-2 self-start`}
-                  onPress={() => {
-                    setEditForm({
-                      addressId: item.id.toString(),
-                      country: item.country || 'India',
-                      state: item.state,
-                      city: item.city,
-                      pincode: item.pincode,
-                      street: item.street,
-                      landmark: item.landmark || '',
-                      houseNo: item.house_no || '',
-                    });
-                    setEditModalVisible(true);
-                  }}
-                >
-                  <Text style={tw`text-white font-bold`}>Edit</Text>
-                </TouchableOpacity>
+                <View style={tw`flex-row mt-2`}>
+                  <TouchableOpacity
+                    style={tw`bg-blue-600 py-2 px-4 rounded-lg mr-2 self-start`}
+                    onPress={() => {
+                      setEditForm({
+                        addressId: item.id.toString(),
+                        country: item.country || 'India',
+                        state: item.state,
+                        city: item.city,
+                        pincode: item.pincode,
+                        street: item.street,
+                        landmark: item.landmark || '',
+                        houseNo: item.house_no || '',
+                      });
+                      setEditModalVisible(true);
+                    }}
+                  >
+                    <Text style={tw`text-white font-bold`}>Edit</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={tw`bg-red-600 py-2 px-4 rounded-lg self-start`}
+                    onPress={() => handleDeleteAddress(item.id.toString())}
+                  >
+                    <Text style={tw`text-white font-bold`}>Delete</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             ))}
           </View>
@@ -2222,7 +2270,7 @@ const PersonalDetailsScreen = () => {
                 />
               )}
 
-              <View style={tw`flex-row justify-between mb-3`}> 
+              <View style={tw`flex-row justify-between mb-3`}>
                 {['Male', 'Female', 'Others'].map((g) => (
                   <TouchableOpacity
                     key={g}

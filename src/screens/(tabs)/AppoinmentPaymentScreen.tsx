@@ -2295,6 +2295,7 @@ const PaymentScreen = () => {
     date,
     consultationType,
     amount,
+    doctorId,
   });
 } else {
   Alert.alert('❌ Failed', data?.message || 'Could not schedule appointment.');

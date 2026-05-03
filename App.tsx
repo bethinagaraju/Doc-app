@@ -3,6 +3,7 @@ import { NavigationContainer, NavigationContainerRef } from '@react-navigation/n
 import { createStackNavigator } from '@react-navigation/stack';
 import { UserProvider, useUser } from './src/screens/contexts/UserContext';
 import { AccessTokenProvider } from './src/screens/contexts/AccessTokenContext';
+import { UserProfileProvider } from './src/contexts/userProfileContext';
 import { View, Keyboard, StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Footer from './src/screens/(tabs)/Footer';
@@ -190,7 +191,8 @@ export default function App() {
     
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AccessTokenProvider>
-        <UserProvider>
+        <UserProfileProvider>
+          <UserProvider>
           <LoadingProvider>
             <SafeAreaProvider>
               <View style={{ flex: 1, backgroundColor: '#16a34a' }}>
@@ -201,7 +203,8 @@ export default function App() {
               </View>
             </SafeAreaProvider>
           </LoadingProvider>
-        </UserProvider>
+          </UserProvider>
+        </UserProfileProvider>
       </AccessTokenProvider>
     </GestureHandlerRootView>
     

@@ -418,7 +418,7 @@ export default function AppointmentsScreen() {
           headers: { "Content-Type": "application/json" },
           credentials: "include",
           body: JSON.stringify({
-            appointment_id: String(reviewAppointmentId),
+            appointment_id: reviewAppointmentId,
             review: reviewText.trim(),
           }),
         }
@@ -434,7 +434,8 @@ export default function AppointmentsScreen() {
         setReviewAppointmentId(null);
         fetchAppointments();
       } else {
-        throw new Error(data.message || "Failed to submit review");
+        throw new Error(data.message || `Failed to submit review (${reviewAppointmentId})`);
+  
       }
     } catch (err: any) {
       Alert.alert("Error", err.message || "Something went wrong");
@@ -489,6 +490,7 @@ export default function AppointmentsScreen() {
         ) : (
           filteredAppointments.map((item) => (
             <View key={item.id} style={tw`bg-white p-4 mb-4 rounded-xl shadow-sm border border-gray-200`}>
+              <Text style={tw`text-lg font-bold text-green-700`}>APPOINTMENT ID: #{item.id}</Text>
               <Text style={tw`text-lg font-bold text-green-700`}>Doctor ID: #{item.doctor_id}</Text>
               <Text style={tw`text-gray-800`}>Date: {new Date(item.appointment_date).toDateString()}</Text>
               <Text style={tw`text-gray-800`}>Time: {item.appointment_start_time} - {item.appointment_end_time}</Text>
@@ -813,7 +815,7 @@ export default function AppointmentsScreen() {
       <Modal visible={reviewModalVisible} animationType="slide" transparent={true}>
         <View style={tw`flex-1 justify-center bg-black/50 p-4`}>
           <View style={tw`bg-white p-5 rounded-2xl max-h-[70%]`}>
-            <Text style={tw`text-xl font-bold mb-3 text-center`}>Write Review</Text>
+            <Text style={tw`text-xl font-bold mb-3 text-center`}>Write Reviews</Text>
 
             <TextInput
               placeholder="Write your review here..."

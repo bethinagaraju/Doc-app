@@ -59,7 +59,7 @@
 //   const route =
 //     useRoute<RouteProp<RootStackParamList, 'RazorpayPaymentScreen'>>();
 
-//   const { appointmentId, doctor, slot, date, amount } = route.params;
+//   const { appointmentId, doctor, slot, date, amount, doctorId } = route.params;
 
 //   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -71,7 +71,7 @@
 //       const payload = {
 //         amount,
 //         appointmentId,
-//         doctorId: Number(doctor?.id),
+//         doctorId: doctorId,
 //         patientName: 'John Doe',
 //         patientEmail: 'john@example.com',
 //         appointmentDate: date,
@@ -285,6 +285,7 @@ type RootStackParamList = {
     date: string;
     consultationType: 'video' | 'inclinic';
     amount: number;
+    doctorId: number;
   };
 };
 
@@ -293,7 +294,7 @@ const RazorpayPaymentScreen = () => {
   const route =
     useRoute<RouteProp<RootStackParamList, 'RazorpayPaymentScreen'>>();
 
-  const { appointmentId, doctor, slot, date, amount } = route.params;
+  const { appointmentId, doctor, slot, date, amount, doctorId } = route.params;
   const { user } = useUser();
 
   const { accessToken } = useAccessToken();
@@ -340,7 +341,14 @@ const RazorpayPaymentScreen = () => {
     const payload = {
       amount,
       appointmentId,
-      doctorId: Number(doctor?.id),
+      doctorId: doctorId,
+
+
+            // ✅ ADD THESE (missing before)
+      patientName: user?.username || 'Patient',
+      patientEmail: user?.email || '',
+      appointmentDate: date,
+      appointmentTime: slot,
     };
 
     console.log('📤 Payload:', payload);
