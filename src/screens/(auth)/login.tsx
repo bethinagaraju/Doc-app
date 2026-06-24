@@ -233,7 +233,7 @@ const handleLogin = async () => {
       keyboardShouldPersistTaps="handled"
     >
       <Text style={styles.title}>
-        {isLoginMode ? 'Welcomes too DocApp' : 'Create an Account'}
+        {isLoginMode ? 'Welcomes to DocApp' : 'Create an Account'}
       </Text>
 
       {!isLoginMode && (
