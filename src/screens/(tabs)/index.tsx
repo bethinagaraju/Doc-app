@@ -10,59 +10,64 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
   Dimensions,
+  StatusBar,
 } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { 
-  Home, 
-  Calendar, 
-  User, 
-  PieChart, 
-  MessageCircle, 
-  Search, 
-  Hospital, 
-  Pill, 
-  Bell, 
-  Settings, 
-  LogOut, 
-  ChevronLeft, 
-  ChevronRight, 
-  ChevronDown, 
-  Plus, 
-  Edit, 
-  FileText, 
-  Video, 
-  Phone, 
-  MapPin, 
-  CreditCard, 
-  Lock, 
-  HelpCircle, 
-  Star, 
-  Stethoscope, 
-  Heart, 
-  ClipboardList, 
-  FilePlus, 
-  FileCheck, 
-  FileX, 
-  FileMinus, 
-  File, 
-  Camera, 
-  Upload, 
-  Download, 
-  Trash, 
-  Eye, 
-  EyeOff, 
-  Mail, 
-  Phone as PhoneIcon, 
-  Globe 
+import {
+  Home,
+  Calendar,
+  User,
+  PieChart,
+  MessageCircle,
+  Search,
+  Hospital,
+  Pill,
+  Bell,
+  Settings,
+  LogOut,
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  Plus,
+  Edit,
+  FileText,
+  Video,
+  Phone,
+  MapPin,
+  CreditCard,
+  Lock,
+  HelpCircle,
+  Star,
+  Stethoscope,
+  Heart,
+  ClipboardList,
+  FilePlus,
+  FileCheck,
+  FileX,
+  FileMinus,
+  File,
+  Camera,
+  Upload,
+  Download,
+  Trash,
+  Eye,
+  EyeOff,
+  Mail,
+  Phone as PhoneIcon,
+  Globe
 } from 'lucide-react-native';
 import tw from 'twrnc'; // Import twrnc
 import Modal from 'react-native-modal'; // or 'react-native' if you use the built-in Modal
 import Footer from './Footer';
+import Svg, { Path } from 'react-native-svg';
 
 
 
 import { useUser } from '../contexts/UserContext';
 import { useAccessToken } from '../contexts/AccessTokenContext';
+import UpcomingAppointmentCard from '../user_components/UpcomingAppointmentCard';
+import QuickActionsGrid from '../user_components/QuickActionsGrid';
+import DoctorCardsContainer from '../user_components/DoctorCardsContainer';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -147,7 +152,7 @@ const HomeScreen = () => {
   const banners = [
     require('../../assets/images/unnamed.webp'),
     require('../../assets/images/unnamed-banner.webp'),
-     require('../../assets/images/9786325ef35b05c91053c663067481ff_screen.jpg'),
+    require('../../assets/images/9786325ef35b05c91053c663067481ff_screen.jpg'),
     // require('../Images/Banner3.jpg'),
   ];
 
@@ -162,20 +167,20 @@ const HomeScreen = () => {
     { name: 'Mental Health', image: require('../Images/PopUpICons/brain.png') },
     { name: 'Orthopedic', image: require('../Images/PopUpICons/arthritis.png') },
   ];
-const cityList = [
-  'Bangalore',
-  'Hyderabad',
-  'Delhi',
-  'Mumbai',
-  'Chennai',
-  'Kolkata',
-  'Pune',
-  'Ahmedabad',
-  'Jaipur',
-  'Lucknow',
-];
-const [selectedLocation, setSelectedLocation] = useState('Bangalore');
-const [showLocationModal, setShowLocationModal] = useState(false);
+  const cityList = [
+    'Bangalore',
+    'Hyderabad',
+    'Delhi',
+    'Mumbai',
+    'Chennai',
+    'Kolkata',
+    'Pune',
+    'Ahmedabad',
+    'Jaipur',
+    'Lucknow',
+  ];
+  const [selectedLocation, setSelectedLocation] = useState('Bangalore');
+  const [showLocationModal, setShowLocationModal] = useState(false);
 
   const bottomBanners = [
     require('../Images/BottomBanner1.jpg'),
@@ -290,197 +295,360 @@ const [showLocationModal, setShowLocationModal] = useState(false);
   };
 
   return (
-    <SafeAreaView style={tw`flex-1 bg-green-50`}>
+    <SafeAreaView style={[tw`flex-1`, { backgroundColor: '#F8F9FF' }]}>
+      <StatusBar backgroundColor="#F8F9FF" barStyle="dark-content" />
       <ScrollView
+        style={[tw`flex-1 px-5`, { backgroundColor: '#F8F9FF' }]}
         contentContainerStyle={tw`pb-20`}
         showsVerticalScrollIndicator={false}
       >
-<View
-  style={[
-    tw`px-4 pb-4 bg-green-600`,
-    {
-      borderBottomLeftRadius: 35,
-      borderBottomRightRadius: 35,
-      paddingTop: Platform.OS === 'android' ? 35 : 60,
-      height: Platform.OS === 'android' ? 170 : 180,
-    },
-  ]}
->
-  <View style={tw`h-full justify-between`}>
-    {/* Top Row: Profile | Location | Language & Notification */}
-    <View style={tw`flex-row items-center justify-between mt-3`}>
-      {/* Profile Image */}
-      <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-        <Image
-          source={{ uri: profileImageUri }}
-          style={tw`w-14 h-14 rounded-full border-2 border-green-200`}
-        />
-      </TouchableOpacity>
 
-      {/* Location */}
-      <TouchableOpacity
-        onPress={() => setShowLocationModal(true)}
-        style={tw`flex-row items-center mx-3`}
-      >
-        <MapPin size={16} color="white" />
-        <Text style={tw`ml-1 text-white font-medium text-sm`}>
-          {selectedLocation}
-        </Text>
-        <ChevronDown size={16} color="white" style={tw`ml-1`} />
-      </TouchableOpacity>
-      <Modal isVisible={showLocationModal} onBackdropPress={() => setShowLocationModal(false)}>
-        <View style={tw`bg-white p-6 rounded-2xl items-center`}>
-          <Text style={tw`text-base font-semibold mb-2`}>Select your city</Text>
-          {cityList.map((city) => (
-            <TouchableOpacity
-              key={city}
-              style={tw`py-2 w-full items-center`}
-              onPress={() => {
-                setSelectedLocation(city);
-                setShowLocationModal(false);
-              }}
-            >
-              <Text style={tw`text-lg ${selectedLocation === city ? 'text-green-700 font-bold' : 'text-green-800'}`}>{city}</Text>
-            </TouchableOpacity>
-          ))}
-          <TouchableOpacity style={tw`mt-4`} onPress={() => setShowLocationModal(false)}>
-            <Text style={tw`text-green-700 font-bold`}>Close</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>      
-      
-      <View style={tw`flex-row items-center`}>
-        <TouchableOpacity 
-          onPress={() => setShowLanguageModal(true)} 
-          style={tw`flex-row items-center`}
+
+        {/* old top bar */}
+        {/* <View
+          style={[
+            tw`px-4 pb-4 bg-green-600`,
+            {
+              borderBottomLeftRadius: 35,
+              borderBottomRightRadius: 35,
+              paddingTop: Platform.OS === 'android' ? 35 : 60,
+              height: Platform.OS === 'android' ? 170 : 180,
+            },
+          ]}
         >
-          <Globe size={18} color="white" />
-          <Text style={tw`ml-1 text-white text-xs`}>{selectedLanguage.slice(0, 2)}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Notification')} style={tw`ml-3`}>
-            <View>
-              <Bell size={20} color="white" />
-              <View style={tw`absolute top-0 right-0 w-2 h-2 rounded-full bg-emerald-500`} />
-            </View>
-        </TouchableOpacity>
-      </View>
-
-      {/* Language Selection Modal */}
-      <Modal 
-        isVisible={showLanguageModal} 
-        onBackdropPress={() => setShowLanguageModal(false)}
-        style={tw`m-0 justify-end`}
-      >
-        <View style={tw`bg-white rounded-t-3xl`}>
-          <View style={tw`p-4 border-b border-green-100`}>
-            <View style={tw`w-12 h-1 bg-green-200 rounded-full mx-auto mb-4`} />
-            <Text style={tw`text-xl font-bold text-center`}>Select Language</Text>
-          </View>
-          <ScrollView style={tw`max-h-[70%]`}>
-            {languages.map((lang) => (
-              <TouchableOpacity
-                key={lang.code}
-                style={tw`flex-row items-center justify-between px-6 py-4 border-b border-green-50`}
-                onPress={() => {
-                  setSelectedLanguage(lang.name);
-                  setShowLanguageModal(false);
-                }}
-              >
-                <Text style={tw`text-base ${selectedLanguage === lang.name ? 'text-green-700 font-bold' : 'text-green-800'}`}>
-                  {lang.name}
-                </Text>
-                {selectedLanguage === lang.name && (
-                  <View style={tw`w-6 h-6 rounded-full bg-green-600 items-center justify-center`}>
-                    <Text style={tw`text-white font-bold text-sm`}>✓</Text>
-                  </View>
-                )}
+          <View style={tw`h-full justify-between`}>
+           
+            <View style={tw`flex-row items-center justify-between mt-3`}>
+            
+              <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+                <Image
+                  source={{ uri: profileImageUri }}
+                  style={tw`w-14 h-14 rounded-full border-2 border-green-200`}
+                />
               </TouchableOpacity>
-            ))}
-          </ScrollView>
-          <TouchableOpacity
-            style={tw`p-4 border-t border-green-100`}
-            onPress={() => setShowLanguageModal(false)}
+
+            
+              <TouchableOpacity
+                onPress={() => setShowLocationModal(true)}
+                style={tw`flex-row items-center mx-3`}
+              >
+                <MapPin size={16} color="white" />
+                <Text style={tw`ml-1 text-white font-medium text-sm`}>
+                  {selectedLocation}
+                </Text>
+                <ChevronDown size={16} color="white" style={tw`ml-1`} />
+              </TouchableOpacity>
+              <Modal isVisible={showLocationModal} onBackdropPress={() => setShowLocationModal(false)}>
+                <View style={tw`bg-white p-6 rounded-2xl items-center`}>
+                  <Text style={tw`text-base font-semibold mb-2`}>Select your city</Text>
+                  {cityList.map((city) => (
+                    <TouchableOpacity
+                      key={city}
+                      style={tw`py-2 w-full items-center`}
+                      onPress={() => {
+                        setSelectedLocation(city);
+                        setShowLocationModal(false);
+                      }}
+                    >
+                      <Text style={tw`text-lg ${selectedLocation === city ? 'text-green-700 font-bold' : 'text-green-800'}`}>{city}</Text>
+                    </TouchableOpacity>
+                  ))}
+                  <TouchableOpacity style={tw`mt-4`} onPress={() => setShowLocationModal(false)}>
+                    <Text style={tw`text-green-700 font-bold`}>Close</Text>
+                  </TouchableOpacity>
+                </View>
+              </Modal>
+
+              <View style={tw`flex-row items-center`}>
+                <TouchableOpacity
+                  onPress={() => setShowLanguageModal(true)}
+                  style={tw`flex-row items-center`}
+                >
+                  <Globe size={18} color="white" />
+                  <Text style={tw`ml-1 text-white text-xs`}>{selectedLanguage.slice(0, 2)}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('Notification')} style={tw`ml-3`}>
+                  <View>
+                    <Bell size={20} color="white" />
+                    <View style={tw`absolute top-0 right-0 w-2 h-2 rounded-full bg-emerald-500`} />
+                  </View>
+                </TouchableOpacity>
+              </View>
+
+      
+              <Modal
+                isVisible={showLanguageModal}
+                onBackdropPress={() => setShowLanguageModal(false)}
+                style={tw`m-0 justify-end`}
+              >
+                <View style={tw`bg-white rounded-t-3xl`}>
+                  <View style={tw`p-4 border-b border-green-100`}>
+                    <View style={tw`w-12 h-1 bg-green-200 rounded-full mx-auto mb-4`} />
+                    <Text style={tw`text-xl font-bold text-center`}>Select Language</Text>
+                  </View>
+                  <ScrollView style={tw`max-h-[70%]`}>
+                    {languages.map((lang) => (
+                      <TouchableOpacity
+                        key={lang.code}
+                        style={tw`flex-row items-center justify-between px-6 py-4 border-b border-green-50`}
+                        onPress={() => {
+                          setSelectedLanguage(lang.name);
+                          setShowLanguageModal(false);
+                        }}
+                      >
+                        <Text style={tw`text-base ${selectedLanguage === lang.name ? 'text-green-700 font-bold' : 'text-green-800'}`}>
+                          {lang.name}
+                        </Text>
+                        {selectedLanguage === lang.name && (
+                          <View style={tw`w-6 h-6 rounded-full bg-green-600 items-center justify-center`}>
+                            <Text style={tw`text-white font-bold text-sm`}>✓</Text>
+                          </View>
+                        )}
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                  <TouchableOpacity
+                    style={tw`p-4 border-t border-green-100`}
+                    onPress={() => setShowLanguageModal(false)}
+                  >
+                    <Text style={tw`text-center text-green-700 font-bold text-lg`}>Close</Text>
+                  </TouchableOpacity>
+                </View>
+              </Modal>
+            </View>
+
+          
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Searcheverything')}
+              activeOpacity={0.9}
+              style={tw`mt-4 mb-4 flex-row items-center px-4 py-2.5 bg-white rounded-full shadow-sm border border-gray-200`}
+            >
+              <Search size={18} color="#059669" />
+              <Text style={tw`ml-3 text-green-700 text-sm`}>
+                Search doctors, clinics, tests...
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View> */}
+
+
+
+        <View
+          style={[
+            tw`w-full`,
+            {
+              paddingTop: Platform.OS === 'android' ? 20 : 45,
+              paddingBottom: 5,
+              backgroundColor: '#F8F9FF',
+            },
+          ]}
+        >
+          {/* Header - TopAppBar */}
+          <View style={tw`flex-row justify-between items-center pt-4 h-16 w-full`}>
+            {/* App Title Container */}
+            <View style={tw`flex-row items-center h-8`}>
+              <Text style={[tw`text-2xl font-bold tracking-[-0.24px]`, { color: '#124CB8', lineHeight: 32 }]}>
+                DocApp
+              </Text>
+            </View>
+
+            {/* Profile Image Border & Touch Container */}
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Profile')}
+              style={[
+                tw`justify-center items-center rounded-full`,
+                {
+                  width: 40,
+                  height: 40,
+                  borderWidth: 2,
+                  borderColor: '#3766D2',
+                }
+              ]}
+            >
+              <Image
+                source={{ uri: profileImageUri }}
+                style={[
+                  tw`rounded-full`,
+                  {
+                    width: 36,
+                    height: 36,
+                  }
+                ]}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {/* Welcome Text Section */}
+          <View style={[tw`mt-2 w-full gap-1`, { height: 44 }]}>
+            <Text style={[tw`text-[12px] font-semibold tracking-[0.6px]`, { color: '#434653', height: 16, lineHeight: 16 }]}>
+              Welcome back
+            </Text>
+            <Text style={[tw`text-[20px] font-semibold`, { color: '#011D35', height: 28, lineHeight: 28 }]}>
+              Hello, John!
+            </Text>
+          </View>
+
+          {/* Search Section */}
+          <View style={[tw`mt-4 w-full`, { height: 56 }]}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Searcheverything')}
+              activeOpacity={0.9}
+              style={[
+                tw`flex-row items-center bg-white border border-[#C3C6D5] rounded-xl px-4 w-full`,
+                {
+                  height: 56,
+                  shadowColor: 'rgba(0, 0, 0, 0.05)',
+                  shadowOffset: { width: 0, height: 1 },
+                  shadowOpacity: 1,
+                  shadowRadius: 2,
+                  elevation: 1,
+                }
+              ]}
+            >
+              <Search size={18} color="#737684" />
+              <Text style={[tw`ml-3 text-[16px] font-normal`, { color: '#737684', lineHeight: 19 }]}>
+                Search doctors, specialties...
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Hidden Modals / Logic preserved exactly as requested */}
+          <Modal isVisible={showLocationModal} onBackdropPress={() => setShowLocationModal(false)}>
+            <View style={tw`bg-white p-6 rounded-2xl items-center`}>
+              <Text style={tw`text-base font-semibold mb-2`}>Select your city</Text>
+              {cityList.map((city) => (
+                <TouchableOpacity
+                  key={city}
+                  style={tw`py-2 w-full items-center`}
+                  onPress={() => {
+                    setSelectedLocation(city);
+                    setShowLocationModal(false);
+                  }}
+                >
+                  <Text style={tw`text-lg ${selectedLocation === city ? 'text-green-700 font-bold' : 'text-green-800'}`}>{city}</Text>
+                </TouchableOpacity>
+              ))}
+              <TouchableOpacity style={tw`mt-4`} onPress={() => setShowLocationModal(false)}>
+                <Text style={tw`text-green-700 font-bold`}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </Modal>
+
+          <Modal
+            isVisible={showLanguageModal}
+            onBackdropPress={() => setShowLanguageModal(false)}
+            style={tw`m-0 justify-end`}
           >
-            <Text style={tw`text-center text-green-700 font-bold text-lg`}>Close</Text>
-          </TouchableOpacity>
+            <View style={tw`bg-white rounded-t-3xl`}>
+              <View style={tw`p-4 border-b border-green-100`}>
+                <View style={tw`w-12 h-1 bg-green-200 rounded-full mx-auto mb-4`} />
+                <Text style={tw`text-xl font-bold text-center`}>Select Language</Text>
+              </View>
+              <ScrollView style={tw`max-h-[70%]`}>
+                {languages.map((lang) => (
+                  <TouchableOpacity
+                    key={lang.code}
+                    style={tw`flex-row items-center justify-between px-6 py-4 border-b border-green-50`}
+                    onPress={() => {
+                      setSelectedLanguage(lang.name);
+                      setShowLanguageModal(false);
+                    }}
+                  >
+                    <Text style={tw`text-base ${selectedLanguage === lang.name ? 'text-green-700 font-bold' : 'text-green-800'}`}>
+                      {lang.name}
+                    </Text>
+                    {selectedLanguage === lang.name && (
+                      <View style={tw`w-6 h-6 rounded-full bg-green-600 items-center justify-center`}>
+                        <Text style={tw`text-white font-bold text-sm`}>✓</Text>
+                      </View>
+                    )}
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+              <TouchableOpacity
+                style={tw`p-4 border-t border-green-100`}
+                onPress={() => setShowLanguageModal(false)}
+              >
+                <Text style={tw`text-center text-green-700 font-bold text-lg`}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </Modal>
         </View>
-      </Modal>
-    </View>
 
-    {/* Search Bar */}
-    <TouchableOpacity
-      onPress={() => navigation.navigate('Searcheverything')}
-      activeOpacity={0.9}
-      style={tw`mt-4 mb-4 flex-row items-center px-4 py-2.5 bg-white rounded-full shadow-sm border border-gray-200`}
-    >
-      <Search size={18} color="#059669" />
-      <Text style={tw`ml-3 text-green-700 text-sm`}>
-        Search doctors, clinics, tests...
-      </Text>
-    </TouchableOpacity>
-  </View>
-</View>
 
-  {/* Quick Actions Grid - Images only */}
-<View style={tw`flex-row flex-wrap justify-between mx-4 mt-6 gap-2`}>
-  {/* Online Consultation */}
-  <TouchableOpacity
-    onPress={() => {
-      user.setConsultationMode('online');
-      navigation.navigate('AllSpecialtiesScreen', { mode: 'video' });
-    }}
-    style={tw`relative`}
-  >
-    <Image
-      source={require('../../assets/images/13234650_5183184.jpg')}
-      style={tw`w-[${(screenWidth - 48) / 2}px] h-30 rounded-3xl`}
-      resizeMode="cover"
-    />
-    <View style={tw`absolute bottom-2 left-2 bg-black/30 p-2 rounded-lg`}>
-      <Text style={tw`text-white font-bold text-lg`}>Video Consult</Text>
-      <Text style={tw`text-white text-sm`}>Consult Online Now</Text>
-    </View>
-  </TouchableOpacity>
 
-  {/* In-Clinic Consultation */}
-  <TouchableOpacity
-    onPress={() => {
-      user.setConsultationMode('offline');
-      navigation.navigate('AllSpecialtiesScreen', { mode: 'inclinic' });
-    }}
-    style={tw`relative`}
-  >
-    <Image
-      source={require('../../assets/images/18706987_TaeAugust07.jpg')}
-      style={tw`w-[${(screenWidth - 48) / 2}px] h-30 rounded-3xl`}
-      resizeMode="cover"
-    />
-    <View style={tw`absolute bottom-2 left-2 bg-black/30 p-2 rounded-lg`}>
-      <Text style={tw`text-white font-bold text-lg`}>Visit Clinic</Text>
-      <Text style={tw`text-white text-sm`}>Book Appointment</Text>
-    </View>
-  </TouchableOpacity>
 
-  <TouchableOpacity onPress={() => navigation.navigate('LabTestCategoriesScreen')}>
-    <Image
-      source={require('../../assets/images/2148958363.jpg')}
-      style={tw`w-[${(screenWidth - 48) / 2}px] h-30 rounded-3xl`}
-      resizeMode="cover"
-    />
-  </TouchableOpacity>
+        <UpcomingAppointmentCard />
 
-  <TouchableOpacity onPress={() => navigation.navigate('pharmacytestcategories')}>
-    <Image
-      source={require('../../assets/images/images.jpg')}
-      style={tw`w-[${(screenWidth - 48) / 2}px] h-30 rounded-3xl`}
-      resizeMode="cover"
-    />
-  </TouchableOpacity>
-</View>
+
+
+
+        {/* Old Quick Actions Grid - Images only */}
+        {/* <View style={tw`flex-row flex-wrap justify-between mx-4 mt-6 gap-2`}>
+          
+          <TouchableOpacity
+            onPress={() => {
+              user.setConsultationMode('online');
+              navigation.navigate('AllSpecialtiesScreen', { mode: 'video' });
+            }}
+            style={tw`relative`}
+          >
+            <Image
+              source={require('../../assets/images/13234650_5183184.jpg')}
+              style={tw`w-[${(screenWidth - 48) / 2}px] h-30 rounded-3xl`}
+              resizeMode="cover"
+            />
+            <View style={tw`absolute bottom-2 left-2 bg-black/30 p-2 rounded-lg`}>
+              <Text style={tw`text-white font-bold text-lg`}>Video Consult</Text>
+              <Text style={tw`text-white text-sm`}>Consult Online Now</Text>
+            </View>
+          </TouchableOpacity>
+
+          
+          <TouchableOpacity
+            onPress={() => {
+              user.setConsultationMode('offline');
+              navigation.navigate('AllSpecialtiesScreen', { mode: 'inclinic' });
+            }}
+            style={tw`relative`}
+          >
+            <Image
+              source={require('../../assets/images/18706987_TaeAugust07.jpg')}
+              style={tw`w-[${(screenWidth - 48) / 2}px] h-30 rounded-3xl`}
+              resizeMode="cover"
+            />
+            <View style={tw`absolute bottom-2 left-2 bg-black/30 p-2 rounded-lg`}>
+              <Text style={tw`text-white font-bold text-lg`}>Visit Clinic</Text>
+              <Text style={tw`text-white text-sm`}>Book Appointment</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => navigation.navigate('LabTestCategoriesScreen')}>
+            <Image
+              source={require('../../assets/images/2148958363.jpg')}
+              style={tw`w-[${(screenWidth - 48) / 2}px] h-30 rounded-3xl`}
+              resizeMode="cover"
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => navigation.navigate('pharmacytestcategories')}>
+            <Image
+              source={require('../../assets/images/images.jpg')}
+              style={tw`w-[${(screenWidth - 48) / 2}px] h-30 rounded-3xl`}
+              resizeMode="cover"
+            />
+          </TouchableOpacity>
+        </View> */}
+
+
+        <View style={tw`items-center w-full`}>
+          <QuickActionsGrid />
+        </View>
+
 
 
         {/* Banner Section */}
-        <View style={tw`mt-6`}>
+        {/* <View style={tw`mt-6`}>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -507,13 +675,18 @@ const [showLocationModal, setShowLocationModal] = useState(false);
             {banners.map((_, index) => (
               <View
                 key={index}
-                style={tw`w-2 h-2 bg-gray-300 rounded-full mx-1 ${
-                  activeBannerIndex === index ? 'bg-green-800 w-4 shadow-sm' : ''
-                }`}
+                style={tw`w-2 h-2 bg-gray-300 rounded-full mx-1 ${activeBannerIndex === index ? 'bg-green-800 w-4 shadow-sm' : ''
+                  }`}
               />
             ))}
           </View>
-        </View>
+        </View> */}
+
+
+        <DoctorCardsContainer />
+
+
+
 
         {/* Specialties */}
         <View style={tw`mt-6 px-6`}>
@@ -533,7 +706,7 @@ const [showLocationModal, setShowLocationModal] = useState(false);
                 />
               ))}
               <TouchableOpacity
-                style={tw`w-[30%] mb-4 items-center`} 
+                style={tw`w-[30%] mb-4 items-center`}
                 onPress={() => navigation.navigate('AllSpecialtiesScreen')}
               >
                 <View style={tw`bg-green-100 w-[100px] h-[100px] rounded-[30px] items-center justify-center`}>
@@ -582,7 +755,7 @@ const [showLocationModal, setShowLocationModal] = useState(false);
                   resizeMode="cover"
                 />
 
-            {/* <Image
+                {/* <Image
             source={{ uri: hospital.image }}
             style={tw`w-full h-full absolute top-0 left-0 bg-white`}
             resizeMode="cover"
@@ -594,11 +767,11 @@ const [showLocationModal, setShowLocationModal] = useState(false);
                     <Text style={tw`text-xs text-green-100 ml-1`}>{hospital.location}</Text>
                   </View>
                 </View>
-              </TouchableOpacity> 
+              </TouchableOpacity>
             ))}
 
 
-            
+
           </ScrollView>
         </View>
 
@@ -648,7 +821,7 @@ const [showLocationModal, setShowLocationModal] = useState(false);
 
         {/* Bottom Banners */}
         <View style={tw`mt-6 px-6`}>
-          
+
           <View style={tw`flex-row justify-between items-center mb-2`}>
             <Text style={tw`text-lg font-semibold text-gray-900 flex-1 text-left`}>
               Special Offers
@@ -676,7 +849,7 @@ const [showLocationModal, setShowLocationModal] = useState(false);
               >
                 <Image
                   source={imgSrc}
-                  style={tw`w-full h-full rounded-3xl`}f
+                  style={tw`w-full h-full rounded-3xl`}
                   resizeMode="cover"
                 />
               </TouchableOpacity>
@@ -684,7 +857,33 @@ const [showLocationModal, setShowLocationModal] = useState(false);
           </ScrollView>
         </View>
       </ScrollView>
- 
+
+      {/* Floating Action Chat Button */}
+      <TouchableOpacity
+        onPress={() => navigation.navigate('AIPatientChat')}
+        activeOpacity={0.85}
+        style={[
+          tw`absolute justify-center items-center bg-[#3766D2] rounded-full`,
+          {
+            width: 56,
+            height: 56,
+            right: 20,
+            bottom: 86,
+            shadowColor: '#3766D2',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.4,
+            shadowRadius: 12,
+            elevation: 8,
+          }
+        ]}
+      >
+        <Svg width={24} height={24} viewBox="28.33 24.33 23.33 23.33">
+          <Path
+            d="M33 38.3334H42.3333V36H33V38.3334ZM33 34.8334H47V32.5H33V34.8334ZM33 31.3334H47V29H33V31.3334ZM28.3333 47.6667V26.6667C28.3333 26.025 28.5618 25.4757 29.0188 25.0188C29.4757 24.5618 30.025 24.3334 30.6667 24.3334H49.3333C49.975 24.3334 50.5243 24.5618 50.9813 25.0188C51.4382 25.4757 51.6667 26.025 51.6667 26.6667V40.6667C51.6667 41.3084 51.4382 41.8577 50.9813 42.3146C50.5243 42.7716 49.975 43 49.3333 43H33L28.3333 47.6667ZM32.0083 40.6667H49.3333V26.6667H30.6667V41.9792L32.0083 40.6667ZM30.6667 40.6667V26.6667V40.6667Z"
+            fill="white"
+          />
+        </Svg>
+      </TouchableOpacity>
     </SafeAreaView>
 
   );
