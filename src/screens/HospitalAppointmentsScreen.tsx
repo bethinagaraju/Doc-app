@@ -138,7 +138,7 @@
 
 //     try {
 //       const res = await fetch(
-//         'https://landing.docapp.co.in/api/hospital/get-appointments',
+//         'https://api.docapp.co.in/api/hospital/get-appointments',
 //         {
 //           headers: {
 //             Authorization: `Bearer ${accessToken}`,
@@ -245,7 +245,7 @@ type Appointment = {
 const AppointmentItem = ({ item }: { item: Appointment }) => (
   <View style={tw`bg-white rounded-xl p-4 mb-3 shadow`}>
     <View style={tw`flex-row justify-between`}>
-      
+
       {/* LEFT SIDE */}
       <View style={tw`flex-row`}>
         <Image
@@ -278,13 +278,12 @@ const AppointmentItem = ({ item }: { item: Appointment }) => (
         </Text>
 
         <Text
-          style={tw`text-xs mt-1 ${
-            item.status === 'pending'
+          style={tw`text-xs mt-1 ${item.status === 'pending'
               ? 'text-yellow-600'
               : item.status === 'completed'
-              ? 'text-green-600'
-              : 'text-red-600'
-          }`}
+                ? 'text-green-600'
+                : 'text-red-600'
+            }`}
         >
           {item.status}
         </Text>
@@ -306,7 +305,7 @@ export default function HospitalAppointmentsScreen() {
 
     try {
       const res = await fetch(
-        'https://landing.docapp.co.in/api/hospital/get-appointments',
+        'https://api.docapp.co.in/api/hospital/get-appointments',
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,

@@ -3,7 +3,7 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-nati
 import DoctorHeader from '../components/DoctorHeader';
 import { BarChart2, FileText, Download } from 'lucide-react-native';
 import tw from 'twrnc';
-// import VideoCall from '@/screens/(tabs)/VideoCall';
+// import VideoCall from '../../screens/(tabs)/VideoCall';
 import VideoCall from '../../screens/(tabs)/VideoCall';
 const reports = [
   {

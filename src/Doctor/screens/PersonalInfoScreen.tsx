@@ -9,16 +9,16 @@
 
 // type DoctorNavigationProp = NativeStackNavigationProp<DoctorStackParamList>;
 
-// const API_GET_USER = 'https://landing.docapp.co.in/api/auth/get-user-data';
-// const API_UPDATE_PROFILE = 'https://landing.docapp.co.in/api/auth/profile/complete/doctor';
-// const API_UPLOAD_PHOTO = 'https://landing.docapp.co.in/api/auth/upload-photo';
-// const API_UPLOAD_BANK = 'https://landing.docapp.co.in/api/auth/upload/bank-details';
+// const API_GET_USER = 'https://api.docapp.co.in/api/auth/get-user-data';
+// const API_UPDATE_PROFILE = 'https://api.docapp.co.in/api/auth/profile/complete/doctor';
+// const API_UPLOAD_PHOTO = 'https://api.docapp.co.in/api/auth/upload-photo';
+// const API_UPLOAD_BANK = 'https://api.docapp.co.in/api/auth/upload/bank-details';
 
 // const PersonalInfoScreen = () => {
 //   const navigation = useNavigation<DoctorNavigationProp>();
 //   const [personalInfo, setPersonalInfo] = useState<any>(null);
 //   const [loading, setLoading] = useState(true);
-  
+
 //   // 🔀 Tab State: 'personal' | 'bank'
 //   const [activeTab, setActiveTab] = useState<'personal' | 'bank'>('personal');
 
@@ -181,7 +181,7 @@
 
 //     try {
 //       setLoading(true);
-      
+
 //       // Prepare payload (exclude confirm_account_number)
 //       const payload = {
 //         beneficiary_name: bankForm.beneficiary_name,
@@ -228,7 +228,7 @@
 //           onPress: async () => {
 //             try {
 //               setLoading(true);
-//               const res = await fetch("https://landing.docapp.co.in/api/auth/delete-profile-pic", {
+//               const res = await fetch("https://api.docapp.co.in/api/auth/delete-profile-pic", {
 //                 method: "DELETE",
 //                 credentials: "include",
 //               });
@@ -263,7 +263,7 @@
 //   return (
 //     <View style={tw`flex-1 bg-green-50`}>
 //       <DoctorHeader title="Profile Settings" showSettings showNotifications />
-      
+
 //       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={tw`flex-1`}>
 //         <ScrollView contentContainerStyle={tw`p-5 pb-20`}>
 
@@ -451,7 +451,7 @@ import { useAccessToken } from '../../screens/contexts/AccessTokenContext';
 type DoctorNavigationProp = NativeStackNavigationProp<DoctorStackParamList>;
 
 // ======================= API CONSTANTS =======================
-const API_BASE = 'https://landing.docapp.co.in';
+const API_BASE = 'https://api.docapp.co.in';
 const API_GET_USER = `${API_BASE}/api/auth/get-user-data`;
 const API_UPDATE_PROFILE = `${API_BASE}/api/auth/profile/complete/doctor`;
 const API_UPLOAD_PHOTO = `${API_BASE}/api/auth/upload-photo`;
@@ -474,7 +474,7 @@ const PersonalInfoScreen = () => {
   const { accessToken } = useAccessToken();
   const [personalInfo, setPersonalInfo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  
+
   // 🔀 Tab State: 'personal' | 'bank' | 'address'
   const [activeTab, setActiveTab] = useState<'personal' | 'bank' | 'address'>('personal');
 
@@ -571,7 +571,7 @@ const PersonalInfoScreen = () => {
         credentials: 'include',
       });
       const data = await response.json();
-      
+
       if (response.ok && data.addresses) {
         setAddresses(data.addresses);
       }
@@ -612,8 +612,7 @@ const PersonalInfoScreen = () => {
       setLoading(true);
       const res = await fetch(API_UPLOAD_PHOTO, {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'multipart/form-data',
+        headers: {
           'Authorization': `Bearer ${accessToken}`,
         },
         credentials: 'include',
@@ -647,7 +646,7 @@ const PersonalInfoScreen = () => {
 
       const response = await fetch(API_UPDATE_PROFILE, {
         method: 'PUT',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${accessToken}`,
         },
@@ -659,7 +658,7 @@ const PersonalInfoScreen = () => {
 
       if (response.ok) {
         Alert.alert('Success', data.message || 'Profile updated successfully');
-        fetchData(); 
+        fetchData();
       } else {
         Alert.alert('Error', data.message || 'Failed to update profile');
       }
@@ -692,7 +691,7 @@ const PersonalInfoScreen = () => {
 
       const response = await fetch(API_UPLOAD_BANK, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${accessToken}`,
         },
@@ -737,7 +736,7 @@ const PersonalInfoScreen = () => {
 
       const response = await fetch(API_ADD_ADDRESS, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${accessToken}`,
         },
@@ -815,13 +814,13 @@ const PersonalInfoScreen = () => {
   return (
     <View style={tw`flex-1 bg-green-50`}>
       <DoctorHeader title="Profile Settings" showSettings showNotifications />
-      
+
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={tw`flex-1`}>
         <ScrollView contentContainerStyle={tw`p-5 pb-20`}>
 
           {/* 🔀 Tabs Switcher */}
           <View style={tw`flex-row justify-center mb-6 bg-white rounded-full p-1 shadow-sm`}>
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => setActiveTab('personal')}
               style={tw`flex-1 py-3 rounded-full items-center ${activeTab === 'personal' ? 'bg-green-600' : 'bg-transparent'}`}
             >
@@ -830,7 +829,7 @@ const PersonalInfoScreen = () => {
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => setActiveTab('address')}
               style={tw`flex-1 py-3 rounded-full items-center ${activeTab === 'address' ? 'bg-green-600' : 'bg-transparent'}`}
             >
@@ -839,7 +838,7 @@ const PersonalInfoScreen = () => {
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => setActiveTab('bank')}
               style={tw`flex-1 py-3 rounded-full items-center ${activeTab === 'bank' ? 'bg-green-600' : 'bg-transparent'}`}
             >
@@ -937,9 +936,9 @@ const PersonalInfoScreen = () => {
               {/* Existing Addresses List */}
               <View style={tw`bg-white rounded-2xl p-5 shadow-sm mb-5`}>
                 <Text style={tw`text-lg font-bold text-green-700 mb-4`}>Clinic Addresses</Text>
-                
+
                 {addressLoading ? (
-                   <ActivityIndicator color="green" />
+                  <ActivityIndicator color="green" />
                 ) : addresses.length === 0 ? (
                   <Text style={tw`text-gray-500 italic`}>No addresses added yet.</Text>
                 ) : (
@@ -995,8 +994,8 @@ const PersonalInfoScreen = () => {
                   style={tw`border border-gray-300 rounded p-3 mb-5 bg-gray-50`}
                 />
 
-                <TouchableOpacity 
-                  style={tw`bg-emerald-500 rounded-full px-6 py-3 items-center`} 
+                <TouchableOpacity
+                  style={tw`bg-emerald-500 rounded-full px-6 py-3 items-center`}
                   onPress={handleAddAddress}
                   disabled={addressLoading}
                 >
@@ -1031,7 +1030,7 @@ const PersonalInfoScreen = () => {
                 placeholder="Enter Account Number"
                 value={bankForm.account_number}
                 keyboardType="number-pad"
-                secureTextEntry={true} 
+                secureTextEntry={true}
                 onChangeText={(t) => setBankForm({ ...bankForm, account_number: t })}
                 style={tw`border border-gray-300 rounded p-3 mb-4 bg-gray-50`}
               />
@@ -1054,8 +1053,8 @@ const PersonalInfoScreen = () => {
                 style={tw`border border-gray-300 rounded p-3 mb-6 bg-gray-50`}
               />
 
-              <TouchableOpacity 
-                style={tw`bg-emerald-500 rounded-full px-6 py-3 items-center`} 
+              <TouchableOpacity
+                style={tw`bg-emerald-500 rounded-full px-6 py-3 items-center`}
                 onPress={handleUpdateBankDetails}
               >
                 <Text style={tw`text-white font-bold text-base`}>Save Bank Details</Text>

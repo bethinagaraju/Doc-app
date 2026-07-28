@@ -20,7 +20,7 @@
 //   showDoctorInfo = false,
 // }) => {
 //   const navigation = useNavigation<NativeStackNavigationProp<DoctorStackParamList>>();
-  
+
 //   const normalizedTitle = title?.toString().trim().toLowerCase();
 //   const showBack = normalizedTitle !== 'dashboard' && normalizedTitle !== 'home';
 //   return (
@@ -121,7 +121,7 @@ const DoctorHeader: React.FC<DoctorHeaderProps> = ({
 
   const fetchDoctorData = async () => {
     try {
-      const response = await fetch('https://landing.docapp.co.in/api/auth/get-user-data', {
+      const response = await fetch('https://api.docapp.co.in/api/auth/get-user-data', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${accessToken}`,

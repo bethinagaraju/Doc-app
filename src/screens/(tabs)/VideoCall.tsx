@@ -96,7 +96,7 @@
 // // // // // // // // // // // //     try {
 // // // // // // // // // // // //         const stream = await mediaDevices.getUserMedia({ audio: true, video: true });
 // // // // // // // // // // // //         setLocalStream(stream as MediaStream);
-        
+
 // // // // // // // // // // // //         stream.getTracks().forEach((track: MediaStreamTrack) => {
 // // // // // // // // // // // //           pc.current.addTrack(track, stream);
 // // // // // // // // // // // //         });
@@ -132,10 +132,10 @@
 // // // // // // // // // // // //                 offer: { sdp: offer.sdp, type: offer.type }
 // // // // // // // // // // // //             })
 // // // // // // // // // // // //         });
-        
+
 // // // // // // // // // // // //         const data = await response.json();
 // // // // // // // // // // // //         if(data.error) throw new Error(data.error);
-        
+
 // // // // // // // // // // // //         const newCallId = data.call_id;
 // // // // // // // // // // // //         setCallId(newCallId);
 
@@ -211,7 +211,7 @@
 // // // // // // // // // // // //             answer: { sdp: answer.sdp, type: answer.type }
 // // // // // // // // // // // //         })
 // // // // // // // // // // // //     });
-    
+
 // // // // // // // // // // // //     // Listen for Candidates
 // // // // // // // // // // // //     const offCandsRef = collection(callDoc, 'offerCandidates');
 // // // // // // // // // // // //     onSnapshot(offCandsRef, (snapshot) => {
@@ -332,7 +332,7 @@
 // // // // // // // // // // // import { useUser } from '../contexts/UserContext';
 
 // // // // // // // // // // // // --- YOUR CONFIGURATION ---
-// // // // // // // // // // // const API_BASE_URL = "https://landing.docapp.co.in/api";
+// // // // // // // // // // // const API_BASE_URL = "https://api.docapp.co.in/api";
 
 // // // // // // // // // // // // ✅ YOUR REAL FIREBASE CONFIG
 // // // // // // // // // // // const firebaseConfig = {
@@ -469,10 +469,10 @@
 // // // // // // // // // // //                 offer: { sdp: offer.sdp, type: offer.type }
 // // // // // // // // // // //             })
 // // // // // // // // // // //         });
-        
+
 // // // // // // // // // // //         const data = await response.json();
 // // // // // // // // // // //         if(data.error) throw new Error(data.error);
-        
+
 // // // // // // // // // // //         const newCallId = data.call_id;
 // // // // // // // // // // //         setCallId(newCallId);
 
@@ -540,7 +540,7 @@
 // // // // // // // // // // //             answer: { sdp: answer.sdp, type: answer.type }
 // // // // // // // // // // //         })
 // // // // // // // // // // //     });
-    
+
 // // // // // // // // // // //     const offCandsRef = collection(callDoc, 'offerCandidates');
 // // // // // // // // // // //     onSnapshot(offCandsRef, (snapshot) => {
 // // // // // // // // // // //         snapshot.docChanges().forEach((change) => {
@@ -673,7 +673,7 @@
 // // // // // // // // // // // import { useUser } from '../contexts/UserContext'; // Uncomment if you use this
 
 // // // // // // // // // // // --- YOUR CONFIGURATION ---
-// // // // // // // // // // const API_BASE_URL = "https://landing.docapp.co.in/api";
+// // // // // // // // // // const API_BASE_URL = "https://api.docapp.co.in/api";
 
 // // // // // // // // // // // ✅ YOUR REAL FIREBASE CONFIG
 // // // // // // // // // // const firebaseConfig = {
@@ -752,7 +752,7 @@
 
 // // // // // // // // // //       // HARDCODED ID FOR TESTING (Patient = 101)
 // // // // // // // // // //       const TEST_USER_ID = "33"; 
-      
+
 // // // // // // // // // //       // ✅ FIXED: Updated to match your backend docs (/notifications/save-token)
 // // // // // // // // // //       const response = await fetch(`${API_BASE_URL}/notifications/save-token`, { 
 // // // // // // // // // //           method: 'POST',
@@ -816,10 +816,10 @@
 // // // // // // // // // //                 offer: { sdp: offer.sdp, type: offer.type }
 // // // // // // // // // //             })
 // // // // // // // // // //         });
-        
+
 // // // // // // // // // //         const data = await response.json();
 // // // // // // // // // //         if(data.error) throw new Error(data.error);
-        
+
 // // // // // // // // // //         const newCallId = data.call_id;
 // // // // // // // // // //         setCallId(newCallId);
 
@@ -889,7 +889,7 @@
 // // // // // // // // // //             answer: { sdp: answer.sdp, type: answer.type }
 // // // // // // // // // //         })
 // // // // // // // // // //     });
-    
+
 // // // // // // // // // //     const offCandsRef = collection(callDoc, 'offerCandidates');
 // // // // // // // // // //     onSnapshot(offCandsRef, (snapshot) => {
 // // // // // // // // // //         snapshot.docChanges().forEach((change) => {
@@ -1025,7 +1025,7 @@
 // // // // // // // // // import { getFirestore, collection, doc, onSnapshot, getDoc } from 'firebase/firestore';
 // // // // // // // // // import messaging from '@react-native-firebase/messaging';
 
-// // // // // // // // // const API_BASE_URL = "https://landing.docapp.co.in/api";
+// // // // // // // // // const API_BASE_URL = "https://api.docapp.co.in/api";
 
 // // // // // // // // // /* ---------- Firebase ---------- */
 // // // // // // // // // const firebaseConfig = {
@@ -1360,7 +1360,7 @@
 // // // // // // // // import { getFirestore, collection, doc, onSnapshot } from 'firebase/firestore';
 // // // // // // // // import messaging from '@react-native-firebase/messaging';
 
-// // // // // // // // const API_BASE_URL = "https://landing.docapp.co.in/api";
+// // // // // // // // const API_BASE_URL = "https://api.docapp.co.in/api";
 
 // // // // // // // // /* ---------- Firebase ---------- */
 // // // // // // // // const firebaseConfig = {
@@ -1681,7 +1681,7 @@
 // // // // // // // import { getFirestore, collection, doc, onSnapshot } from 'firebase/firestore';
 // // // // // // // import messaging from '@react-native-firebase/messaging';
 
-// // // // // // // const API_BASE_URL = "https://landing.docapp.co.in/api";
+// // // // // // // const API_BASE_URL = "https://api.docapp.co.in/api";
 
 // // // // // // // /* ---------- Firebase ---------- */
 // // // // // // // const firebaseConfig = {
@@ -2003,7 +2003,7 @@
 // // // // // // import { getFirestore, collection, doc, onSnapshot } from 'firebase/firestore';
 // // // // // // import messaging from '@react-native-firebase/messaging';
 
-// // // // // // const API_BASE_URL = "https://landing.docapp.co.in/api";
+// // // // // // const API_BASE_URL = "https://api.docapp.co.in/api";
 
 // // // // // // /* ---------- Firebase ---------- */
 // // // // // // const firebaseConfig = {
@@ -2304,7 +2304,7 @@
 // // // // // import { getFirestore, collection, doc, onSnapshot } from 'firebase/firestore';
 // // // // // import messaging from '@react-native-firebase/messaging';
 
-// // // // // const API_BASE_URL = 'https://landing.docapp.co.in/api';
+// // // // // const API_BASE_URL = 'https://api.docapp.co.in/api';
 
 // // // // // /* ---------- Firebase ---------- */
 // // // // // const firebaseConfig = {
@@ -2633,7 +2633,7 @@
 // // // // import messaging from '@react-native-firebase/messaging';
 // // // // import { useAccessToken } from '../contexts/AccessTokenContext';
 
-// // // // const API_BASE_URL = 'https://landing.docapp.co.in/api';
+// // // // const API_BASE_URL = 'https://api.docapp.co.in/api';
 
 // // // // /* ---------- Firebase ---------- */
 // // // // const firebaseConfig = {
@@ -2980,7 +2980,7 @@
 // // // import messaging from '@react-native-firebase/messaging';
 // // // import { useAccessToken } from '../contexts/AccessTokenContext';
 
-// // // const API_BASE_URL = 'https://landing.docapp.co.in/api';
+// // // const API_BASE_URL = 'https://api.docapp.co.in/api';
 
 // // // /* ---------------- Firebase ---------------- */
 // // // const firebaseConfig = {
@@ -3282,7 +3282,7 @@
 
 // // /* ---------------- CONFIG ---------------- */
 
-// // const API_BASE_URL = 'https://landing.docapp.co.in/api';
+// // const API_BASE_URL = 'https://api.docapp.co.in/api';
 
 // // const firebaseConfig = {
 // //   apiKey: 'AIzaSyCE6uu63O91LA5eCfKKIz6n5_dHWm4nwpw',
@@ -3306,7 +3306,7 @@
 // // /* ---------------- COMPONENT ---------------- */
 
 // // export default function VideoCall({ route, embeddedRole, embeddedApptId }: any) {
-  
+
 
 // //   const userRole = route?.params?.userRole || embeddedRole || 'doctor';
 // //   const appointmentId = route?.params?.appointmentId || embeddedApptId;
@@ -3592,7 +3592,7 @@
 
 // /* ---------------- CONFIG ---------------- */
 
-// const API_BASE_URL = 'https://landing.docapp.co.in/api';
+// const API_BASE_URL = 'https://api.docapp.co.in/api';
 
 // /** 🔧 TEMP DEBUG IDS (REMOVE IN PROD) */
 // const DOCTOR_ID = 36;
@@ -3928,7 +3928,7 @@ import { useAccessToken } from '../contexts/AccessTokenContext';
 
 /* ---------------- CONFIG ---------------- */
 
-const API_BASE_URL = 'https://landing.docapp.co.in/api';
+const API_BASE_URL = 'https://api.docapp.co.in/api';
 
 /** 🔧 TEMP HARD-CODED IDS (TESTING ONLY) */
 const DOCTOR_ID = 36;
@@ -4205,16 +4205,16 @@ export default function VideoCall({
         )} */}
 
 
-{localStream && (
-  <RTCView
-    streamURL={localStream.toURL()}
-    style={styles.localVideo}
-    objectFit="cover"
-    mirror={userRole === 'patient'}
-    zOrder={1}
-    zOrderMediaOverlay={true}
-  />
-)}
+        {localStream && (
+          <RTCView
+            streamURL={localStream.toURL()}
+            style={styles.localVideo}
+            objectFit="cover"
+            mirror={userRole === 'patient'}
+            zOrder={1}
+            zOrderMediaOverlay={true}
+          />
+        )}
 
 
         {status === 'calling' && !remoteStream && (

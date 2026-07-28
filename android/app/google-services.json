@@ -38,7 +38,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:965109245557:android:4c4946111b1e58e1da7a3c",
         "android_client_info": {
-          "package_name": "landing.docapp.co.in"
+          "package_name": "api.docapp.co.in"
         }
       },
       "oauth_client": [

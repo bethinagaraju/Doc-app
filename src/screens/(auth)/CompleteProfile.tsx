@@ -19,7 +19,7 @@
 // // // // import { useUser } from '../contexts/UserContext';
 
 // // // // const GREEN = '#22c55e';
-// // // // const API_ENDPOINT = 'https://landing.docapp.co.in/api/auth/profile/complete/general_user';
+// // // // const API_ENDPOINT = 'https://api.docapp.co.in/api/auth/profile/complete/general_user';
 
 // // // // export default function CompleteProfile() {
 // // // //   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -223,7 +223,7 @@
 
 // // // const GREEN = '#22c55e';
 // // // const API_ENDPOINT =
-// // //   'https://landing.docapp.co.in/api/auth/profile/complete/general_user';
+// // //   'https://api.docapp.co.in/api/auth/profile/complete/general_user';
 
 // // // export default function CompleteProfile() {
 // // //   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -471,7 +471,7 @@
 
 // // const GREEN = '#22c55e';
 // // const API_ENDPOINT =
-// //   'https://landing.docapp.co.in/api/auth/profile/complete/general_user';
+// //   'https://api.docapp.co.in/api/auth/profile/complete/general_user';
 
 // // export default function CompleteProfile() {
 // //   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -721,8 +721,8 @@
 
 // const GREEN = '#22c55e';
 // const API_COMPLETE_PROFILE =
-//   'https://landing.docapp.co.in/api/auth/profile/complete/general_user';
-// const API_GET_USER = 'https://landing.docapp.co.in/api/auth/get-user-data';
+//   'https://api.docapp.co.in/api/auth/profile/complete/general_user';
+// const API_GET_USER = 'https://api.docapp.co.in/api/auth/get-user-data';
 
 // export default function CompleteProfile() {
 //   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -1023,10 +1023,10 @@ const GREEN = '#22c55e';
 
 // API Endpoints
 const API_COMPLETE_PROFILE =
-  'https://landing.docapp.co.in/api/auth/profile/complete/general_user';
-const API_GET_USER = 'https://landing.docapp.co.in/api/auth/get-user-data';
+  'https://api.docapp.co.in/api/auth/profile/complete/general_user';
+const API_GET_USER = 'https://api.docapp.co.in/api/auth/get-user-data';
 // NEW: Add the photo upload API endpoint
-const API_UPLOAD_PHOTO = 'https://landing.docapp.co.in/api/auth/upload-photo';
+const API_UPLOAD_PHOTO = 'https://api.docapp.co.in/api/auth/upload-photo';
 
 
 export default function CompleteProfile() {
@@ -1116,9 +1116,9 @@ export default function CompleteProfile() {
 
         const uploadData = await uploadResponse.json();
         if (!uploadResponse.ok) throw new Error(uploadData.message || 'Photo upload failed');
-        
+
         // Assuming the API returns the URL in a field named 'imageUrl'
-        finalImageUrl = uploadData.imageUrl; 
+        finalImageUrl = uploadData.imageUrl;
       } catch (error) {
         Alert.alert('Upload Error', 'Could not upload the selected photo. Please try again.');
         setLoading(false);
@@ -1158,7 +1158,7 @@ export default function CompleteProfile() {
       setLoading(false);
     }
   };
-  
+
   // --- RENDER LOGIC ---
 
   if (initialCheckLoading) {
@@ -1224,20 +1224,20 @@ export default function CompleteProfile() {
                 />
               )}
             </View>
-            
+
             {/* Gender */}
             <View style={tw`mb-6`}>
-               <Text style={tw`text-sm font-semibold text-gray-800 mb-2`}>Gender</Text>
-               <View style={tw`flex-row justify-between`}>
-                 {['Male', 'Female', 'Others'].map((g) => (
-                   <TouchableOpacity key={g} onPress={() => { setGender(g as typeof gender); setErrors((prev) => ({ ...prev, gender: '' })); }} style={tw`flex-1 mx-1 py-2 rounded-lg border ${gender === g ? `bg-[${GREEN}] border-[${GREEN}]` : 'bg-white border-gray-200'} shadow-sm items-center`}>
-                     <Text style={tw`${gender === g ? 'text-white' : 'text-gray-700'} text-sm`}>{g}</Text>
-                   </TouchableOpacity>
-                 ))}
-               </View>
+              <Text style={tw`text-sm font-semibold text-gray-800 mb-2`}>Gender</Text>
+              <View style={tw`flex-row justify-between`}>
+                {['Male', 'Female', 'Others'].map((g) => (
+                  <TouchableOpacity key={g} onPress={() => { setGender(g as typeof gender); setErrors((prev) => ({ ...prev, gender: '' })); }} style={tw`flex-1 mx-1 py-2 rounded-lg border ${gender === g ? `bg-[${GREEN}] border-[${GREEN}]` : 'bg-white border-gray-200'} shadow-sm items-center`}>
+                    <Text style={tw`${gender === g ? 'text-white' : 'text-gray-700'} text-sm`}>{g}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
               {errors.gender && <Text style={tw`text-red-500 text-xs mt-2`}>{errors.gender}</Text>}
             </View>
-            
+
             {/* Submit Button */}
             <TouchableOpacity onPress={handleSubmit} style={tw`bg-[${GREEN}] rounded-lg h-12 justify-center items-center shadow-md ${loading ? 'opacity-50' : ''}`} disabled={loading}>
               {loading ? <ActivityIndicator color="#fff" /> : <Text style={tw`text-white text-base font-semibold`}>Complete ProfileS</Text>}

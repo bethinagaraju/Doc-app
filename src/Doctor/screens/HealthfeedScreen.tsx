@@ -80,7 +80,7 @@ export default function AppointmentsScreen() {
   const fetchAppointments = async () => {
     try {
       const response = await fetch(
-        'https://landing.docapp.co.in/api/appointment/list-appointments',
+        'https://api.docapp.co.in/api/appointment/list-appointments',
         {
           credentials: 'include',
         }
@@ -102,7 +102,7 @@ export default function AppointmentsScreen() {
   const handleDelete = async (id: number) => {
     try {
       const response = await fetch(
-        'https://landing.docapp.co.in/api/appointment/delete-appointment',
+        'https://api.docapp.co.in/api/appointment/delete-appointment',
         {
           method: 'DELETE',
           headers: {
@@ -146,14 +146,12 @@ export default function AppointmentsScreen() {
           <TouchableOpacity
             key={tab}
             onPress={() => setSelectedTab(tab)}
-            style={tw`px-4 py-2 rounded-full ${
-              selectedTab === tab ? 'bg-green-600' : 'bg-gray-200'
-            }`}
+            style={tw`px-4 py-2 rounded-full ${selectedTab === tab ? 'bg-green-600' : 'bg-gray-200'
+              }`}
           >
             <Text
-              style={tw`text-sm font-semibold ${
-                selectedTab === tab ? 'text-white' : 'text-gray-700'
-              }`}
+              style={tw`text-sm font-semibold ${selectedTab === tab ? 'text-white' : 'text-gray-700'
+                }`}
             >
               {tab}
             </Text>

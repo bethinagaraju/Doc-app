@@ -134,7 +134,7 @@
 // //       }, 1000);
 
 // //       // Uncomment and modify for actual API call:
-// //       // const response = await fetch('https://landing.docapp.co.in/api/hospital/remove-staff', {
+// //       // const response = await fetch('https://api.docapp.co.in/api/hospital/remove-staff', {
 // //       //   method: 'DELETE',
 // //       //   headers: {
 // //       //     'Content-Type': 'application/json',
@@ -305,8 +305,8 @@
 //   const loadDoctors = async () => {
 //     try {
 //       setLoading(true);
-      
-//       const response = await fetch('https://landing.docapp.co.in/api/hospital/get-doctors');
+
+//       const response = await fetch('https://api.docapp.co.in/api/hospital/get-doctors');
 //       const data: APIResponse = await response.json();
 
 //       if (data && data.allDoctorsInOrganisation) {
@@ -376,7 +376,7 @@
 //               </Text>
 //               <Text style={tw`text-gray-500 text-xs mb-1`}>ID: {item.id} | User ID: {item.user_id}</Text>
 //             </View>
-            
+
 //             {/* Status Badge */}
 //             <View style={tw`flex-row items-center px-2 py-1 rounded-full ${item.verified_status ? 'bg-green-100' : 'bg-orange-100'}`}>
 //               {item.verified_status ? (
@@ -392,7 +392,7 @@
 
 //           {/* Details Grid */}
 //           <View style={tw`flex-row flex-wrap mt-2`}>
-            
+
 //             {/* Experience */}
 //             <View style={tw`flex-row items-center mr-4 mb-1`}>
 //               <Clock size={14} color="#6b7280" />
@@ -542,7 +542,7 @@ const ViewDoctorsScreen = () => {
   const { accessToken } = useAccessToken();
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   // Stores the ID of the doctor currently being removed to show spinner on specific button
   const [removing, setRemoving] = useState<number | null>(null);
 
@@ -553,7 +553,7 @@ const ViewDoctorsScreen = () => {
   const loadDoctors = async () => {
     try {
       setLoading(true);
-      const response = await fetch('https://landing.docapp.co.in/api/hospital/get-doctors', {
+      const response = await fetch('https://api.docapp.co.in/api/hospital/get-doctors', {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
         },
@@ -593,7 +593,7 @@ const ViewDoctorsScreen = () => {
     try {
       setRemoving(id); // Start loading spinner for this item
 
-      const response = await fetch('https://landing.docapp.co.in/api/hospital/remove-staff', {
+      const response = await fetch('https://api.docapp.co.in/api/hospital/remove-staff', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -626,8 +626,8 @@ const ViewDoctorsScreen = () => {
     <View style={tw`bg-white rounded-xl p-4 mb-4 shadow-sm border border-blue-100`}>
       <View style={tw`flex-row`}>
         {/* Profile Image */}
-        <Image 
-          source={{ uri: item.profile_picture || 'https://via.placeholder.com/100' }} 
+        <Image
+          source={{ uri: item.profile_picture || 'https://via.placeholder.com/100' }}
           style={tw`w-16 h-16 rounded-full bg-gray-200 border-2 border-white shadow-sm`}
           resizeMode="cover"
         />
@@ -641,7 +641,7 @@ const ViewDoctorsScreen = () => {
               </Text>
               <Text style={tw`text-gray-500 text-xs mb-1`}>ID: {item.id} | User ID: {item.user_id}</Text>
             </View>
-            
+
             {/* Status Badge */}
             <View style={tw`flex-row items-center px-2 py-1 rounded-full ${item.verified_status ? 'bg-green-100' : 'bg-orange-100'}`}>
               {item.verified_status ? (
@@ -667,7 +667,7 @@ const ViewDoctorsScreen = () => {
             <View style={tw`flex-row items-center mb-1`}>
               <Banknote size={14} color="#6b7280" />
               <Text style={tw`text-gray-600 text-xs ml-1`}>
-                 ₹{item.consultation_fee} / Visit
+                ₹{item.consultation_fee} / Visit
               </Text>
             </View>
           </View>

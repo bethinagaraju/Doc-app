@@ -125,7 +125,7 @@ const FollowUpAppointmentModal: React.FC<FollowUpAppointmentModalProps> = ({
 
     try {
       const response = await fetch(
-        "https://landing.docapp.co.in/api/appointment/schedule-checkup-appointment",
+        "https://api.docapp.co.in/api/appointment/schedule-checkup-appointment",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -209,22 +209,20 @@ const FollowUpAppointmentModal: React.FC<FollowUpAppointmentModalProps> = ({
             {/* Pricing indicator based on selected date */}
             {followUpDate && parentAppointment && (
               <View
-                style={tw`p-2 rounded-lg mb-3 ${
-                  getFollowUpPricing(parentAppointment.appointment_date, followUpDate).free
+                style={tw`p-2 rounded-lg mb-3 ${getFollowUpPricing(parentAppointment.appointment_date, followUpDate).free
                     ? "bg-green-100"
                     : getFollowUpPricing(parentAppointment.appointment_date, followUpDate).eligible
-                    ? "bg-yellow-100"
-                    : "bg-red-100"
-                }`}
+                      ? "bg-yellow-100"
+                      : "bg-red-100"
+                  }`}
               >
                 <Text
-                  style={tw`text-sm text-center ${
-                    getFollowUpPricing(parentAppointment.appointment_date, followUpDate).free
+                  style={tw`text-sm text-center ${getFollowUpPricing(parentAppointment.appointment_date, followUpDate).free
                       ? "text-green-800"
                       : getFollowUpPricing(parentAppointment.appointment_date, followUpDate).eligible
-                      ? "text-yellow-800"
-                      : "text-red-800"
-                  }`}
+                        ? "text-yellow-800"
+                        : "text-red-800"
+                    }`}
                 >
                   {getFollowUpPricing(parentAppointment.appointment_date, followUpDate).message}
                 </Text>
@@ -254,28 +252,24 @@ const FollowUpAppointmentModal: React.FC<FollowUpAppointmentModalProps> = ({
             <View style={tw`flex-row justify-around mb-4`}>
               <TouchableOpacity
                 onPress={() => setFollowUpType("online_video")}
-                style={tw`px-4 py-2 rounded-full ${
-                  followUpType === "online_video" ? "bg-green-600" : "bg-gray-200"
-                }`}
+                style={tw`px-4 py-2 rounded-full ${followUpType === "online_video" ? "bg-green-600" : "bg-gray-200"
+                  }`}
               >
                 <Text
-                  style={tw`${
-                    followUpType === "online_video" ? "text-white" : "text-gray-700"
-                  } font-semibold`}
+                  style={tw`${followUpType === "online_video" ? "text-white" : "text-gray-700"
+                    } font-semibold`}
                 >
                   Online Video
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => setFollowUpType("in_person")}
-                style={tw`px-4 py-2 rounded-full ${
-                  followUpType === "in_person" ? "bg-green-600" : "bg-gray-200"
-                }`}
+                style={tw`px-4 py-2 rounded-full ${followUpType === "in_person" ? "bg-green-600" : "bg-gray-200"
+                  }`}
               >
                 <Text
-                  style={tw`${
-                    followUpType === "in_person" ? "text-white" : "text-gray-700"
-                  } font-semibold`}
+                  style={tw`${followUpType === "in_person" ? "text-white" : "text-gray-700"
+                    } font-semibold`}
                 >
                   In Person
                 </Text>

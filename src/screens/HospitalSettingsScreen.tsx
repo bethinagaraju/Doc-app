@@ -51,7 +51,7 @@ const HospitalSettingsScreen = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [changingPassword, setChangingPassword] = useState(false);
 
-  const API_CHANGE_PASSWORD = 'https://landing.docapp.co.in/api/auth/change-password';
+  const API_CHANGE_PASSWORD = 'https://api.docapp.co.in/api/auth/change-password';
 
   const settingsSections = [
     {
@@ -304,7 +304,7 @@ const HospitalSettingsScreen = () => {
         <View style={tw`flex-1 justify-center items-center bg-black bg-opacity-50`}>
           <View style={tw`bg-white rounded-2xl p-6 w-80`}>
             <Text style={tw`text-xl font-bold text-green-700 mb-4`}>Change Password</Text>
-            
+
             <TextInput
               style={tw`bg-gray-100 rounded-lg p-3 mb-4`}
               placeholder="New Password"
@@ -312,7 +312,7 @@ const HospitalSettingsScreen = () => {
               value={newPassword}
               onChangeText={setNewPassword}
             />
-            
+
             <TextInput
               style={tw`bg-gray-100 rounded-lg p-3 mb-6`}
               placeholder="Confirm New Password"
@@ -320,7 +320,7 @@ const HospitalSettingsScreen = () => {
               value={confirmPassword}
               onChangeText={setConfirmPassword}
             />
-            
+
             <View style={tw`flex-row justify-between`}>
               <TouchableOpacity
                 style={tw`bg-gray-300 rounded-lg p-3 flex-1 mr-2`}
@@ -332,7 +332,7 @@ const HospitalSettingsScreen = () => {
               >
                 <Text style={tw`text-center text-gray-700 font-medium`}>Cancel</Text>
               </TouchableOpacity>
-              
+
               <TouchableOpacity
                 style={tw`bg-green-600 rounded-lg p-3 flex-1 ml-2 ${changingPassword ? 'opacity-50' : ''}`}
                 onPress={handleChangePassword}

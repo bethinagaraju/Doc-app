@@ -1,6 +1,6 @@
 
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -10,7 +10,7 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { useNavigation, NavigationProp, useFocusEffect } from '@react-navigation/native';
 import tw from 'twrnc';
 import {
   Settings,
@@ -37,10 +37,20 @@ export default function ProfileScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const { logout, user, setUser, checkingLogin } = useUser();
   const { accessToken, clearAccessToken } = useAccessToken();
-  const { userData, setUserData, clearUserData } = useUserProfile();
+  const { userData, setUserData, clearUserData, fetchAndStoreUserData } = useUserProfile();
   const [loading, setLoading] = useState(false);
 
-  // We now rely on `userData` from `useUserProfile()` instead of fetching here.
+  useFocusEffect(
+    useCallback(() => {
+      if (accessToken) {
+        fetchAndStoreUserData(accessToken).catch(console.error);
+      }
+    }, [accessToken, fetchAndStoreUserData])
+  );
+
+  const rawProfilePic = (userData as any)?.doctorProfile?.profile_picture || (userData as any)?.generalUser?.profile_picture || user?.generalUser?.profile_picture;
+  const lastUpdated = (userData as any)?.doctorProfile?.updatedAt || (userData as any)?.generalUser?.updatedAt || '1';
+  const profileImageSource = rawProfilePic ? { uri: `${rawProfilePic}?t=${new Date(lastUpdated).getTime() || lastUpdated}` } : undefined;
 
   // ===========================
   // 🚀 Upload Photo Integration
@@ -66,10 +76,9 @@ export default function ProfileScreen() {
 
       setLoading(true);
 
-      const response = await fetch('https://landing.docapp.co.in/api/auth/upload-photo', {
+      const response = await fetch('https://api.docapp.co.in/api/auth/upload-photo', {
         method: 'POST',
         headers: {
-          'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${accessToken}`,
         },
         body: formData,
@@ -97,7 +106,7 @@ export default function ProfileScreen() {
 
           return {
             ...(prev || {}),
-            ...( { generalUser: { ...(((prev as any)?.generalUser) || {}), profile_picture: data.image_url } } as any ),
+            ...({ generalUser: { ...(((prev as any)?.generalUser) || {}), profile_picture: data.image_url } } as any),
           }
         })
       }
@@ -105,6 +114,7 @@ export default function ProfileScreen() {
       Alert.alert('Success', 'Profile photo uploaded successfully!');
     } catch (error) {
       Alert.alert('Error', 'Failed to upload photo.');
+      console.error('Error uploading photo:', error);
     } finally {
       setLoading(false);
     }
@@ -113,6 +123,7 @@ export default function ProfileScreen() {
   // ===========================
   // ❌ DELETE PHOTO API
   // ===========================
+
   const handleDeletePhoto = async () => {
     Alert.alert(
       'Delete Photo',
@@ -127,7 +138,7 @@ export default function ProfileScreen() {
               setLoading(true);
 
               const response = await fetch(
-                'https://landing.docapp.co.in/api/auth/delete-profile-pic',
+                'https://api.docapp.co.in/api/auth/delete-profile-pic',
                 {
                   method: 'DELETE',
                   headers: {
@@ -158,7 +169,7 @@ export default function ProfileScreen() {
 
                 return {
                   ...(prev || {}),
-                  ...( { generalUser: { ...(((prev as any)?.generalUser) || {}), profile_picture: null } } as any ),
+                  ...({ generalUser: { ...(((prev as any)?.generalUser) || {}), profile_picture: null } } as any),
                 }
               });
 
@@ -185,7 +196,7 @@ export default function ProfileScreen() {
           try {
             await logout();
             clearAccessToken();
-              clearUserData();
+            clearUserData();
             navigation.reset({
               index: 0,
               routes: [{ name: 'Login' }],
@@ -217,14 +228,9 @@ export default function ProfileScreen() {
           ) : (
             <>
               <View style={tw`w-28 h-28 rounded-full mb-4 shadow-md bg-green-100 overflow-hidden`}>
-                {/* prefer profile picture from userProfileContext (doctor/generalUser), fallback to user.generalUser */}
-                {(
-                  (userData as any)?.doctorProfile?.profile_picture ||
-                  (userData as any)?.generalUser?.profile_picture ||
-                  user?.generalUser?.profile_picture
-                ) ? (
+                {profileImageSource ? (
                   <Image
-                    source={{ uri: (userData as any)?.doctorProfile?.profile_picture || (userData as any)?.generalUser?.profile_picture || user?.generalUser?.profile_picture }}
+                    source={profileImageSource}
                     style={tw`w-full h-full rounded-full`}
                     resizeMode="cover"
                   />
@@ -260,14 +266,14 @@ export default function ProfileScreen() {
                 (userData as any)?.generalUser?.profile_picture ||
                 user?.generalUser?.profile_picture
               ) && (
-                <TouchableOpacity
-                  style={tw`flex-row items-center px-4 py-2 rounded-full bg-red-100 mb-3`}
-                  onPress={handleDeletePhoto}
-                >
-                  <Trash2 size={18} color="red" />
-                  <Text style={tw`text-red-600 font-semibold ml-2`}>Delete Photo</Text>
-                </TouchableOpacity>
-              )}
+                  <TouchableOpacity
+                    style={tw`flex-row items-center px-4 py-2 rounded-full bg-red-100 mb-3`}
+                    onPress={handleDeletePhoto}
+                  >
+                    <Trash2 size={18} color="red" />
+                    <Text style={tw`text-red-600 font-semibold ml-2`}>Delete Photo</Text>
+                  </TouchableOpacity>
+                )}
 
               <Text style={tw`font-semibold text-xl text-green-800 mb-1`}>
                 {userData?.username || user?.username || 'Unknown User'}

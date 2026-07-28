@@ -28,9 +28,9 @@ const UserContext = createContext<UserContextType>({
   user: null,
   isLoggedIn: false,
   checkingLogin: true,
-  setUser: () => {},
-  setIsLoggedIn: () => {},
-  logout: async () => {},
+  setUser: () => { },
+  setIsLoggedIn: () => { },
+  logout: async () => { },
 });
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -40,7 +40,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const getUserData = async () => {
     try {
-      const response = await fetch('https://landing.docapp.co.in/api/auth/get-user-data', {
+      const response = await fetch('https://api.docapp.co.in/api/auth/get-user-data', {
         method: 'GET',
         credentials: 'include',
       });

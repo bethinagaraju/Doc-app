@@ -1,1452 +1,4 @@
-// // // // // // // // // import React from 'react';
-// // // // // // // // // import { View, Text } from 'react-native';
-// // // // // // // // // import tw from 'twrnc';
-// // // // // // // // // import PageLayout from '../../components/PageLayout';
 
-// // // // // // // // // const PersonalDetailsScreen = () => {
-// // // // // // // // //   const name = 'John Doe';
-// // // // // // // // //   const email = 'john.doe@example.com';
-// // // // // // // // //   const phone = '123-456-7890';
-// // // // // // // // //   const gender = 'Male';
-// // // // // // // // //   const dob = '1990-01-01';
-// // // // // // // // //   const address = '123 Main Street, New York';
-
-// // // // // // // // //   return (
-// // // // // // // // //     <PageLayout
-// // // // // // // // //       title="Personal Details"
-// // // // // // // // //       headerBackgroundColor="bg-green-600"
-// // // // // // // // //       scrollable={true}
-// // // // // // // // //     >
-// // // // // // // // //       <View style={[tw`bg-green-50 rounded-xl p-4 mx-4`, { elevation: 1 }]}> 
-// // // // // // // // //         <View style={tw`mb-4`}>
-// // // // // // // // //           <Text style={tw`text-sm text-green-700`}>Full Name</Text>
-// // // // // // // // //           <Text style={tw`text-base text-green-900 mt-1 font-medium`}>{name}</Text>
-// // // // // // // // //         </View>
-
-// // // // // // // // //         <View style={tw`mb-4`}>
-// // // // // // // // //           <Text style={tw`text-sm text-green-700`}>Email</Text>
-// // // // // // // // //           <Text style={tw`text-base text-green-900 mt-1 font-medium`}>{email}</Text>
-// // // // // // // // //         </View>
-
-// // // // // // // // //         <View style={tw`mb-4`}>
-// // // // // // // // //           <Text style={tw`text-sm text-green-700`}>Phone</Text>
-// // // // // // // // //           <Text style={tw`text-base text-green-900 mt-1 font-medium`}>{phone}</Text>
-// // // // // // // // //         </View>
-
-// // // // // // // // //         <View style={tw`mb-4`}>
-// // // // // // // // //           <Text style={tw`text-sm text-green-700`}>Gender</Text>
-// // // // // // // // //           <Text style={tw`text-base text-green-900 mt-1 font-medium`}>{gender}</Text>
-// // // // // // // // //         </View>
-
-// // // // // // // // //         <View style={tw`mb-4`}>
-// // // // // // // // //           <Text style={tw`text-sm text-green-700`}>Date of Birth</Text>
-// // // // // // // // //           <Text style={tw`text-base text-green-900 mt-1 font-medium`}>{dob}</Text>
-// // // // // // // // //         </View>
-
-// // // // // // // // //         <View style={tw`mb-4`}>
-// // // // // // // // //           <Text style={tw`text-sm text-green-700`}>Address</Text>
-// // // // // // // // //           <Text style={tw`text-base text-green-900 mt-1 font-medium`}>{address}</Text>
-// // // // // // // // //         </View>
-// // // // // // // // //       </View>
-// // // // // // // // //     </PageLayout>
-// // // // // // // // //   );
-// // // // // // // // // };
-
-// // // // // // // // // export default PersonalDetailsScreen;
-
-
-
-
-
-// // // // // // // // import React, { useEffect, useState } from 'react';
-// // // // // // // // import { View, Text, ActivityIndicator, Alert } from 'react-native';
-// // // // // // // // import tw from 'twrnc';
-// // // // // // // // import PageLayout from '../../components/PageLayout';
-
-// // // // // // // // const PersonalDetailsScreen = () => {
-// // // // // // // //   const [userData, setUserData] = useState(null);
-// // // // // // // //   const [loading, setLoading] = useState(true);
-
-// // // // // // // //   const fetchUserData = async () => {
-// // // // // // // //     try {
-// // // // // // // //       const response = await fetch('https://landing.docapp.co.in/api/auth/get-user-data', {
-// // // // // // // //         method: 'GET',
-// // // // // // // //         headers: {
-// // // // // // // //           'Content-Type': 'application/json',
-// // // // // // // //           // include token if API requires authentication
-// // // // // // // //           // 'Authorization': `Bearer ${token}`,
-// // // // // // // //         },
-// // // // // // // //       });
-
-// // // // // // // //       const data = await response.json();
-
-// // // // // // // //       if (response.ok) {
-// // // // // // // //         setUserData(data.userData);
-// // // // // // // //       } else {
-// // // // // // // //         Alert.alert('Error', data.message || 'Failed to fetch user data');
-// // // // // // // //       }
-// // // // // // // //     } catch (error) {
-// // // // // // // //       console.error(error);
-// // // // // // // //       Alert.alert('Error', 'Something went wrong while fetching user data');
-// // // // // // // //     } finally {
-// // // // // // // //       setLoading(false);
-// // // // // // // //     }
-// // // // // // // //   };
-
-// // // // // // // //   useEffect(() => {
-// // // // // // // //     fetchUserData();
-// // // // // // // //   }, []);
-
-// // // // // // // //   if (loading) {
-// // // // // // // //     return (
-// // // // // // // //       <PageLayout title="Personal Details" headerBackgroundColor="bg-green-600">
-// // // // // // // //         <View style={tw`flex-1 justify-center items-center`}>
-// // // // // // // //           <ActivityIndicator size="large" color="#16a34a" />
-// // // // // // // //           <Text style={tw`text-green-700 mt-2`}>Loading your details...</Text>
-// // // // // // // //         </View>
-// // // // // // // //       </PageLayout>
-// // // // // // // //     );
-// // // // // // // //   }
-
-// // // // // // // //   if (!userData) {
-// // // // // // // //     return (
-// // // // // // // //       <PageLayout title="Personal Details" headerBackgroundColor="bg-green-600">
-// // // // // // // //         <View style={tw`flex-1 justify-center items-center`}>
-// // // // // // // //           <Text style={tw`text-red-500`}>No user data found</Text>
-// // // // // // // //         </View>
-// // // // // // // //       </PageLayout>
-// // // // // // // //     );
-// // // // // // // //   }
-
-// // // // // // // //   const { username, email, phone_number, doctorProfile } = userData;
-// // // // // // // //   const dob = doctorProfile?.date_of_birth
-// // // // // // // //     ? new Date(doctorProfile.date_of_birth).toISOString().split('T')[0]
-// // // // // // // //     : 'N/A';
-// // // // // // // //   const gender = doctorProfile?.gender || 'N/A';
-// // // // // // // //   const specialization = doctorProfile?.specialization || 'N/A';
-// // // // // // // //   const experience = doctorProfile?.experience_years || 'N/A';
-
-// // // // // // // //   return (
-// // // // // // // //     <PageLayout
-// // // // // // // //       title="Personal Details"
-// // // // // // // //       headerBackgroundColor="bg-green-600"
-// // // // // // // //       scrollable={true}
-// // // // // // // //     >
-// // // // // // // //       <View style={[tw`bg-green-50 rounded-xl p-4 mx-4`, { elevation: 1 }]}>
-// // // // // // // //         <Detail label="Full Name" value={username} />
-// // // // // // // //         <Detail label="Email" value={email} />
-// // // // // // // //         <Detail label="Phone" value={phone_number} />
-// // // // // // // //         <Detail label="Gender" value={gender} />
-// // // // // // // //         <Detail label="Date of Birth" value={dob} />
-// // // // // // // //         <Detail label="Specialization" value={specialization} />
-// // // // // // // //         <Detail label="Experience (Years)" value={experience.toString()} />
-// // // // // // // //       </View>
-// // // // // // // //     </PageLayout>
-// // // // // // // //   );
-// // // // // // // // };
-
-// // // // // // // // const Detail = ({ label, value }) => (
-// // // // // // // //   <View style={tw`mb-4`}>
-// // // // // // // //     <Text style={tw`text-sm text-green-700`}>{label}</Text>
-// // // // // // // //     <Text style={tw`text-base text-green-900 mt-1 font-medium`}>
-// // // // // // // //       {value || 'N/A'}
-// // // // // // // //     </Text>
-// // // // // // // //   </View>
-// // // // // // // // );
-
-// // // // // // // // export default PersonalDetailsScreen;
-
-
-// // // // // // // import React, { useEffect, useState } from 'react';
-// // // // // // // import { View, Text, ActivityIndicator, Alert, Image, ScrollView } from 'react-native';
-// // // // // // // import tw from 'twrnc';
-// // // // // // // import PageLayout from '../../components/PageLayout';
-
-// // // // // // // const PersonalDetailsScreen = () => {
-// // // // // // //   const [userData, setUserData] = useState(null);
-// // // // // // //   const [loading, setLoading] = useState(true);
-
-// // // // // // //   const fetchUserData = async () => {
-// // // // // // //     try {
-// // // // // // //       const response = await fetch('https://landing.docapp.co.in/api/auth/get-user-data', {
-// // // // // // //         method: 'GET',
-// // // // // // //         headers: {
-// // // // // // //           'Content-Type': 'application/json',
-// // // // // // //           // Include auth token if required:
-// // // // // // //           // 'Authorization': `Bearer ${token}`,
-// // // // // // //         },
-// // // // // // //       });
-
-// // // // // // //       const data = await response.json();
-
-// // // // // // //       if (response.ok) {
-// // // // // // //         setUserData(data.userData);
-// // // // // // //       } else {
-// // // // // // //         Alert.alert('Error', data.message || 'Failed to fetch user data');
-// // // // // // //       }
-// // // // // // //     } catch (error) {
-// // // // // // //       console.error(error);
-// // // // // // //       Alert.alert('Error', 'Something went wrong while fetching user data');
-// // // // // // //     } finally {
-// // // // // // //       setLoading(false);
-// // // // // // //     }
-// // // // // // //   };
-
-// // // // // // //   useEffect(() => {
-// // // // // // //     fetchUserData();
-// // // // // // //   }, []);
-
-// // // // // // //   if (loading) {
-// // // // // // //     return (
-// // // // // // //       <PageLayout title="Personal Details" headerBackgroundColor="bg-green-600">
-// // // // // // //         <View style={tw`flex-1 justify-center items-center`}>
-// // // // // // //           <ActivityIndicator size="large" color="#16a34a" />
-// // // // // // //           <Text style={tw`text-green-700 mt-2`}>Loading your details...</Text>
-// // // // // // //         </View>
-// // // // // // //       </PageLayout>
-// // // // // // //     );
-// // // // // // //   }
-
-// // // // // // //   if (!userData) {
-// // // // // // //     return (
-// // // // // // //       <PageLayout title="Personal Details" headerBackgroundColor="bg-green-600">
-// // // // // // //         <View style={tw`flex-1 justify-center items-center`}>
-// // // // // // //           <Text style={tw`text-red-500`}>No user data found</Text>
-// // // // // // //         </View>
-// // // // // // //       </PageLayout>
-// // // // // // //     );
-// // // // // // //   }
-
-// // // // // // //   const { username, email, phone_number, role, is_email_verified, is_phone_verified, doctorProfile } = userData;
-
-// // // // // // //   const dob = doctorProfile?.date_of_birth
-// // // // // // //     ? new Date(doctorProfile.date_of_birth).toISOString().split('T')[0]
-// // // // // // //     : 'N/A';
-// // // // // // //   const gender = doctorProfile?.gender || 'N/A';
-// // // // // // //   const specialization = doctorProfile?.specialization || 'N/A';
-// // // // // // //   const experience = doctorProfile?.experience_years || 'N/A';
-// // // // // // //   const licenseNumber = doctorProfile?.license_number || 'N/A';
-// // // // // // //   const fee = doctorProfile?.consultation_fee || 'N/A';
-// // // // // // //   const appointmentTime = doctorProfile?.appointment_time || 'N/A';
-// // // // // // //   const verifiedStatus = doctorProfile?.verified_status ? 'Verified' : 'Not Verified';
-// // // // // // //   const profilePic = doctorProfile?.profile_picture;
-
-// // // // // // //   return (
-// // // // // // //     <PageLayout
-// // // // // // //       title="Personal Details"
-// // // // // // //       headerBackgroundColor="bg-green-600"
-// // // // // // //       scrollable={true}
-// // // // // // //     >
-// // // // // // //       <ScrollView contentContainerStyle={tw`pb-10`}>
-// // // // // // //         <View style={tw`items-center mt-6`}>
-// // // // // // //           {profilePic ? (
-// // // // // // //             <Image
-// // // // // // //               source={{ uri: profilePic }}
-// // // // // // //               style={tw`w-32 h-32 rounded-full border-4 border-green-500`}
-// // // // // // //               resizeMode="cover"
-// // // // // // //             />
-// // // // // // //           ) : (
-// // // // // // //             <View
-// // // // // // //               style={tw`w-32 h-32 rounded-full bg-green-200 justify-center items-center border-4 border-green-500`}
-// // // // // // //             >
-// // // // // // //               <Text style={tw`text-green-800 text-lg font-bold`}>No Image</Text>
-// // // // // // //             </View>
-// // // // // // //           )}
-// // // // // // //           <Text style={tw`text-xl font-bold text-green-900 mt-3`}>{username}</Text>
-// // // // // // //           <Text style={tw`text-sm text-green-700`}>{role?.toUpperCase()}</Text>
-// // // // // // //         </View>
-
-// // // // // // //         <View style={[tw`bg-green-50 rounded-xl p-4 mx-4 mt-6`, { elevation: 1 }]}>
-// // // // // // //           <Detail label="Email" value={`${email} (${is_email_verified ? 'Verified' : 'Not Verified'})`} />
-// // // // // // //           <Detail label="Phone" value={`${phone_number} (${is_phone_verified ? 'Verified' : 'Not Verified'})`} />
-// // // // // // //           <Detail label="Gender" value={gender} />
-// // // // // // //           <Detail label="Date of Birth" value={dob} />
-// // // // // // //           <Detail label="Specialization" value={specialization} />
-// // // // // // //           <Detail label="Experience (Years)" value={experience.toString()} />
-// // // // // // //           <Detail label="License Number" value={licenseNumber} />
-// // // // // // //           <Detail label="Consultation Fee" value={`₹${fee}`} />
-// // // // // // //           <Detail label="Appointment Duration" value={`${appointmentTime} min`} />
-// // // // // // //           <Detail label="Profile Status" value={verifiedStatus} />
-// // // // // // //         </View>
-// // // // // // //       </ScrollView>
-// // // // // // //     </PageLayout>
-// // // // // // //   );
-// // // // // // // };
-
-// // // // // // // const Detail = ({ label, value }) => (
-// // // // // // //   <View style={tw`mb-4`}>
-// // // // // // //     <Text style={tw`text-sm text-green-700`}>{label}</Text>
-// // // // // // //     <Text style={tw`text-base text-green-900 mt-1 font-medium`}>
-// // // // // // //       {value || 'N/A'}
-// // // // // // //     </Text>
-// // // // // // //   </View>
-// // // // // // // );
-
-// // // // // // // export default PersonalDetailsScreen;
-
-
-// // // // // // import React, { useEffect, useState } from 'react';
-// // // // // // import { View, Text, ActivityIndicator, Alert, Image, ScrollView } from 'react-native';
-// // // // // // import tw from 'twrnc';
-// // // // // // import PageLayout from '../../components/PageLayout';
-
-// // // // // // const PersonalDetailsScreen = () => {
-// // // // // //   const [userData, setUserData] = useState(null);
-// // // // // //   const [loading, setLoading] = useState(true);
-
-// // // // // //   const fetchUserData = async () => {
-// // // // // //     try {
-// // // // // //       const response = await fetch('https://landing.docapp.co.in/api/auth/get-user-data', {
-// // // // // //         method: 'GET',
-// // // // // //         headers: {
-// // // // // //           'Content-Type': 'application/json',
-// // // // // //           // Add token if required
-// // // // // //           // 'Authorization': `Bearer ${token}`,
-// // // // // //         },
-// // // // // //       });
-
-// // // // // //       const data = await response.json();
-
-// // // // // //       if (response.ok) {
-// // // // // //         setUserData(data.userData);
-// // // // // //       } else {
-// // // // // //         Alert.alert('Error', data.message || 'Failed to fetch user data');
-// // // // // //       }
-// // // // // //     } catch (error) {
-// // // // // //       console.error(error);
-// // // // // //       Alert.alert('Error', 'Something went wrong while fetching user data');
-// // // // // //     } finally {
-// // // // // //       setLoading(false);
-// // // // // //     }
-// // // // // //   };
-
-// // // // // //   useEffect(() => {
-// // // // // //     fetchUserData();
-// // // // // //   }, []);
-
-// // // // // //   if (loading) {
-// // // // // //     return (
-// // // // // //       <PageLayout title="Personal Details" headerBackgroundColor="bg-green-600">
-// // // // // //         <View style={tw`flex-1 justify-center items-center`}>
-// // // // // //           <ActivityIndicator size="large" color="#16a34a" />
-// // // // // //           <Text style={tw`text-green-700 mt-2`}>Loading your details...</Text>
-// // // // // //         </View>
-// // // // // //       </PageLayout>
-// // // // // //     );
-// // // // // //   }
-
-// // // // // //   if (!userData) {
-// // // // // //     return (
-// // // // // //       <PageLayout title="Personal Details" headerBackgroundColor="bg-green-600">
-// // // // // //         <View style={tw`flex-1 justify-center items-center`}>
-// // // // // //           <Text style={tw`text-red-500`}>No user data found</Text>
-// // // // // //         </View>
-// // // // // //       </PageLayout>
-// // // // // //     );
-// // // // // //   }
-
-// // // // // //   const {
-// // // // // //     username,
-// // // // // //     email,
-// // // // // //     phone_number,
-// // // // // //     role,
-// // // // // //     is_email_verified,
-// // // // // //     is_phone_verified,
-// // // // // //     doctorProfile,
-// // // // // //     generalUser,
-// // // // // //   } = userData;
-
-// // // // // //   // Determine if it's a doctor or general user
-// // // // // //   const profileData = doctorProfile || generalUser || {};
-// // // // // //   const dob = profileData.date_of_birth
-// // // // // //     ? new Date(profileData.date_of_birth).toISOString().split('T')[0]
-// // // // // //     : 'N/A';
-// // // // // //   const gender = profileData.gender || 'N/A';
-// // // // // //   const profilePic = profileData.profile_picture;
-
-// // // // // //   // Doctor-specific details
-// // // // // //   const specialization = doctorProfile?.specialization || null;
-// // // // // //   const experience = doctorProfile?.experience_years || null;
-// // // // // //   const licenseNumber = doctorProfile?.license_number || null;
-// // // // // //   const fee = doctorProfile?.consultation_fee || null;
-// // // // // //   const appointmentTime = doctorProfile?.appointment_time || null;
-// // // // // //   const verifiedStatus = doctorProfile?.verified_status
-// // // // // //     ? 'Verified'
-// // // // // //     : doctorProfile
-// // // // // //     ? 'Not Verified'
-// // // // // //     : null;
-
-// // // // // //   return (
-// // // // // //     <PageLayout
-// // // // // //       title="Personal Details"
-// // // // // //       headerBackgroundColor="bg-green-600"
-// // // // // //       scrollable={true}
-// // // // // //     >bb
-// // // // // //       <ScrollView contentContainerStyle={tw`pb-10`}>
-// // // // // //         {/* Profile Section */}
-// // // // // //         <View style={tw`items-center mt-6`}>
-// // // // // //           {profilePic ? (
-// // // // // //             <Image
-// // // // // //               source={{ uri: profilePic }}
-// // // // // //               style={tw`w-32 h-32 rounded-full border-4 border-green-500`}
-// // // // // //               resizeMode="cover"
-// // // // // //             />
-// // // // // //           ) : (
-// // // // // //             <View
-// // // // // //               style={tw`w-32 h-32 rounded-full bg-green-200 justify-center items-center border-4 border-green-500`}
-// // // // // //             >
-// // // // // //               <Text style={tw`text-green-800 text-lg font-bold`}>No Image</Text>
-// // // // // //             </View>
-// // // // // //           )}
-// // // // // //           <Text style={tw`text-xl font-bold text-green-900 mt-3`}>{username}</Text>
-// // // // // //           <Text style={tw`text-sm text-green-700`}>{role?.toUpperCase()}</Text>
-// // // // // //         </View>
-
-// // // // // //         {/* Details Section */}
-// // // // // //         <View style={[tw`bg-green-50 rounded-xl p-4 mx-4 mt-6`, { elevation: 1 }]}>
-// // // // // //           <Detail
-// // // // // //             label="Email"
-// // // // // //             value={`${email} (${is_email_verified ? 'Verified' : 'Not Verified'})`}
-// // // // // //           />
-// // // // // //           <Detail
-// // // // // //             label="Phone"
-// // // // // //             value={`${phone_number} (${is_phone_verified ? 'Verified' : 'Not Verified'})`}
-// // // // // //           />
-// // // // // //           <Detail label="Gender" value={gender} />
-// // // // // //           <Detail label="Date of Birth" value={dob} />
-
-// // // // // //           {/* Doctor-specific info */}
-// // // // // //           {role === 'doctor' && (
-// // // // // //             <>
-// // // // // //               <Detail label="Specialization" value={specialization} />
-// // // // // //               <Detail
-// // // // // //                 label="Experience (Years)"
-// // // // // //                 value={experience?.toString() || 'N/A'}
-// // // // // //               />
-// // // // // //               <Detail label="License Number" value={licenseNumber} />
-// // // // // //               <Detail
-// // // // // //                 label="Consultation Fee"
-// // // // // //                 value={fee ? `₹${fee}` : 'N/A'}
-// // // // // //               />
-// // // // // //               <Detail
-// // // // // //                 label="Appointment Duration"
-// // // // // //                 value={appointmentTime ? `${appointmentTime} min` : 'N/A'}
-// // // // // //               />
-// // // // // //               <Detail label="Profile Status" value={verifiedStatus} />
-// // // // // //             </>
-// // // // // //           )}
-// // // // // //         </View>
-// // // // // //       </ScrollView>
-// // // // // //     </PageLayout>
-// // // // // //   );
-// // // // // // };
-
-// // // // // // const Detail = ({ label, value }) => (
-// // // // // //   <View style={tw`mb-4`}>
-// // // // // //     <Text style={tw`text-sm text-green-700`}>{label}</Text>
-// // // // // //     <Text style={tw`text-base text-green-900 mt-1 font-medium`}>
-// // // // // //       {value || 'N/A'}
-// // // // // //     </Text>
-// // // // // //   </View>
-// // // // // // );
-
-// // // // // // export default PersonalDetailsScreen;
-
-
-
-// // // // // import React, { useEffect, useState } from 'react';
-// // // // // import { View, Text, ActivityIndicator, Alert, Image, ScrollView } from 'react-native';
-// // // // // import tw from 'twrnc';
-// // // // // import PageLayout from '../../components/PageLayout';
-
-// // // // // const PersonalDetailsScreen = () => {
-// // // // //   const [userData, setUserData] = useState(null);
-// // // // //   const [loading, setLoading] = useState(true);
-
-// // // // //   const fetchUserData = async () => {
-// // // // //     try {
-// // // // //       const response = await fetch('https://landing.docapp.co.in/api/auth/get-user-data', {
-// // // // //         method: 'GET',
-// // // // //         headers: {
-// // // // //           'Content-Type': 'application/json',
-// // // // //           // Add token if required
-// // // // //           // 'Authorization': `Bearer ${token}`,
-// // // // //         },
-// // // // //       });
-
-// // // // //       const data = await response.json();
-
-// // // // //       if (response.ok) {
-// // // // //         setUserData(data.userData);
-// // // // //       } else {
-// // // // //         Alert.alert('Error', data.message || 'Failed to fetch user data');
-// // // // //       }
-// // // // //     } catch (error) {
-// // // // //       console.error(error);
-// // // // //       Alert.alert('Error', 'Something went wrong while fetching user data');
-// // // // //     } finally {
-// // // // //       setLoading(false);
-// // // // //     }
-// // // // //   };
-
-// // // // //   useEffect(() => {
-// // // // //     fetchUserData();
-// // // // //   }, []);
-
-// // // // //   if (loading) {
-// // // // //     return (
-// // // // //       <PageLayout title="Personal Details" headerBackgroundColor="bg-green-600">
-// // // // //         <View style={tw`flex-1 justify-center items-center`}>
-// // // // //           <ActivityIndicator size="large" color="#16a34a" />
-// // // // //           <Text style={tw`text-green-700 mt-2`}>Loading your details...</Text>
-// // // // //         </View>
-// // // // //       </PageLayout>
-// // // // //     );
-// // // // //   }
-
-// // // // //   if (!userData) {
-// // // // //     return (
-// // // // //       <PageLayout title="Personal Details" headerBackgroundColor="bg-green-600">
-// // // // //         <View style={tw`flex-1 justify-center items-center`}>
-// // // // //           <Text style={tw`text-red-500`}>No user data found</Text>
-// // // // //         </View>
-// // // // //       </PageLayout>
-// // // // //     );
-// // // // //   }
-
-// // // // //   const {
-// // // // //     username,
-// // // // //     email,
-// // // // //     phone_number,
-// // // // //     role,
-// // // // //     is_email_verified,
-// // // // //     is_phone_verified,
-// // // // //     doctorProfile,
-// // // // //     generalUser,
-// // // // //     organisationProfile,
-// // // // //   } = userData;
-
-// // // // //   // Determine profile data based on role
-// // // // //   const profileData = doctorProfile || generalUser || organisationProfile || {};
-// // // // //   const dob = profileData.date_of_birth
-// // // // //     ? new Date(profileData.date_of_birth).toISOString().split('T')[0]
-// // // // //     : 'N/A';
-// // // // //   const gender = profileData.gender || 'N/A';
-// // // // //   const profilePic = profileData.profile_picture;
-
-// // // // //   // Doctor-specific details
-// // // // //   const specialization = doctorProfile?.specialization || null;
-// // // // //   const experience = doctorProfile?.experience_years || null;
-// // // // //   const licenseNumber = doctorProfile?.license_number || null;
-// // // // //   const fee = doctorProfile?.consultation_fee || null;
-// // // // //   const appointmentTime = doctorProfile?.appointment_time || null;
-// // // // //   const verifiedStatus = doctorProfile?.verified_status
-// // // // //     ? 'Verified'
-// // // // //     : doctorProfile
-// // // // //     ? 'Not Verified'
-// // // // //     : null;
-
-// // // // //   return (
-// // // // //     <PageLayout
-// // // // //       title="Personal Details"
-// // // // //       headerBackgroundColor="bg-green-600"
-// // // // //       scrollable={true}
-// // // // //     >
-// // // // //       <ScrollView contentContainerStyle={tw`pb-10`}>
-// // // // //         {/* Profile Section */}
-// // // // //         <View style={tw`items-center mt-6`}>
-// // // // //           {profilePic ? (
-// // // // //             <Image
-// // // // //               source={{ uri: profilePic }}
-// // // // //               style={tw`w-32 h-32 rounded-full border-4 border-green-500`}
-// // // // //               resizeMode="cover"
-// // // // //             />
-// // // // //           ) : (
-// // // // //             <View
-// // // // //               style={tw`w-32 h-32 rounded-full bg-green-200 justify-center items-center border-4 border-green-500`}
-// // // // //             >
-// // // // //               <Text style={tw`text-green-800 text-lg font-bold`}>No Image</Text>
-// // // // //             </View>
-// // // // //           )}
-// // // // //           <Text style={tw`text-xl font-bold text-green-900 mt-3`}>{username}</Text>
-// // // // //           <Text style={tw`text-sm text-green-700`}>{role?.toUpperCase()}</Text>
-// // // // //         </View>
-
-// // // // //         {/* Details Section */}
-// // // // //         <View style={[tw`bg-green-50 rounded-xl p-4 mx-4 mt-6`, { elevation: 1 }]}>
-// // // // //           <Detail
-// // // // //             label="Email"
-// // // // //             value={`${email} (${is_email_verified ? 'Verified' : 'Not Verified'})`}
-// // // // //           />
-// // // // //           <Detail
-// // // // //             label="Phone"
-// // // // //             value={`${phone_number} (${is_phone_verified ? 'Verified' : 'Not Verified'})`}
-// // // // //           />
-// // // // //           <Detail label="Gender" value={gender} />
-// // // // //           <Detail label="Date of Birth" value={dob} />
-
-// // // // //           {/* Doctor-specific info */}
-// // // // //           {role === 'doctor' && (
-// // // // //             <>
-// // // // //               <Detail label="Specialization" value={specialization} />
-// // // // //               <Detail
-// // // // //                 label="Experience (Years)"
-// // // // //                 value={experience?.toString() || 'N/A'}
-// // // // //               />
-// // // // //               <Detail label="License Number" value={licenseNumber} />
-// // // // //               <Detail
-// // // // //                 label="Consultation Fee"
-// // // // //                 value={fee ? `₹${fee}` : 'N/A'}
-// // // // //               />
-// // // // //               <Detail
-// // // // //                 label="Appointment Duration"
-// // // // //                 value={appointmentTime ? `${appointmentTime} min` : 'N/A'}
-// // // // //               />
-// // // // //               <Detail label="Profile Status" value={verifiedStatus} />
-// // // // //             </>
-// // // // //           )}
-
-// // // // //           {/* Hospital-specific info */}
-// // // // //           {role === 'hospital_organisation' && organisationProfile && (
-// // // // //             <>
-// // // // //               <Detail label="Organisation Name" value={organisationProfile.organisation_name || 'N/A'} />
-// // // // //               <Detail label="Registration Number" value={organisationProfile.regestration_number || 'N/A'} />
-// // // // //               <Detail label="Establishment Year" value={organisationProfile.establishment_year || 'N/A'} />
-// // // // //               <Detail label="Specializations Provided" value={organisationProfile.specializations_provided || 'N/A'} />
-// // // // //               <Detail label="Ambulance Available" value={organisationProfile.ambulance_available ? 'Yes' : 'No'} />
-// // // // //               <Detail label="Website URL" value={organisationProfile.website_url || 'N/A'} />
-// // // // //               <Detail label="Profile Status" value={organisationProfile.verified_status ? 'Verified' : 'Not Verified'} />
-// // // // //             </>
-// // // // //           )}
-// // // // //         </View>
-// // // // //       </ScrollView>
-// // // // //     </PageLayout>
-// // // // //   );
-// // // // // };
-
-// // // // // const Detail = ({ label, value }) => (
-// // // // //   <View style={tw`mb-4`}>
-// // // // //     <Text style={tw`text-sm text-green-700`}>{label}</Text>
-// // // // //     <Text style={tw`text-base text-green-900 mt-1 font-medium`}>
-// // // // //       {value || 'N/A'}
-// // // // //     </Text>
-// // // // //   </View>
-// // // // // );
-
-// // // // // export default PersonalDetailsScreen;
-
-
-
-// // // // import React, { useEffect, useState } from 'react';
-// // // // import { View, Text, ActivityIndicator, Alert, Image, ScrollView, TextInput, TouchableOpacity } from 'react-native';
-// // // // import tw from 'twrnc';
-// // // // import PageLayout from '../../components/PageLayout';
-
-// // // // const API_GET_USER = 'https://landing.docapp.co.in/api/auth/get-user-data';
-// // // // const API_ADD_ADDRESS = 'https://landing.docapp.co.in/api/address/addAddress';
-
-// // // // const PersonalDetailsScreen = () => {
-// // // //   const [userData, setUserData] = useState(null);
-// // // //   const [loading, setLoading] = useState(true);
-
-// // // //   // Address Form
-// // // //   const [addressForm, setAddressForm] = useState({
-// // // //     city: '',
-// // // //     pincode: '',
-// // // //     street: '',
-// // // //     state: '',
-// // // //   });
-
-// // // //   const handleChange = (field, value) => {
-// // // //     setAddressForm({ ...addressForm, [field]: value });
-// // // //   };
-
-// // // //   // Add Address Handler
-// // // //   const handleAddAddress = async () => {
-// // // //     if (!addressForm.city || !addressForm.pincode || !addressForm.street || !addressForm.state) {
-// // // //       Alert.alert('Error', 'Please fill all fields');
-// // // //       return;
-// // // //     }
-
-// // // //     try {
-// // // //       const response = await fetch(API_ADD_ADDRESS, {
-// // // //         method: 'POST',
-// // // //         headers: { 'Content-Type': 'application/json' },
-// // // //         credentials: 'include',
-// // // //         body: JSON.stringify(addressForm),
-// // // //       });
-
-// // // //       const data = await response.json();
-
-// // // //       if (response.ok) {
-// // // //         Alert.alert('Success', data.message || 'Address added successfully');
-// // // //         fetchUserData(); // reload updated user data
-// // // //         setAddressForm({ city: '', pincode: '', street: '', state: '' }); // clear fields
-// // // //       } else {
-// // // //         Alert.alert('Error', data.message || 'Failed to add address');
-// // // //       }
-// // // //     } catch (error) {
-// // // //       console.error(error);
-// // // //       Alert.alert('Network Error', 'Please try again later');
-// // // //     }
-// // // //   };
-
-// // // //   // Fetch User Data
-// // // //   const fetchUserData = async () => {
-// // // //     try {
-// // // //       const response = await fetch(API_GET_USER, {
-// // // //         method: 'GET',
-// // // //         headers: { 'Content-Type': 'application/json' },
-// // // //       });
-
-// // // //       const data = await response.json();
-
-// // // //       if (response.ok) {
-// // // //         setUserData(data.userData);
-// // // //       } else {
-// // // //         Alert.alert('Error', data.message || 'Failed to fetch user data');
-// // // //       }
-// // // //     } catch (error) {
-// // // //       console.error(error);
-// // // //       Alert.alert('Error', 'Something went wrong while fetching user data');
-// // // //     } finally {
-// // // //       setLoading(false);
-// // // //     }
-// // // //   };
-
-// // // //   useEffect(() => {
-// // // //     fetchUserData();
-// // // //   }, []);
-
-// // // //   if (loading) {
-// // // //     return (
-// // // //       <PageLayout title="Personal Details" headerBackgroundColor="bg-green-600">
-// // // //         <View style={tw`flex-1 justify-center items-center`}>
-// // // //           <ActivityIndicator size="large" color="#16a34a" />
-// // // //           <Text style={tw`text-green-700 mt-2`}>Loading your details...</Text>
-// // // //         </View>
-// // // //       </PageLayout>
-// // // //     );
-// // // //   }
-
-// // // //   if (!userData) {
-// // // //     return (
-// // // //       <PageLayout title="Personal Details" headerBackgroundColor="bg-green-600">
-// // // //         <View style={tw`flex-1 justify-center items-center`}>
-// // // //           <Text style={tw`text-red-500`}>No user data found</Text>
-// // // //         </View>
-// // // //       </PageLayout>
-// // // //     );
-// // // //   }
-
-// // // //   const {
-// // // //     username,
-// // // //     email,
-// // // //     phone_number,
-// // // //     role,
-// // // //     is_email_verified,
-// // // //     is_phone_verified,
-// // // //     doctorProfile,
-// // // //     generalUser,
-// // // //     organisationProfile,
-// // // //   } = userData;
-
-// // // //   const profileData = doctorProfile || generalUser || organisationProfile || {};
-// // // //   const dob = profileData.date_of_birth
-// // // //     ? new Date(profileData.date_of_birth).toISOString().split('T')[0]
-// // // //     : 'N/A';
-// // // //   const gender = profileData.gender || 'N/A';
-// // // //   const profilePic = profileData.profile_picture;
-
-// // // //   const specialization = doctorProfile?.specialization || null;
-// // // //   const experience = doctorProfile?.experience_years || null;
-// // // //   const licenseNumber = doctorProfile?.license_number || null;
-// // // //   const fee = doctorProfile?.consultation_fee || null;
-// // // //   const appointmentTime = doctorProfile?.appointment_time || null;
-// // // //   const verifiedStatus = doctorProfile?.verified_status ? 'Verified' : doctorProfile ? 'Not Verified' : null;
-
-// // // //   return (
-// // // //     <PageLayout
-// // // //       title="Personal Details"
-// // // //       headerBackgroundColor="bg-green-600"
-// // // //       scrollable={true}
-// // // //     >
-// // // //       <ScrollView contentContainerStyle={tw`pb-10`}>
-
-// // // //         {/* Profile Section */}
-// // // //         <View style={tw`items-center mt-6`}>
-// // // //           {profilePic ? (
-// // // //             <Image
-// // // //               source={{ uri: profilePic }}
-// // // //               style={tw`w-32 h-32 rounded-full border-4 border-green-500`}
-// // // //             />
-// // // //           ) : (
-// // // //             <View style={tw`w-32 h-32 rounded-full bg-green-200 justify-center items-center border-4 border-green-500`}>
-// // // //               <Text style={tw`text-green-800 text-lg font-bold`}>No Image</Text>
-// // // //             </View>
-// // // //           )}
-
-// // // //           <Text style={tw`text-xl font-bold text-green-900 mt-3`}>{username}</Text>
-// // // //           <Text style={tw`text-sm text-green-700`}>{role?.toUpperCase()}</Text>
-// // // //         </View>
-
-// // // //         {/* Details Section */}
-// // // //         <View style={[tw`bg-green-50 rounded-xl p-4 mx-4 mt-6`, { elevation: 1 }]}>
-// // // //           <Detail label="Email" value={`${email} (${is_email_verified ? 'Verified' : 'Not Verified'})`} />
-// // // //           <Detail label="Phone" value={`${phone_number} (${is_phone_verified ? 'Verified' : 'Not Verified'})`} />
-// // // //           <Detail label="Gender" value={gender} />
-// // // //           <Detail label="Date of Birth" value={dob} />
-
-// // // //           {role === 'doctor' && (
-// // // //             <>
-// // // //               <Detail label="Specialization" value={specialization} />
-// // // //               <Detail label="Experience (Years)" value={experience?.toString() || 'N/A'} />
-// // // //               <Detail label="License Number" value={licenseNumber} />
-// // // //               <Detail label="Consultation Fee" value={fee ? `₹${fee}` : 'N/A'} />
-// // // //               <Detail label="Appointment Duration" value={appointmentTime ? `${appointmentTime} min` : 'N/A'} />
-// // // //               <Detail label="Profile Status" value={verifiedStatus} />
-// // // //             </>
-// // // //           )}
-// // // //         </View>
-
-// // // //         {/* Add Address Section */}
-// // // //         <View style={[tw`bg-white rounded-xl p-4 mx-4 mt-6`, { elevation: 2 }]}>
-// // // //           <Text style={tw`text-lg font-bold text-green-800 mb-4`}>Add Address</Text>
-
-// // // //           <TextInput
-// // // //             placeholder="City"
-// // // //             value={addressForm.city}
-// // // //             onChangeText={(t) => handleChange('city', t)}
-// // // //             style={tw`border p-2 rounded mb-3`}
-// // // //           />
-// // // //           <TextInput
-// // // //             placeholder="Pincode"
-// // // //             keyboardType="numeric"
-// // // //             value={addressForm.pincode}
-// // // //             onChangeText={(t) => handleChange('pincode', t)}
-// // // //             style={tw`border p-2 rounded mb-3`}
-// // // //           />
-// // // //           <TextInput
-// // // //             placeholder="Street"
-// // // //             value={addressForm.street}
-// // // //             onChangeText={(t) => handleChange('street', t)}
-// // // //             style={tw`border p-2 rounded mb-3`}
-// // // //           />
-// // // //           <TextInput
-// // // //             placeholder="State"
-// // // //             value={addressForm.state}
-// // // //             onChangeText={(t) => handleChange('state', t)}
-// // // //             style={tw`border p-2 rounded mb-3`}
-// // // //           />
-
-// // // //           <TouchableOpacity
-// // // //             onPress={handleAddAddress}
-// // // //             style={tw`bg-green-600 py-3 rounded-lg mt-2`}
-// // // //           >
-// // // //             <Text style={tw`text-center text-white font-bold`}>Add Address</Text>
-// // // //           </TouchableOpacity>
-// // // //         </View>
-
-// // // //       </ScrollView>
-// // // //     </PageLayout>
-// // // //   );
-// // // // };
-
-// // // // const Detail = ({ label, value }) => (
-// // // //   <View style={tw`mb-4`}>
-// // // //     <Text style={tw`text-sm text-green-700`}>{label}</Text>
-// // // //     <Text style={tw`text-base text-green-900 mt-1 font-medium`}>{value || 'N/A'}</Text>
-// // // //   </View>
-// // // // );
-
-// // // // export default PersonalDetailsScreen;
-
-
-
-// // // import React, { useEffect, useState } from 'react';
-// // // import {
-// // //   View,
-// // //   Text,
-// // //   ActivityIndicator,
-// // //   Alert,
-// // //   Image,
-// // //   ScrollView,
-// // //   TextInput,
-// // //   TouchableOpacity,
-// // // } from 'react-native';
-// // // import tw from 'twrnc';
-// // // import PageLayout from '../../components/PageLayout';
-
-// // // // APIs
-// // // const API_GET_USER = 'https://landing.docapp.co.in/api/auth/get-user-data';
-// // // const API_ADD_ADDRESS = 'https://landing.docapp.co.in/api/address/addAddress';
-// // // const API_GET_ALL_ADDRESS = 'https://landing.docapp.co.in/api/address/getAllAddress';
-
-// // // const PersonalDetailsScreen = () => {
-// // //   const [userData, setUserData] = useState(null);
-// // //   const [loading, setLoading] = useState(true);
-
-// // //   // Store all fetched addresses
-// // //   const [addresses, setAddresses] = useState([]);
-
-// // //   // Address Form
-// // //   const [addressForm, setAddressForm] = useState({
-// // //     city: '',
-// // //     pincode: '',
-// // //     street: '',
-// // //     state: '',
-// // //   });
-
-// // //   const handleChange = (field, value) => {
-// // //     setAddressForm({ ...addressForm, [field]: value });
-// // //   };
-
-// // //   // -------------------------------
-// // //   // 🚀 Add New Address
-// // //   // -------------------------------
-// // //   const handleAddAddress = async () => {
-// // //     if (!addressForm.city || !addressForm.pincode || !addressForm.street || !addressForm.state) {
-// // //       Alert.alert('Error', 'Please fill all fields');
-// // //       return;
-// // //     }
-
-// // //     try {
-// // //       const response = await fetch(API_ADD_ADDRESS, {
-// // //         method: 'POST',
-// // //         headers: { 'Content-Type': 'application/json' },
-// // //         credentials: 'include',
-// // //         body: JSON.stringify(addressForm),
-// // //       });
-
-// // //       const data = await response.json();
-
-// // //       if (response.ok) {
-// // //         Alert.alert('Success', data.message || 'Address added successfully');
-// // //         setAddressForm({ city: '', pincode: '', street: '', state: '' });
-// // //         fetchAllAddresses(); // 🔄 Refresh the list
-// // //       } else {
-// // //         Alert.alert('Error', data.message || 'Failed to add address');
-// // //       }
-// // //     } catch (error) {
-// // //       console.error(error);
-// // //       Alert.alert('Network Error', 'Please try again later');
-// // //     }
-// // //   };
-
-// // //   // -------------------------------
-// // //   // 🚀 Fetch User Data
-// // //   // -------------------------------
-// // //   const fetchUserData = async () => {
-// // //     try {
-// // //       const response = await fetch(API_GET_USER, {
-// // //         method: 'GET',
-// // //         headers: { 'Content-Type': 'application/json' },
-// // //       });
-
-// // //       const data = await response.json();
-
-// // //       if (response.ok) {
-// // //         setUserData(data.userData);
-// // //       } else {
-// // //         Alert.alert('Error', data.message || 'Failed to fetch user data');
-// // //       }
-// // //     } catch (error) {
-// // //       console.error(error);
-// // //       Alert.alert('Error', 'Something went wrong while fetching user data');
-// // //     } finally {
-// // //       setLoading(false);
-// // //     }
-// // //   };
-
-// // //   // -------------------------------
-// // //   // 🚀 Fetch All Addresses
-// // //   // -------------------------------
-// // //   const fetchAllAddresses = async () => {
-// // //     try {
-// // //       const response = await fetch(API_GET_ALL_ADDRESS, {
-// // //         method: 'GET',
-// // //         headers: { 'Content-Type': 'application/json' },
-// // //         credentials: 'include',
-// // //       });
-
-// // //       const data = await response.json();
-
-// // //       if (response.ok) {
-// // //         setAddresses(data.addresses || []);
-// // //       } else {
-// // //         Alert.alert('Error', data.message || 'Failed to fetch addresses');
-// // //       }
-// // //     } catch (error) {
-// // //       console.log(error);
-// // //       Alert.alert("Error", "Couldn't load your saved addresses.");
-// // //     }
-// // //   };
-
-// // //   useEffect(() => {
-// // //     fetchUserData();
-// // //     fetchAllAddresses();
-// // //   }, []);
-
-// // //   if (loading) {
-// // //     return (
-// // //       <PageLayout title="Personal Details" headerBackgroundColor="bg-green-600">
-// // //         <View style={tw`flex-1 justify-center items-center`}>
-// // //           <ActivityIndicator size="large" color="#16a34a" />
-// // //           <Text style={tw`text-green-700 mt-2`}>Loading your details...</Text>
-// // //         </View>
-// // //       </PageLayout>
-// // //     );
-// // //   }
-
-// // //   if (!userData) {
-// // //     return (
-// // //       <PageLayout title="Personal Details" headerBackgroundColor="bg-green-600">
-// // //         <View style={tw`flex-1 justify-center items-center`}>
-// // //           <Text style={tw`text-red-500`}>No user data found</Text>
-// // //         </View>
-// // //       </PageLayout>
-// // //     );
-// // //   }
-
-// // //   // Extract user info
-// // //   const {
-// // //     username,
-// // //     email,
-// // //     phone_number,
-// // //     role,
-// // //     is_email_verified,
-// // //     is_phone_verified,
-// // //     doctorProfile,
-// // //     generalUser,
-// // //     organisationProfile,
-// // //   } = userData;
-
-// // //   const profileData = doctorProfile || generalUser || organisationProfile || {};
-// // //   const dob = profileData.date_of_birth
-// // //     ? new Date(profileData.date_of_birth).toISOString().split('T')[0]
-// // //     : 'N/A';
-// // //   const gender = profileData.gender || 'N/A';
-// // //   const profilePic = profileData.profile_picture;
-
-// // //   return (
-// // //     <PageLayout
-// // //       title="Personal Details"
-// // //       headerBackgroundColor="bg-green-600"
-// // //       scrollable={true}
-// // //     >
-// // //       <ScrollView contentContainerStyle={tw`pb-10`}>
-
-// // //         {/* Profile Section */}
-// // //         <View style={tw`items-center mt-6`}>
-// // //           {profilePic ? (
-// // //             <Image
-// // //               source={{ uri: profilePic }}
-// // //               style={tw`w-32 h-32 rounded-full border-4 border-green-500`}
-// // //             />
-// // //           ) : (
-// // //             <View style={tw`w-32 h-32 rounded-full bg-green-200 justify-center items-center border-4 border-green-500`}>
-// // //               <Text style={tw`text-green-800 text-lg font-bold`}>No Image</Text>
-// // //             </View>
-// // //           )}
-
-// // //           <Text style={tw`text-xl font-bold text-green-900 mt-3`}>{username}</Text>
-// // //           <Text style={tw`text-sm text-green-700`}>{role?.toUpperCase()}</Text>
-// // //         </View>
-
-// // //         {/* User Details */}
-// // //         <View style={[tw`bg-green-50 rounded-xl p-4 mx-4 mt-6`, { elevation: 1 }]}>
-// // //           <Detail label="Email" value={`${email} (${is_email_verified ? 'Verified' : 'Not Verified'})`} />
-// // //           <Detail label="Phone" value={`${phone_number} (${is_phone_verified ? 'Verified' : 'Not Verified'})`} />
-// // //           <Detail label="Gender" value={gender} />
-// // //           <Detail label="Date of Birth" value={dob} />
-// // //         </View>
-
-// // //         {/* Saved Addresses List */}
-// // //         <View style={[tw`bg-white rounded-xl p-4 mx-4 mt-6`, { elevation: 2 }]}>
-// // //           <Text style={tw`text-lg font-bold text-green-800 mb-3`}>Saved Addresses</Text>
-
-// // //           {addresses.length === 0 ? (
-// // //             <Text style={tw`text-green-600`}>No addresses added yet.</Text>
-// // //           ) : (
-// // //             addresses.map((addr) => (
-// // //               <View
-// // //                 key={addr.id}
-// // //                 style={tw`border border-green-200 rounded-xl p-3 mb-3 bg-green-50`}
-// // //               >
-// // //                 <Text style={tw`text-green-900 font-bold`}>
-// // //                   {addr.street}, {addr.city}
-// // //                 </Text>
-// // //                 <Text style={tw`text-green-700`}>
-// // //                   {addr.state} - {addr.pincode}
-// // //                 </Text>
-// // //                 <Text style={tw`text-green-600 mt-1`}>
-// // //                   Country: {addr.country || 'India'}
-// // //                 </Text>
-// // //               </View>
-// // //             ))
-// // //           )}
-// // //         </View>
-
-// // //         {/* Add Address Form */}
-// // //         <View style={[tw`bg-white rounded-xl p-4 mx-4 mt-6`, { elevation: 2 }]}>
-// // //           <Text style={tw`text-lg font-bold text-green-800 mb-4`}>Add Address</Text>
-
-// // //           <TextInput
-// // //             placeholder="City"
-// // //             value={addressForm.city}
-// // //             onChangeText={(t) => handleChange('city', t)}
-// // //             style={tw`border p-2 rounded mb-3`}
-// // //           />
-// // //           <TextInput
-// // //             placeholder="Pincode"
-// // //             keyboardType="numeric"
-// // //             value={addressForm.pincode}
-// // //             onChangeText={(t) => handleChange('pincode', t)}
-// // //             style={tw`border p-2 rounded mb-3`}
-// // //           />
-// // //           <TextInput
-// // //             placeholder="Street"
-// // //             value={addressForm.street}
-// // //             onChangeText={(t) => handleChange('street', t)}
-// // //             style={tw`border p-2 rounded mb-3`}
-// // //           />
-// // //           <TextInput
-// // //             placeholder="State"
-// // //             value={addressForm.state}
-// // //             onChangeText={(t) => handleChange('state', t)}
-// // //             style={tw`border p-2 rounded mb-3`}
-// // //           />
-
-// // //           <TouchableOpacity
-// // //             onPress={handleAddAddress}
-// // //             style={tw`bg-green-600 py-3 rounded-lg mt-2`}
-// // //           >
-// // //             <Text style={tw`text-center text-white font-bold`}>Add Address</Text>
-// // //           </TouchableOpacity>
-// // //         </View>
-
-// // //       </ScrollView>
-// // //     </PageLayout>
-// // //   );
-// // // };
-
-// // // const Detail = ({ label, value }) => (
-// // //   <View style={tw`mb-4`}>
-// // //     <Text style={tw`text-sm text-green-700`}>{label}</Text>
-// // //     <Text style={tw`text-base text-green-900 mt-1 font-medium`}>{value || 'N/A'}</Text>
-// // //   </View>
-// // // );
-
-// // // export default PersonalDetailsScreen;
-
-
-
-// // import React, { useEffect, useState } from 'react';
-// // import {
-// //   View,
-// //   Text,
-// //   ActivityIndicator,
-// //   Alert,
-// //   Image,
-// //   ScrollView,
-// //   TextInput,
-// //   TouchableOpacity,
-// //   Modal,
-// // } from 'react-native';
-// // import tw from 'twrnc';
-// // import PageLayout from '../../components/PageLayout';
-
-// // const API_GET_USER = 'https://landing.docapp.co.in/api/auth/get-user-data';
-// // const API_ADD_ADDRESS = 'https://landing.docapp.co.in/api/address/addAddress';
-// // const API_GET_ALL_ADDRESS = 'https://landing.docapp.co.in/api/address/getAllAddress';
-// // const API_UPDATE_ADDRESS = 'https://landing.docapp.co.in/api/address/updateAddress';
-
-// // const PersonalDetailsScreen = () => {
-// //   const [userData, setUserData] = useState(null);
-// //   const [loading, setLoading] = useState(true);
-
-// //   const [allAddresses, setAllAddresses] = useState([]);
-
-// //   // Address Form
-// //   const [addressForm, setAddressForm] = useState({
-// //     city: '',
-// //     pincode: '',
-// //     street: '',
-// //     state: '',
-// //   });
-
-// //   // Update Address Modal
-// //   const [editModalVisible, setEditModalVisible] = useState(false);
-// //   const [editForm, setEditForm] = useState({
-// //     addressId: '',
-// //     country: 'India',
-// //     state: '',
-// //     city: '',
-// //     pincode: '',
-// //     street: '',
-// //     landmark: '',
-// //     houseNo: '',
-// //   });
-
-// //   const handleChange = (field, value) => {
-// //     setAddressForm({ ...addressForm, [field]: value });
-// //   };
-
-// //   const handleEditChange = (field, value) => {
-// //     setEditForm({ ...editForm, [field]: value });
-// //   };
-
-// //   // ----------------------------------------------------------------------------------------
-// //   // Fetch User Details
-// //   const fetchUserData = async () => {
-// //     try {
-// //       const response = await fetch(API_GET_USER, {
-// //         method: 'GET',
-// //         headers: { 'Content-Type': 'application/json' },
-// //       });
-
-// //       const data = await response.json();
-// //       if (response.ok) {
-// //         setUserData(data.userData);
-// //       } else {
-// //         Alert.alert('Error', data.message || 'Failed to fetch user data');
-// //       }
-// //     } catch (error) {
-// //       Alert.alert('Error', 'Failed to fetch user details');
-// //     } finally {
-// //       setLoading(false);
-// //     }
-// //   };
-
-// //   // ----------------------------------------------------------------------------------------
-// //   // Fetch All Addresses
-// //   const fetchAllAddresses = async () => {
-// //     try {
-// //       const response = await fetch(API_GET_ALL_ADDRESS, {
-// //         method: 'GET',
-// //         credentials: 'include',
-// //       });
-
-// //       const data = await response.json();
-
-// //       if (response.ok) {
-// //         setAllAddresses(data.addresses || []);
-// //       } else {
-// //         Alert.alert('Error', data.message || 'Failed to fetch addresses');
-// //       }
-// //     } catch (error) {
-// //       Alert.alert('Error', 'Failed to load addresses');
-// //     }
-// //   };
-
-// //   // ----------------------------------------------------------------------------------------
-// //   // Add Address
-// //   const handleAddAddress = async () => {
-// //     if (!addressForm.city || !addressForm.pincode || !addressForm.street || !addressForm.state) {
-// //       Alert.alert('Error', 'Please fill all fields');
-// //       return;
-// //     }
-
-// //     try {
-// //       const response = await fetch(API_ADD_ADDRESS, {
-// //         method: 'POST',
-// //         headers: { 'Content-Type': 'application/json' },
-// //         credentials: 'include',
-// //         body: JSON.stringify(addressForm),
-// //       });
-
-// //       const data = await response.json();
-
-// //       if (response.ok) {
-// //         Alert.alert('Success', data.message || 'Address added');
-// //         setAddressForm({ city: '', pincode: '', street: '', state: '' });
-// //         fetchAllAddresses();
-// //       } else {
-// //         Alert.alert('Error', data.message || 'Failed to add address');
-// //       }
-// //     } catch (error) {
-// //       Alert.alert('Error', 'Network error');
-// //     }
-// //   };
-
-// //   // ----------------------------------------------------------------------------------------
-// //   // Update Address
-// //   const handleUpdateAddress = async () => {
-// //     try {
-// //       const response = await fetch(API_UPDATE_ADDRESS, {
-// //         method: 'PUT',
-// //         headers: { 'Content-Type': 'application/json' },
-// //         credentials: 'include',
-// //         body: JSON.stringify(editForm),
-// //       });
-
-// //       const data = await response.json();
-
-// //       if (response.ok) {
-// //         Alert.alert('Success', data.message || 'Address updated');
-// //         setEditModalVisible(false);
-// //         fetchAllAddresses();
-// //       } else {
-// //         Alert.alert('Error', data.message || 'Failed to update');
-// //       }
-// //     } catch (error) {
-// //       Alert.alert('Error', 'Could not update address');
-// //     }
-// //   };
-
-// //   // ----------------------------------------------------------------------------------------
-// //   useEffect(() => {
-// //     fetchUserData();
-// //     fetchAllAddresses();
-// //   }, []);
-
-// //   if (loading) {
-// //     return (
-// //       <PageLayout title="Personal Details" headerBackgroundColor="bg-green-600">
-// //         <View style={tw`flex-1 justify-center items-center`}>
-// //           <ActivityIndicator size="large" color="#16a34a" />
-// //           <Text style={tw`text-green-700 mt-2`}>Loading...</Text>
-// //         </View>
-// //       </PageLayout>
-// //     );
-// //   }
-
-// //   if (!userData) {
-// //     return (
-// //       <PageLayout title="Personal Details" headerBackgroundColor="bg-green-600">
-// //         <View style={tw`flex-1 justify-center items-center`}>
-// //           <Text style={tw`text-red-500`}>No user data found</Text>
-// //         </View>
-// //       </PageLayout>
-// //     );
-// //   }
-
-// //   const { username, email, phone_number, role, is_email_verified, is_phone_verified } = userData;
-
-// //   return (
-// //     <PageLayout title="Personal Details" headerBackgroundColor="bg-green-600" scrollable={true}>
-// //       <ScrollView contentContainerStyle={tw`pb-10`}>
-
-// //         {/* USER INFO */}
-// //         <View style={tw`items-center mt-6`}>
-// //           <Text style={tw`text-xl font-bold text-green-900 mt-3`}>{username}</Text>
-// //           <Text style={tw`text-sm text-green-700`}>{role?.toUpperCase()}</Text>
-// //         </View>
-
-// //         {/* USER DETAILS */}
-// //         <View style={[tw`bg-green-50 rounded-xl p-4 mx-4 mt-6`, { elevation: 1 }]}>
-// //           <Detail label="Email" value={`${email} (${is_email_verified ? 'Verified' : 'Not Verified'})`} />
-// //           <Detail label="Phone" value={`${phone_number} (${is_phone_verified ? 'Verified' : 'Not Verified'})`} />
-// //         </View>
-
-// //         {/* ADD ADDRESS */}
-// //         <View style={[tw`bg-white rounded-xl p-4 mx-4 mt-6`, { elevation: 2 }]}>
-// //           <Text style={tw`text-lg font-bold text-green-800 mb-4`}>Add Address</Text>
-
-// //           <TextInput style={styles.input} placeholder="City" value={addressForm.city} onChangeText={(t) => handleChange('city', t)} />
-// //           <TextInput style={styles.input} placeholder="Pincode" keyboardType="numeric" value={addressForm.pincode} onChangeText={(t) => handleChange('pincode', t)} />
-// //           <TextInput style={styles.input} placeholder="Street" value={addressForm.street} onChangeText={(t) => handleChange('street', t)} />
-// //           <TextInput style={styles.input} placeholder="State" value={addressForm.state} onChangeText={(t) => handleChange('state', t)} />
-
-// //           <TouchableOpacity style={tw`bg-green-600 py-3 rounded-lg mt-2`} onPress={handleAddAddress}>
-// //             <Text style={tw`text-center text-white font-bold`}>Add Address</Text>
-// //           </TouchableOpacity>
-// //         </View>
-
-// //         {/* SHOW ALL ADDRESSES */}
-// //         <View style={[tw`bg-green-50 rounded-xl p-4 mx-4 mt-6`, { elevation: 1 }]}>
-// //           <Text style={tw`text-lg font-bold text-green-900 mb-3`}>Your Addresses</Text>
-
-// //           {allAddresses.length === 0 ? (
-// //             <Text style={tw`text-green-700`}>No addresses added yet.</Text>
-// //           ) : (
-// //             allAddresses.map((item) => (
-// //               <View key={item.id} style={tw`p-3 bg-white rounded-lg mb-3 border`}>
-// //                 <Text style={tw`text-green-900 font-bold`}>{item.street}, {item.city}</Text>
-// //                 <Text style={tw`text-green-700`}>{item.state} - {item.pincode}</Text>
-
-// //                 <TouchableOpacity
-// //                   style={tw`bg-blue-600 py-2 px-4 rounded-lg mt-2 self-start`}
-// //                   onPress={() => {
-// //                     setEditForm({
-// //                       addressId: item.id.toString(),
-// //                       country: item.country || 'India',
-// //                       state: item.state,
-// //                       city: item.city,
-// //                       pincode: item.pincode,
-// //                       street: item.street,
-// //                       landmark: item.landmark || '',
-// //                       houseNo: item.house_no || '',
-// //                     });
-// //                     setEditModalVisible(true);
-// //                   }}
-// //                 >
-// //                   <Text style={tw`text-white font-bold`}>Edit</Text>
-// //                 </TouchableOpacity>
-// //               </View>
-// //             ))
-// //           )}
-// //         </View>
-
-// //         {/* UPDATE MODAL */}
-// //         <Modal visible={editModalVisible} transparent animationType="slide">
-// //           <View style={styles.modalContainer}>
-// //             <View style={styles.modalBox}>
-// //               <Text style={tw`text-lg font-bold text-green-800 mb-3`}>Edit Address</Text>
-
-// //               <TextInput style={styles.input} placeholder="City" value={editForm.city} onChangeText={(t) => handleEditChange('city', t)} />
-// //               <TextInput style={styles.input} placeholder="State" value={editForm.state} onChangeText={(t) => handleEditChange('state', t)} />
-// //               <TextInput style={styles.input} placeholder="Pincode" value={editForm.pincode} onChangeText={(t) => handleEditChange('pincode', t)} />
-// //               <TextInput style={styles.input} placeholder="Street" value={editForm.street} onChangeText={(t) => handleEditChange('street', t)} />
-// //               <TextInput style={styles.input} placeholder="Landmark" value={editForm.landmark} onChangeText={(t) => handleEditChange('landmark', t)} />
-// //               <TextInput style={styles.input} placeholder="House No." value={editForm.houseNo} onChangeText={(t) => handleEditChange('houseNo', t)} />
-
-// //               <TouchableOpacity style={tw`bg-green-600 py-3 rounded-lg mt-3`} onPress={handleUpdateAddress}>
-// //                 <Text style={tw`text-center text-white font-bold`}>Update Address</Text>
-// //               </TouchableOpacity>
-
-// //               <TouchableOpacity style={tw`bg-red-600 py-3 rounded-lg mt-2`} onPress={() => setEditModalVisible(false)}>
-// //                 <Text style={tw`text-center text-white font-bold`}>Cancel</Text>
-// //               </TouchableOpacity>
-// //             </View>
-// //           </View>
-// //         </Modal>
-
-// //       </ScrollView>
-// //     </PageLayout>
-// //   );
-// // };
-
-// // const Detail = ({ label, value }) => (
-// //   <View style={tw`mb-4`}>
-// //     <Text style={tw`text-sm text-green-700`}>{label}</Text>
-// //     <Text style={tw`text-base text-green-900 mt-1 font-medium`}>{value || 'N/A'}</Text>
-// //   </View>
-// // );
-
-// // const styles = {
-// //   input: {
-// //     borderWidth: 1,
-// //     borderColor: '#ccc',
-// //     padding: 10,
-// //     borderRadius: 8,
-// //     marginBottom: 10,
-// //   },
-// //   modalContainer: {
-// //     flex: 1,
-// //     backgroundColor: '#00000099',
-// //     justifyContent: 'center',
-// //     alignItems: 'center',
-// //   },
-// //   modalBox: {
-// //     width: '85%',
-// //     backgroundColor: 'white',
-// //     padding: 20,
-// //     borderRadius: 12,
-// //   },
-// // };
-
-// // export default PersonalDetailsScreen;
 
 
 
@@ -1464,17 +16,23 @@
 // } from 'react-native';
 // import tw from 'twrnc';
 // import PageLayout from '../../components/PageLayout';
+// import { sendEmailOtp, verifyEmailOtp } from '../../api/verify';
+// import { completeGeneralUserProfile } from '../../api/profile';
+// import { useAccessToken } from '../contexts/AccessTokenContext';
 
-// const API_GET_USER = 'https://landing.docapp.co.in/api/auth/get-user-data';
-// const API_ADD_ADDRESS = 'https://landing.docapp.co.in/api/address/addAddress';
-// const API_GET_ALL_ADDRESS = 'https://landing.docapp.co.in/api/address/getAllAddress';
-// const API_UPDATE_ADDRESS = 'https://landing.docapp.co.in/api/address/updateAddress';
+// const API_GET_USER = 'https://api.docapp.co.in/api/auth/get-user-data';
+// const API_ADD_ADDRESS = 'https://api.docapp.co.in/api/address/addAddress';
+// const API_GET_ALL_ADDRESS = 'https://api.docapp.co.in/api/address/getAllAddress';
+// const API_UPDATE_ADDRESS = 'https://api.docapp.co.in/api/address/updateAddress';
+// const API_DELETE_ADDRESS = 'https://api.docapp.co.in/api/address/deleteAddress';
 
 // const PersonalDetailsScreen = () => {
 //   const [userData, setUserData] = useState(null);
 //   const [loading, setLoading] = useState(true);
 
 //   const [allAddresses, setAllAddresses] = useState([]);
+
+//   const { accessToken } = useAccessToken();
 
 //   // Address Form
 //   const [addressForm, setAddressForm] = useState({
@@ -1484,7 +42,7 @@
 //     state: '',
 //   });
 
-//   // Update Address Modal
+//   // Update Modal
 //   const [editModalVisible, setEditModalVisible] = useState(false);
 //   const [editForm, setEditForm] = useState({
 //     addressId: '',
@@ -1496,6 +54,16 @@
 //     landmark: '',
 //     houseNo: '',
 //   });
+//   // Email OTP states
+//   const [otpModalVisible, setOtpModalVisible] = useState(false);
+//   const [otpValue, setOtpValue] = useState('');
+//   const [isOtpSending, setIsOtpSending] = useState(false);
+//   // Edit profile modal
+//   const [editProfileVisible, setEditProfileVisible] = useState(false);
+//   const [editDob, setEditDob] = useState<Date | undefined>();
+//   const [editGender, setEditGender] = useState<'Male' | 'Female' | 'Others' | ''>('');
+//   const [editLoading, setEditLoading] = useState(false);
+//   const [showEditDatePicker, setShowEditDatePicker] = useState(false);
 
 //   const handleChange = (field, value) => {
 //     setAddressForm({ ...addressForm, [field]: value });
@@ -1505,51 +73,51 @@
 //     setEditForm({ ...editForm, [field]: value });
 //   };
 
-//   // -------------------------------------------------------------
-//   // Fetch User Details
+//   // Fetch User
 //   const fetchUserData = async () => {
 //     try {
 //       const response = await fetch(API_GET_USER, {
 //         method: 'GET',
-//         headers: { 'Content-Type': 'application/json' },
-//         credentials: 'include',
+//         headers: {
+//           'Content-Type': 'application/json',
+//           'Authorization': `Bearer ${accessToken}`,
+//         },
 //       });
 
 //       const data = await response.json();
 //       if (response.ok) {
 //         setUserData(data.userData);
 //       } else {
-//         Alert.alert('Error', data.message || 'Failed to fetch user data');
+//         Alert.alert('Error', data.message);
 //       }
 //     } catch (error) {
-//       Alert.alert('Error', 'Failed to fetch user details');
+//       Alert.alert('Error', 'Failed to fetch user data');
 //     } finally {
 //       setLoading(false);
 //     }
 //   };
 
-//   // -------------------------------------------------------------
-//   // Fetch All Addresses
+//   // Fetch Addresses
 //   const fetchAllAddresses = async () => {
 //     try {
 //       const response = await fetch(API_GET_ALL_ADDRESS, {
 //         method: 'GET',
-//         credentials: 'include',
+//         headers: {
+//           'Authorization': `Bearer ${accessToken}`,
+//         },
 //       });
 
 //       const data = await response.json();
-
 //       if (response.ok) {
 //         setAllAddresses(data.addresses || []);
 //       } else {
-//         Alert.alert('Error', data.message || 'Failed to fetch addresses');
+//         Alert.alert('Error', data.message);
 //       }
 //     } catch (error) {
 //       Alert.alert('Error', 'Failed to load addresses');
 //     }
 //   };
 
-//   // -------------------------------------------------------------
 //   // Add Address
 //   const handleAddAddress = async () => {
 //     if (!addressForm.city || !addressForm.pincode || !addressForm.street || !addressForm.state) {
@@ -1560,51 +128,159 @@
 //     try {
 //       const response = await fetch(API_ADD_ADDRESS, {
 //         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         credentials: 'include',
+//         headers: {
+//           'Content-Type': 'application/json',
+//           'Authorization': `Bearer ${accessToken}`,
+//         },
 //         body: JSON.stringify(addressForm),
 //       });
 
 //       const data = await response.json();
-
 //       if (response.ok) {
-//         Alert.alert('Success', data.message || 'Address added');
+//         Alert.alert('Success', data.message);
 //         setAddressForm({ city: '', pincode: '', street: '', state: '' });
 //         fetchAllAddresses();
 //       } else {
-//         Alert.alert('Error', data.message || 'Failed to add address');
+//         Alert.alert('Error', data.message);
 //       }
 //     } catch (error) {
 //       Alert.alert('Error', 'Network error');
 //     }
 //   };
 
-//   // -------------------------------------------------------------
 //   // Update Address
 //   const handleUpdateAddress = async () => {
 //     try {
 //       const response = await fetch(API_UPDATE_ADDRESS, {
 //         method: 'PUT',
-//         headers: { 'Content-Type': 'application/json' },
-//         credentials: 'include',
+//         headers: {
+//           'Content-Type': 'application/json',
+//           'Authorization': `Bearer ${accessToken}`,
+//         },
 //         body: JSON.stringify(editForm),
 //       });
 
 //       const data = await response.json();
 
 //       if (response.ok) {
-//         Alert.alert('Success', data.message || 'Address updated');
+//         Alert.alert('Success', data.message);
 //         setEditModalVisible(false);
 //         fetchAllAddresses();
 //       } else {
-//         Alert.alert('Error', data.message || 'Failed to update');
+//         Alert.alert('Error', data.message);
 //       }
 //     } catch (error) {
-//       Alert.alert('Error', 'Could not update address');
+//       Alert.alert('Error', 'Failed to update address');
 //     }
 //   };
 
-//   // -------------------------------------------------------------
+//   // Delete Address
+//   const handleDeleteAddress = async (addressId) => {
+//     Alert.alert(
+//       "Delete Address",
+//       "Are you sure you want to delete this address?",
+//       [
+//         { text: "Cancel", style: "cancel" },
+//         {
+//           text: "Delete",
+//           style: "destructive",
+//           onPress: async () => {
+//             try {
+//               const response = await fetch(API_DELETE_ADDRESS, {
+//                 method: 'DELETE',
+//                 headers: {
+//                   'Content-Type': 'application/json',
+//                   'Authorization': `Bearer ${accessToken}`,
+//                 },
+//                 body: JSON.stringify({ addressId }),
+//               });
+
+//               const data = await response.json();
+
+//               if (response.ok) {
+//                 Alert.alert('Success', data.message || 'Address deleted successfully');
+//                 fetchAllAddresses();
+//               } else {
+//                 Alert.alert('Error', data.message || 'Failed to delete address');
+//               }
+//             } catch (error) {
+//               Alert.alert('Error', 'Network error while deleting address');
+//             }
+//           }
+//         }
+//       ]
+//     );
+//   };
+
+//   // Send Email OTP
+//   const handleSendEmailOtp = async () => {
+//     setIsOtpSending(true);
+//     try {
+//       const res = await sendEmailOtp(accessToken);
+//       if (res.ok) {
+//         Alert.alert('Success', res.data?.message || 'OTP sent to your email');
+//         setOtpModalVisible(true);
+//       } else {
+//         Alert.alert('Error', res.data?.message || 'Failed to send OTP');
+//       }
+//     } catch (err) {
+//       Alert.alert('Error', 'Network error while sending OTP');
+//     } finally {
+//       setIsOtpSending(false);
+//     }
+//   };
+
+//   // Verify Email OTP
+//   const handleVerifyEmailOtp = async () => {
+//     if (!otpValue) {
+//       Alert.alert('Error', 'Please enter the OTP');
+//       return;
+//     }
+//     try {
+//       const res = await verifyEmailOtp(otpValue, userData.email, accessToken);
+//       if (res.ok) {
+//         Alert.alert('Success', res.data?.message || 'Email verified');
+//         setOtpModalVisible(false);
+//         setOtpValue('');
+//         fetchUserData();
+//       } else {
+//         Alert.alert('Error', res.data?.message || 'Invalid OTP');
+//       }
+//     } catch (err) {
+//       Alert.alert('Error', 'Network error while verifying OTP');
+//     }
+//   };
+
+//   // Edit profile submit
+//   const handleEditProfileSubmit = async () => {
+//     // basic validation
+//     if (!editDob || !editGender) {
+//       Alert.alert('Error', 'Please provide date of birth and gender');
+//       return;
+//     }
+
+//     setEditLoading(true);
+//     try {
+//       const payload = {
+//         date_of_birth: editDob.toISOString().split('T')[0],
+//         gender: editGender,
+//       };
+
+//       const res = await completeGeneralUserProfile(payload, accessToken);
+//       if (res.ok) {
+//         Alert.alert('Success', res.data?.message || 'Profile updated');
+//         setEditProfileVisible(false);
+//         fetchUserData();
+//       } else {
+//         Alert.alert('Error', res.data?.message || 'Failed to update profile');
+//       }
+//     } catch (err) {
+//       Alert.alert('Error', 'Network error while updating profile');
+//     } finally {
+//       setEditLoading(false);
+//     }
+//   };
+
 //   useEffect(() => {
 //     fetchUserData();
 //     fetchAllAddresses();
@@ -1655,80 +331,95 @@
 
 //           <View style={tw`mt-4`}>
 //             <Detail label="Email" value={userData.email} />
+//             <View style={tw`mt-2`}>
+//               <TouchableOpacity
+//                 style={tw`bg-blue-600 py-2 px-4 rounded-lg self-start`}
+//                 onPress={handleSendEmailOtp}
+//                 disabled={isOtpSending}
+//               >
+//                 <Text style={tw`text-white font-semibold`}>{isOtpSending ? 'Sending...' : 'Send Email OTP'}</Text>
+//               </TouchableOpacity>
+//             </View>
 //             <Detail label="Phone" value={userData.phone_number} />
 //             <Detail label="Gender" value={general.gender} />
-//             <Detail
-//               label="Date of Birth"
-//               value={general.date_of_birth ? general.date_of_birth.split("T")[0] : ""}
-//             />
-//             <Detail
-//               label="Created At"
-//               value={general.createdAt ? general.createdAt.split("T")[0] : ""}
-//             />
-//             <Detail
-//               label="Updated At"
-//               value={general.updatedAt ? general.updatedAt.split("T")[0] : ""}
-//             />
+//             <Detail label="Date of Birth" value={general.date_of_birth?.split("T")[0]} />
+//             <Detail label="Created At" value={general.createdAt?.split("T")[0]} />
+//             <Detail label="Updated At" value={general.updatedAt?.split("T")[0]} />
 //           </View>
 //         </View>
 
-//         {/* ADD ADDRESS */}
-//         <View style={[tw`bg-white rounded-xl p-4 mx-4 mt-6`, { elevation: 2 }]}>
-//           <Text style={tw`text-lg font-bold text-green-800 mb-4`}>Add Address</Text>
+//         {/* ----------------------------- */}
+//         {/* ADD ADDRESS — SHOW ONLY IF NO ADDRESS */}
+//         {/* ----------------------------- */}
+//         {allAddresses.length === 0 && (
+//           <View style={[tw`bg-white rounded-xl p-4 mx-4 mt-6`, { elevation: 2 }]}>
+//             <Text style={tw`text-lg font-bold text-green-800 mb-4`}>Add Address</Text>
 
-//           <TextInput style={styles.input} placeholder="City" value={addressForm.city} onChangeText={(t) => handleChange('city', t)} />
-//           <TextInput style={styles.input} placeholder="Pincode" keyboardType="numeric" value={addressForm.pincode} onChangeText={(t) => handleChange('pincode', t)} />
-//           <TextInput style={styles.input} placeholder="Street" value={addressForm.street} onChangeText={(t) => handleChange('street', t)} />
-//           <TextInput style={styles.input} placeholder="State" value={addressForm.state} onChangeText={(t) => handleChange('state', t)} />
+//             <TextInput style={styles.input} placeholder="City" value={addressForm.city} onChangeText={(t) => handleChange('city', t)} />
+//             <TextInput style={styles.input} placeholder="Pincode" keyboardType="numeric" value={addressForm.pincode} onChangeText={(t) => handleChange('pincode', t)} />
+//             <TextInput style={styles.input} placeholder="Street" value={addressForm.street} onChangeText={(t) => handleChange('street', t)} />
+//             <TextInput style={styles.input} placeholder="State" value={addressForm.state} onChangeText={(t) => handleChange('state', t)} />
 
-//           <TouchableOpacity style={tw`bg-green-600 py-3 rounded-lg mt-2`} onPress={handleAddAddress}>
-//             <Text style={tw`text-center text-white font-bold`}>Add Address</Text>
-//           </TouchableOpacity>
-//         </View>
+//             <TouchableOpacity style={tw`bg-green-600 py-3 rounded-lg mt-2`} onPress={handleAddAddress}>
+//               <Text style={tw`text-center text-white font-bold`}>Add Address</Text>
+//             </TouchableOpacity>
+//           </View>
+//         )}
 
-//         {/* SHOW ALL ADDRESSES */}
-//         <View style={[tw`bg-green-50 rounded-xl p-4 mx-4 mt-6`, { elevation: 1 }]}>
-//           <Text style={tw`text-lg font-bold text-green-900 mb-3`}>Your Addresses</Text>
+//         {/* ----------------------------- */}
+//         {/* SHOW ADDRESSES — ONLY IF EXISTS */}
+//         {/* ----------------------------- */}
+//         {allAddresses.length > 0 && (
+//           <View style={[tw`bg-green-50 rounded-xl p-4 mx-4 mt-6`, { elevation: 1 }]}>
+//             <Text style={tw`text-lg font-bold text-green-900 mb-3`}>Your Addresss</Text>
 
-//           {allAddresses.length === 0 ? (
-//             <Text style={tw`text-green-700`}>No addresses added yet.</Text>
-//           ) : (
-//             allAddresses.map((item) => (
+//             {allAddresses.map((item) => (
 //               <View key={item.id} style={tw`p-3 bg-white rounded-lg mb-3 border`}>
 //                 <Text style={tw`text-green-900 font-bold`}>{item.street}, {item.city}</Text>
 //                 <Text style={tw`text-green-700`}>{item.state} - {item.pincode}</Text>
 
-//                 <TouchableOpacity
-//                   style={tw`bg-blue-600 py-2 px-4 rounded-lg mt-2 self-start`}
-//                   onPress={() => {
-//                     setEditForm({
-//                       addressId: item.id.toString(),
-//                       country: item.country || 'India',
-//                       state: item.state,
-//                       city: item.city,
-//                       pincode: item.pincode,
-//                       street: item.street,
-//                       landmark: item.landmark || '',
-//                       houseNo: item.house_no || '',
-//                     });
-//                     setEditModalVisible(true);
-//                   }}
-//                 >
-//                   <Text style={tw`text-white font-bold`}>Edit</Text>
-//                 </TouchableOpacity>
-//               </View>
-//             ))
-//           )}
-//         </View>
+//                 <View style={tw`flex-row mt-2`}>
+//                   <TouchableOpacity
+//                     style={tw`bg-blue-600 py-2 px-4 rounded-lg mr-2 self-start`}
+//                     onPress={() => {
+//                       setEditForm({
+//                         addressId: item.id.toString(),
+//                         country: item.country || 'India',
+//                         state: item.state,
+//                         city: item.city,
+//                         pincode: item.pincode,
+//                         street: item.street,
+//                         landmark: item.landmark || '',
+//                         houseNo: item.house_no || '',
+//                       });
+//                       setEditModalVisible(true);
+//                     }}
+//                   >
+//                     <Text style={tw`text-white font-bold`}>Edit</Text>
+//                   </TouchableOpacity>
 
-//         {/* UPDATE MODAL */}
+//                   <TouchableOpacity
+//                     style={tw`bg-red-600 py-2 px-4 rounded-lg self-start`}
+//                     onPress={() => handleDeleteAddress(item.id.toString())}
+//                   >
+//                     <Text style={tw`text-white font-bold`}>Delete</Text>
+//                   </TouchableOpacity>
+//                 </View>
+//               </View>
+//             ))}
+//           </View>
+//         )}
+
+//         {/* ----------------------------- */}
+//         {/* EDIT MODAL */}
+//         {/* ----------------------------- */}
 //         <Modal visible={editModalVisible} transparent animationType="slide">
 //           <View style={styles.modalContainer}>
 //             <View style={styles.modalBox}>
 //               <Text style={tw`text-lg font-bold text-green-800 mb-3`}>Edit Address</Text>
 
 //               <TextInput style={styles.input} placeholder="City" value={editForm.city} onChangeText={(t) => handleEditChange('city', t)} />
-//               <TextInput style={styles.input} placeholder="State" value={editForm.state} onChangeChange={(t) => handleEditChange('state', t)} />
+//               <TextInput style={styles.input} placeholder="State" value={editForm.state} onChangeText={(t) => handleEditChange('state', t)} />
 //               <TextInput style={styles.input} placeholder="Pincode" value={editForm.pincode} onChangeText={(t) => handleEditChange('pincode', t)} />
 //               <TextInput style={styles.input} placeholder="Street" value={editForm.street} onChangeText={(t) => handleEditChange('street', t)} />
 //               <TextInput style={styles.input} placeholder="Landmark" value={editForm.landmark} onChangeText={(t) => handleEditChange('landmark', t)} />
@@ -1739,6 +430,77 @@
 //               </TouchableOpacity>
 
 //               <TouchableOpacity style={tw`bg-red-600 py-3 rounded-lg mt-2`} onPress={() => setEditModalVisible(false)}>
+//                 <Text style={tw`text-center text-white font-bold`}>Cancel</Text>
+//               </TouchableOpacity>
+//             </View>
+//           </View>
+//         </Modal>
+
+//         {/* OTP VERIFY MODAL */}
+//         <Modal visible={otpModalVisible} transparent animationType="slide">
+//           <View style={styles.modalContainer}>
+//             <View style={styles.modalBox}>
+//               <Text style={tw`text-lg font-bold text-green-800 mb-3`}>Enter OTP</Text>
+//               <TextInput
+//                 style={styles.input}
+//                 placeholder="Enter OTP"
+//                 keyboardType="numeric"
+//                 value={otpValue}
+//                 onChangeText={setOtpValue}
+//               />
+//               <TouchableOpacity style={tw`bg-green-600 py-3 rounded-lg mt-3`} onPress={handleVerifyEmailOtp}>
+//                 <Text style={tw`text-center text-white font-bold`}>Verify OTP</Text>
+//               </TouchableOpacity>
+
+//               <TouchableOpacity style={tw`bg-red-600 py-3 rounded-lg mt-2`} onPress={() => { setOtpModalVisible(false); setOtpValue(''); }}>
+//                 <Text style={tw`text-center text-white font-bold`}>Cancel</Text>
+//               </TouchableOpacity>
+//             </View>
+//           </View>
+//         </Modal>
+
+//         {/* EDIT PROFILE MODAL */}
+//         <Modal visible={editProfileVisible} transparent animationType="slide">
+//           <View style={styles.modalContainer}>
+//             <View style={styles.modalBox}>
+//               <Text style={tw`text-lg font-bold text-green-800 mb-3`}>Edit Profile</Text>
+
+//               <TouchableOpacity
+//                 onPress={() => setShowEditDatePicker(true)}
+//                 style={tw`bg-white px-4 py-3 rounded-lg border border-gray-200 mb-3`}
+//               >
+//                 <Text>{editDob ? editDob.toDateString() : 'Select Date of Birth'}</Text>
+//               </TouchableOpacity>
+//               {showEditDatePicker && (
+//                 <DateTimePicker
+//                   value={editDob || new Date(2000, 0, 1)}
+//                   mode="date"
+//                   maximumDate={new Date()}
+//                   display={Platform.OS === 'ios' ? 'inline' : 'default'}
+//                   onChange={(e, d) => {
+//                     setShowEditDatePicker(Platform.OS === 'ios');
+//                     if (d) setEditDob(d);
+//                   }}
+//                 />
+//               )}
+
+//               <View style={tw`flex-row justify-between mb-3`}>
+//                 {['Male', 'Female', 'Others'].map((g) => (
+//                   <TouchableOpacity
+//                     key={g}
+//                     onPress={() => setEditGender(g as any)}
+//                     style={tw`flex-1 mx-1 py-2 rounded-lg border ${editGender === g ? 'bg-green-600 border-green-600' : 'bg-white border-gray-200'}`}
+//                   >
+//                     <Text style={tw`${editGender === g ? 'text-white' : 'text-gray-700'} text-center`}>{g}</Text>
+//                   </TouchableOpacity>
+//                 ))}
+//               </View>
+
+//               <TouchableOpacity style={tw`bg-green-600 py-3 rounded-lg mt-1`} onPress={handleEditProfileSubmit} disabled={editLoading}>
+//                 <Text style={tw`text-center text-white font-bold`}>{editLoading ? 'Saving...' : 'Save'}</Text>
+//               </TouchableOpacity>
+
+//               <TouchableOpacity style={tw`bg-red-600 py-3 rounded-lg mt-2`} onPress={() => setEditProfileVisible(false)}>
 //                 <Text style={tw`text-center text-white font-bold`}>Cancel</Text>
 //               </TouchableOpacity>
 //             </View>
@@ -1782,12 +544,6 @@
 // export default PersonalDetailsScreen;
 
 
-
-
-
-
-
-
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -1799,28 +555,34 @@ import {
   TextInput,
   TouchableOpacity,
   Modal,
+  Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import tw from 'twrnc';
-import PageLayout from '../../components/PageLayout';
+import Svg, { Path } from 'react-native-svg';
+import { launchImageLibrary } from 'react-native-image-picker';
+
 import { sendEmailOtp, verifyEmailOtp } from '../../api/verify';
 import { completeGeneralUserProfile } from '../../api/profile';
 import { useAccessToken } from '../contexts/AccessTokenContext';
+import ProfileTopBar from '../../components/ProfileTopBar';
 
-const API_GET_USER = 'https://landing.docapp.co.in/api/auth/get-user-data';
-const API_ADD_ADDRESS = 'https://landing.docapp.co.in/api/address/addAddress';
-const API_GET_ALL_ADDRESS = 'https://landing.docapp.co.in/api/address/getAllAddress';
-const API_UPDATE_ADDRESS = 'https://landing.docapp.co.in/api/address/updateAddress';
-const API_DELETE_ADDRESS = 'https://landing.docapp.co.in/api/address/deleteAddress';
+const API_GET_USER = 'https://api.docapp.co.in/api/auth/get-user-data';
+const API_ADD_ADDRESS = 'https://api.docapp.co.in/api/address/addAddress';
+const API_GET_ALL_ADDRESS = 'https://api.docapp.co.in/api/address/getAllAddress';
+const API_UPDATE_ADDRESS = 'https://api.docapp.co.in/api/address/updateAddress';
+const API_DELETE_ADDRESS = 'https://api.docapp.co.in/api/address/deleteAddress';
+const API_CHANGE_PASSWORD = 'https://api.docapp.co.in/api/auth/change-password';
 
 const PersonalDetailsScreen = () => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const [allAddresses, setAllAddresses] = useState([]);
-
   const { accessToken } = useAccessToken();
 
   // Address Form
+  const [addressModalVisible, setAddressModalVisible] = useState(false);
   const [addressForm, setAddressForm] = useState({
     city: '',
     pincode: '',
@@ -1840,16 +602,27 @@ const PersonalDetailsScreen = () => {
     landmark: '',
     houseNo: '',
   });
+
   // Email OTP states
   const [otpModalVisible, setOtpModalVisible] = useState(false);
   const [otpValue, setOtpValue] = useState('');
   const [isOtpSending, setIsOtpSending] = useState(false);
+
   // Edit profile modal
   const [editProfileVisible, setEditProfileVisible] = useState(false);
-  const [editDob, setEditDob] = useState<Date | undefined>();
-  const [editGender, setEditGender] = useState<'Male' | 'Female' | 'Others' | ''>('');
+  const [editDob, setEditDob] = useState();
+  const [editGender, setEditGender] = useState('');
   const [editLoading, setEditLoading] = useState(false);
   const [showEditDatePicker, setShowEditDatePicker] = useState(false);
+
+  // Change Password Modal
+  const [changePasswordVisible, setChangePasswordVisible] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [passwordLoading, setPasswordLoading] = useState(false);
+
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [localPhotoUri, setLocalPhotoUri] = useState<string | null>(null);
+  const [imageTimestamp, setImageTimestamp] = useState(Date.now());
 
   const handleChange = (field, value) => {
     setAddressForm({ ...addressForm, [field]: value });
@@ -1910,7 +683,6 @@ const PersonalDetailsScreen = () => {
       Alert.alert('Error', 'Please fill all fields');
       return;
     }
-
     try {
       const response = await fetch(API_ADD_ADDRESS, {
         method: 'POST',
@@ -1925,6 +697,7 @@ const PersonalDetailsScreen = () => {
       if (response.ok) {
         Alert.alert('Success', data.message);
         setAddressForm({ city: '', pincode: '', street: '', state: '' });
+        setAddressModalVisible(false);
         fetchAllAddresses();
       } else {
         Alert.alert('Error', data.message);
@@ -1947,7 +720,6 @@ const PersonalDetailsScreen = () => {
       });
 
       const data = await response.json();
-
       if (response.ok) {
         Alert.alert('Success', data.message);
         setEditModalVisible(false);
@@ -1960,110 +732,86 @@ const PersonalDetailsScreen = () => {
     }
   };
 
-  // Delete Address
-  const handleDeleteAddress = async (addressId) => {
-    Alert.alert(
-      "Delete Address",
-      "Are you sure you want to delete this address?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              const response = await fetch(API_DELETE_ADDRESS, {
-                method: 'DELETE',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${accessToken}`,
-                },
-                body: JSON.stringify({ addressId }),
-              });
-
-              const data = await response.json();
-
-              if (response.ok) {
-                Alert.alert('Success', data.message || 'Address deleted successfully');
-                fetchAllAddresses();
-              } else {
-                Alert.alert('Error', data.message || 'Failed to delete address');
-              }
-            } catch (error) {
-              Alert.alert('Error', 'Network error while deleting address');
-            }
-          }
-        }
-      ]
-    );
-  };
-
-  // Send Email OTP
-  const handleSendEmailOtp = async () => {
-    setIsOtpSending(true);
-    try {
-      const res = await sendEmailOtp(accessToken);
-      if (res.ok) {
-        Alert.alert('Success', res.data?.message || 'OTP sent to your email');
-        setOtpModalVisible(true);
-      } else {
-        Alert.alert('Error', res.data?.message || 'Failed to send OTP');
-      }
-    } catch (err) {
-      Alert.alert('Error', 'Network error while sending OTP');
-    } finally {
-      setIsOtpSending(false);
-    }
-  };
-
-  // Verify Email OTP
-  const handleVerifyEmailOtp = async () => {
-    if (!otpValue) {
-      Alert.alert('Error', 'Please enter the OTP');
+  // Change Password
+  const handleChangePassword = async () => {
+    if (!newPassword || newPassword.length < 6) {
+      Alert.alert('Error', 'Password must be at least 6 characters');
       return;
     }
+    setPasswordLoading(true);
     try {
-      const res = await verifyEmailOtp(otpValue, userData.email, accessToken);
-      if (res.ok) {
-        Alert.alert('Success', res.data?.message || 'Email verified');
-        setOtpModalVisible(false);
-        setOtpValue('');
-        fetchUserData();
+      const response = await fetch(API_CHANGE_PASSWORD, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ newPassword }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        Alert.alert('Success', data.message || 'Password changed successfully');
+        setChangePasswordVisible(false);
+        setNewPassword('');
       } else {
-        Alert.alert('Error', res.data?.message || 'Invalid OTP');
+        Alert.alert('Error', data.message || 'Failed to change password');
       }
-    } catch (err) {
-      Alert.alert('Error', 'Network error while verifying OTP');
+    } catch (error) {
+      Alert.alert('Error', 'Network error while changing password');
+    } finally {
+      setPasswordLoading(false);
     }
   };
 
-  // Edit profile submit
-  const handleEditProfileSubmit = async () => {
-    // basic validation
-    if (!editDob || !editGender) {
-      Alert.alert('Error', 'Please provide date of birth and gender');
+  const handleUploadPhoto = async () => {
+    const result = await launchImageLibrary({
+      mediaType: 'photo',
+      quality: 0.8,
+    });
+
+    if (result.didCancel || !result.assets || result.assets.length === 0) {
       return;
     }
 
-    setEditLoading(true);
-    try {
-      const payload = {
-        date_of_birth: editDob.toISOString().split('T')[0],
-        gender: editGender,
-      };
+    const asset = result.assets[0];
 
-      const res = await completeGeneralUserProfile(payload, accessToken);
-      if (res.ok) {
-        Alert.alert('Success', res.data?.message || 'Profile updated');
-        setEditProfileVisible(false);
-        fetchUserData();
+    const formData = new FormData();
+    formData.append('image', {
+      uri: asset.uri,
+      type: asset.type || 'image/jpeg',
+      name: asset.fileName || 'profile_photo.jpg',
+    } as any);
+
+    setUploadingPhoto(true);
+    setLocalPhotoUri(asset.uri || null);
+
+    try {
+      const response = await fetch('https://api.docapp.co.in/api/auth/upload-photo', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'multipart/form-data',
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        Alert.alert('Success', data.message || 'Photo uploaded successfully');
+        await fetchUserData();
+        setImageTimestamp(Date.now());
+        setLocalPhotoUri(null);
       } else {
-        Alert.alert('Error', res.data?.message || 'Failed to update profile');
+        setLocalPhotoUri(null);
+        Alert.alert('Error', data.message || 'Failed to upload photo');
       }
-    } catch (err) {
-      Alert.alert('Error', 'Network error while updating profile');
+    } catch (error) {
+      console.error(error);
+      setLocalPhotoUri(null);
+      Alert.alert('Error', 'Network error while uploading photo');
     } finally {
-      setEditLoading(false);
+      setUploadingPhoto(false);
     }
   };
 
@@ -2074,256 +822,368 @@ const PersonalDetailsScreen = () => {
 
   if (loading) {
     return (
-      <PageLayout title="Personal Details" headerBackgroundColor="bg-green-600">
-        <View style={tw`flex-1 justify-center items-center`}>
-          <ActivityIndicator size="large" color="#16a34a" />
-          <Text style={tw`text-green-700 mt-2`}>Loading...</Text>
-        </View>
-      </PageLayout>
+      <SafeAreaView style={tw`flex-1 bg-[#F9FAFB] justify-center items-center`}>
+        <ActivityIndicator size="large" color="#124CB8" />
+      </SafeAreaView>
     );
   }
 
   if (!userData) {
     return (
-      <PageLayout title="Personal Details" headerBackgroundColor="bg-green-600">
-        <View style={tw`flex-1 justify-center items-center`}>
-          <Text style={tw`text-red-500`}>No user data found</Text>
-        </View>
-      </PageLayout>
+      <SafeAreaView style={tw`flex-1 bg-[#F9FAFB] justify-center items-center`}>
+        <Text style={tw`text-red-500`}>No user data found</Text>
+      </SafeAreaView>
     );
   }
 
   const general = userData.generalUser || {};
+  const currentAddress = allAddresses.length > 0 ? allAddresses[0] : null;
 
   return (
-    <PageLayout title="Personal Details" headerBackgroundColor="bg-green-600" scrollable={true}>
-      <ScrollView contentContainerStyle={tw`pb-10`}>
+    <SafeAreaView style={tw`flex-1 bg-white px-5 pb-6`}>
+      <ProfileTopBar />
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={tw`pb-10 bg-[#FFFFFF] items-center`}>
 
-        {/* USER DETAILS CARD */}
-        <View
-          style={[
-            tw`bg-white rounded-xl p-4 mx-4 mt-6`,
-            { elevation: 3, borderWidth: 1, borderColor: '#d1d5db' },
-          ]}
-        >
-          <View style={tw`items-center`}>
+
+        {/* === SECTION 1: USER PROFILE CARD === */}
+        <View style={[tw`mt-6 items-center p-4 w-[100%] rounded-[24px]`, styles.profileCard]}>
+          {/* Edit Button */}
+          <TouchableOpacity
+            style={[tw`absolute top-6 right-6 rounded-full justify-center items-center`, styles.editBtn]}
+            onPress={() => setEditProfileVisible(true)}
+          >
+            <Svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <Path d="M2 16H3.425L13.2 6.225L11.775 4.8L2 14.575V16ZM0 18V13.75L13.2 0.575C13.4 0.391667 13.6208 0.25 13.8625 0.15C14.1042 0.05 14.3583 0 14.625 0C14.8917 0 15.15 0.05 15.4 0.15C15.65 0.25 15.8667 0.4 16.05 0.6L17.425 2C17.625 2.18333 17.7708 2.4 17.8625 2.65C17.9542 2.9 18 3.15 18 3.4C18 3.66667 17.9542 3.92083 17.8625 4.1625C17.7708 4.40417 17.625 4.625 17.425 4.825L4.25 18H0ZM16 3.4L14.6 2L16 3.4ZM12.475 5.525L11.775 4.8L13.2 6.225L12.475 5.525Z" fill="#001A41" />
+            </Svg>
+          </TouchableOpacity>
+
+          {/* Avatar with Active Dot */}
+          <TouchableOpacity style={tw`relative mt-2`} onPress={handleUploadPhoto} disabled={uploadingPhoto}>
             <Image
-              source={{ uri: general.profile_picture }}
-              style={tw`w-28 h-28 rounded-full`}
+              source={{ uri: localPhotoUri || (general.profile_picture ? `${general.profile_picture}?t=${imageTimestamp}` : 'https://via.placeholder.com/150') }}
+              style={[tw`w-24 h-24 rounded-full`, styles.avatarShadow]}
             />
-            <Text style={tw`text-xl font-bold text-green-900 mt-3`}>{userData.username}</Text>
-            <Text style={tw`text-sm text-green-700`}>{userData.role?.toUpperCase()}</Text>
-          </View>
+            {uploadingPhoto ? (
+              <View style={[tw`absolute w-24 h-24 rounded-full justify-center items-center`, { backgroundColor: 'rgba(0,0,0,0.5)' }]}>
+                <ActivityIndicator color="#FFFFFF" />
+              </View>
+            ) : null}
+            <View style={styles.activeDot} />
+          </TouchableOpacity>
 
-          <View style={tw`mt-4`}>
-            <Detail label="Email" value={userData.email} />
-            <View style={tw`mt-2`}>
-              <TouchableOpacity
-                style={tw`bg-blue-600 py-2 px-4 rounded-lg self-start`}
-                onPress={handleSendEmailOtp}
-                disabled={isOtpSending}
-              >
-                <Text style={tw`text-white font-semibold`}>{isOtpSending ? 'Sending...' : 'Send Email OTP'}</Text>
-              </TouchableOpacity>
-            </View>
-            <Detail label="Phone" value={userData.phone_number} />
-            <Detail label="Gender" value={general.gender} />
-            <Detail label="Date of Birth" value={general.date_of_birth?.split("T")[0]} />
-            <Detail label="Created At" value={general.createdAt?.split("T")[0]} />
-            <Detail label="Updated At" value={general.updatedAt?.split("T")[0]} />
-          </View>
+          {/* User Info */}
+          <Text style={tw`text-[24px] font-bold text-[#001A41] mt-4 text-center`}>
+            {userData.username || 'Dr. Alexander Sterling'}
+          </Text>
+          <Text style={tw`text-[16px] font-medium text-[#001A41]/80 mt-1 text-center`}>
+            {userData.email}
+          </Text>
         </View>
 
-        {/* ----------------------------- */}
-        {/* ADD ADDRESS — SHOW ONLY IF NO ADDRESS */}
-        {/* ----------------------------- */}
-        {allAddresses.length === 0 && (
-          <View style={[tw`bg-white rounded-xl p-4 mx-4 mt-6`, { elevation: 2 }]}>
-            <Text style={tw`text-lg font-bold text-green-800 mb-4`}>Add Address</Text>
 
-            <TextInput style={styles.input} placeholder="City" value={addressForm.city} onChangeText={(t) => handleChange('city', t)} />
-            <TextInput style={styles.input} placeholder="Pincode" keyboardType="numeric" value={addressForm.pincode} onChangeText={(t) => handleChange('pincode', t)} />
-            <TextInput style={styles.input} placeholder="Street" value={addressForm.street} onChangeText={(t) => handleChange('street', t)} />
-            <TextInput style={styles.input} placeholder="State" value={addressForm.state} onChangeText={(t) => handleChange('state', t)} />
 
-            <TouchableOpacity style={tw`bg-green-600 py-3 rounded-lg mt-2`} onPress={handleAddAddress}>
-              <Text style={tw`text-center text-white font-bold`}>Add Address</Text>
+
+
+
+        {/* === SECTION 2: ADDRESS === */}
+        {/* <View style={[tw`mt-4 p-5`, styles.bentoCard]}>
+          <View style={tw`flex-row items-center mb-4`}>
+            <View style={tw`w-10 h-10 bg-[#0066FF]/10 rounded-xl justify-center items-center mr-3`}>
+              <Text style={tw`text-lg`}>📍</Text>
+            </View>
+            <Text style={tw`text-[18px] font-bold text-[#1A1B1F]`}>Address</Text>
+          </View>
+
+          <View style={tw`bg-[#F1F0F4] rounded-2xl p-4 mb-4`}>
+            {currentAddress ? (
+              <>
+                <Text style={tw`text-[14px] font-semibold text-[#1A1B1F] mb-1`}>
+                  {currentAddress.landmark || 'Primary Address'}
+                </Text>
+                <Text style={tw`text-[12px] text-[#44474F] leading-4`}>
+                  {currentAddress.house_no ? `${currentAddress.house_no} ` : ''}
+                  {currentAddress.street}, {currentAddress.city}{'\n'}
+                  {currentAddress.state}, {currentAddress.pincode}
+                </Text>
+              </>
+            ) : (
+              <Text style={tw`text-[12px] text-[#44474F] leading-4`}>No address added yet.</Text>
+            )}
+          </View>
+
+          {currentAddress ? (
+            <TouchableOpacity
+              style={tw`py-2 rounded-xl justify-center items-center`}
+              onPress={() => {
+                setEditForm({
+                  addressId: currentAddress.id.toString(),
+                  country: currentAddress.country || 'India',
+                  state: currentAddress.state,
+                  city: currentAddress.city,
+                  pincode: currentAddress.pincode,
+                  street: currentAddress.street,
+                  landmark: currentAddress.landmark || '',
+                  houseNo: currentAddress.house_no || '',
+                });
+                setEditModalVisible(true);
+              }}
+            >
+              <Text style={tw`text-[14px] font-bold text-[#124CB8]`}>Change Address</Text>
             </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={tw`py-2 rounded-xl justify-center items-center bg-[#124CB8]/10`}
+              onPress={() => setAddressModalVisible(true)}
+            >
+              <Text style={tw`text-[14px] font-bold text-[#124CB8]`}>Add Address</Text>
+            </TouchableOpacity>
+          )}
+        </View> */}
+
+        {/* === SECTION 2: ADDRESS === */}
+        <View style={[tw`p-5 gap-4 mt-6 w-full`]}>
+
+          {/* Header */}
+          <View style={tw`flex-row items-center gap-3 w-full`}>
+            <View style={tw`w-10 h-10 bg-[#0066FF]/10 rounded-xl justify-center items-center`}>
+              <Svg width="16" height="20" viewBox="0 0 16 20" fill="none">
+                <Path d="M8 10C8.55 10 9.02083 9.80417 9.4125 9.4125C9.80417 9.02083 10 8.55 10 8C10 7.45 9.80417 6.97917 9.4125 6.5875C9.02083 6.19583 8.55 6 8 6C7.45 6 6.97917 6.19583 6.5875 6.5875C6.19583 6.97917 6 7.45 6 8C6 8.55 6.19583 9.02083 6.5875 9.4125C6.97917 9.80417 7.45 10 8 10ZM8 17.35C10.0333 15.4833 11.5417 13.7875 12.525 12.2625C13.5083 10.7375 14 9.38333 14 8.2C14 6.38333 13.4208 4.89583 12.2625 3.7375C11.1042 2.57917 9.68333 2 8 2C6.31667 2 4.89583 2.57917 3.7375 3.7375C2.57917 4.89583 2 6.38333 2 8.2C2 9.38333 2.49167 10.7375 3.475 12.2625C4.45833 13.7875 5.96667 15.4833 8 17.35ZM8 20C5.31667 17.7167 3.3125 15.5958 1.9875 13.6375C0.6625 11.6792 0 9.86667 0 8.2C0 5.7 0.804167 3.70833 2.4125 2.225C4.02083 0.741667 5.88333 0 8 0C10.1167 0 11.9792 0.741667 13.5875 2.225C15.1958 3.70833 16 5.7 16 8.2C16 9.86667 15.3375 11.6792 14.0125 13.6375C12.6875 15.5958 10.6833 17.7167 8 20Z" fill="#124CB8" />
+              </Svg>
+            </View>
+            <Text style={tw`text-lg font-bold text-[#1A1B1F]`}>Address</Text>
           </View>
-        )}
 
-        {/* ----------------------------- */}
-        {/* SHOW ADDRESSES — ONLY IF EXISTS */}
-        {/* ----------------------------- */}
-        {allAddresses.length > 0 && (
-          <View style={[tw`bg-green-50 rounded-xl p-4 mx-4 mt-6`, { elevation: 1 }]}>
-            <Text style={tw`text-lg font-bold text-green-900 mb-3`}>Your Addresss</Text>
-
-            {allAddresses.map((item) => (
-              <View key={item.id} style={tw`p-3 bg-white rounded-lg mb-3 border`}>
-                <Text style={tw`text-green-900 font-bold`}>{item.street}, {item.city}</Text>
-                <Text style={tw`text-green-700`}>{item.state} - {item.pincode}</Text>
-
-                <View style={tw`flex-row mt-2`}>
-                  <TouchableOpacity
-                    style={tw`bg-blue-600 py-2 px-4 rounded-lg mr-2 self-start`}
-                    onPress={() => {
-                      setEditForm({
-                        addressId: item.id.toString(),
-                        country: item.country || 'India',
-                        state: item.state,
-                        city: item.city,
-                        pincode: item.pincode,
-                        street: item.street,
-                        landmark: item.landmark || '',
-                        houseNo: item.house_no || '',
-                      });
-                      setEditModalVisible(true);
-                    }}
-                  >
-                    <Text style={tw`text-white font-bold`}>Edit</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={tw`bg-red-600 py-2 px-4 rounded-lg self-start`}
-                    onPress={() => handleDeleteAddress(item.id.toString())}
-                  >
-                    <Text style={tw`text-white font-bold`}>Delete</Text>
-                  </TouchableOpacity>
-                </View>
+          {/* Address Details Box */}
+          <View style={tw`w-full bg-[#F1F0F4] rounded-2xl p-3`}>
+            {currentAddress ? (
+              <View style={tw`flex-col gap-1`}>
+                <Text style={tw`text-sm font-semibold text-[#1A1B1F]`}>
+                  {currentAddress.landmark || 'Central Medical Plaza'}
+                </Text>
+                <Text style={tw`text-xs text-[#44474F] font-normal leading-4`}>
+                  {currentAddress.house_no ? `${currentAddress.house_no} ` : ''}
+                  {currentAddress.street}, {currentAddress.city}{'\n'}
+                  {currentAddress.state}, {currentAddress.pincode}
+                </Text>
               </View>
-            ))}
+            ) : (
+              <Text style={tw`text-xs text-[#44474F] font-normal leading-4`}>
+                No address added yet.
+              </Text>
+            )}
           </View>
-        )}
 
-        {/* ----------------------------- */}
-        {/* EDIT MODAL */}
-        {/* ----------------------------- */}
-        <Modal visible={editModalVisible} transparent animationType="slide">
+          {/* Action Button */}
+          {currentAddress ? (
+            <TouchableOpacity
+              style={tw`w-full py-2 rounded-xl justify-center items-center`}
+              onPress={() => {
+                setEditForm({
+                  addressId: currentAddress.id.toString(),
+                  country: currentAddress.country || 'India',
+                  state: currentAddress.state,
+                  city: currentAddress.city,
+                  pincode: currentAddress.pincode,
+                  street: currentAddress.street,
+                  landmark: currentAddress.landmark || '',
+                  houseNo: currentAddress.house_no || '',
+                });
+                setEditModalVisible(true);
+              }}
+            >
+              <Text style={tw`text-sm font-bold text-[#124CB8] text-center`}>Change Address</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={tw`w-full py-2 rounded-xl justify-center items-center`}
+              onPress={() => setAddressModalVisible(true)}
+            >
+              <Text style={tw`text-sm font-bold text-[#124CB8] text-center`}>Add Address</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+
+
+
+        {/* === SECTION 3: SECURITY === */}
+        <View style={[tw`mt-2 p-5 w-100%`]}>
+          <View style={tw`flex-row items-center mb-4`}>
+            <View style={tw`w-10 h-10 bg-[#705573]/10 rounded-xl justify-center items-center mr-3`}>
+              <Text style={tw`text-lg`}>🛡️</Text>
+            </View>
+            <Text style={tw`text-[18px] font-bold text-[#1A1B1F]`}>Security</Text>
+          </View>
+
+          <TouchableOpacity
+            style={tw`bg-[#F1F0F4] rounded-2xl p-4 flex-row justify-between items-center mb-3`}
+            onPress={() => setChangePasswordVisible(true)}
+          >
+            <View>
+              <Text style={tw`text-[12px] font-bold text-[#74777F] tracking-widest uppercase`}>
+                Password
+              </Text>
+              <Text style={tw`text-[14px] text-[#1A1B1F] mt-1 tracking-widest`}>
+                ••••••••••••
+              </Text>
+            </View>
+            <Text style={tw`text-[#74777F] text-xl`}>›</Text>
+          </TouchableOpacity>
+
+          {/* <View style={tw`bg-[#F1F0F4] rounded-2xl p-4 flex-row justify-between items-center`}>
+            <View>
+              <Text style={tw`text-[12px] font-bold text-[#74777F] tracking-widest uppercase`}>
+                2FA
+              </Text>
+              <Text style={tw`text-[14px] font-medium text-[#16A34A] mt-1`}>
+                Enabled
+              </Text>
+            </View>
+            <Text style={tw`text-lg`}>✅</Text>
+          </View> */}
+
+        </View>
+
+        {/* ========================================= */}
+        {/* MODALS SECTION                            */}
+        {/* ========================================= */}
+
+        {/* Change Password Modal */}
+        <Modal visible={changePasswordVisible} transparent animationType="fade">
           <View style={styles.modalContainer}>
             <View style={styles.modalBox}>
-              <Text style={tw`text-lg font-bold text-green-800 mb-3`}>Edit Address</Text>
+              <Text style={tw`text-lg font-bold text-[#001A41] mb-3`}>Change Password</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="New Password"
+                secureTextEntry
+                value={newPassword}
+                onChangeText={setNewPassword}
+              />
+              <TouchableOpacity style={tw`bg-[#124CB8] py-3 rounded-xl mt-3`} onPress={handleChangePassword} disabled={passwordLoading}>
+                <Text style={tw`text-center text-white font-bold`}>{passwordLoading ? 'Saving...' : 'Update Password'}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={tw`bg-gray-200 py-3 rounded-xl mt-2`} onPress={() => setChangePasswordVisible(false)}>
+                <Text style={tw`text-center text-gray-800 font-bold`}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
 
+        {/* Add Address Modal */}
+        <Modal visible={addressModalVisible} transparent animationType="fade">
+          <View style={styles.modalContainer}>
+            <View style={styles.modalBox}>
+              <Text style={tw`text-lg font-bold text-[#001A41] mb-4`}>Add Address</Text>
+              <TextInput style={styles.input} placeholder="City" value={addressForm.city} onChangeText={(t) => handleChange('city', t)} />
+              <TextInput style={styles.input} placeholder="Pincode" keyboardType="numeric" value={addressForm.pincode} onChangeText={(t) => handleChange('pincode', t)} />
+              <TextInput style={styles.input} placeholder="Street" value={addressForm.street} onChangeText={(t) => handleChange('street', t)} />
+              <TextInput style={styles.input} placeholder="State" value={addressForm.state} onChangeText={(t) => handleChange('state', t)} />
+              <TouchableOpacity style={tw`bg-[#124CB8] py-3 rounded-xl mt-2`} onPress={handleAddAddress}>
+                <Text style={tw`text-center text-white font-bold`}>Save Address</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={tw`bg-gray-200 py-3 rounded-xl mt-2`} onPress={() => setAddressModalVisible(false)}>
+                <Text style={tw`text-center text-gray-800 font-bold`}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
+        {/* Edit Address Modal */}
+        <Modal visible={editModalVisible} transparent animationType="fade">
+          <View style={styles.modalContainer}>
+            <View style={styles.modalBox}>
+              <Text style={tw`text-lg font-bold text-[#001A41] mb-3`}>Edit Address</Text>
+              <TextInput style={styles.input} placeholder="Landmark" value={editForm.landmark} onChangeText={(t) => handleEditChange('landmark', t)} />
+              <TextInput style={styles.input} placeholder="House No." value={editForm.houseNo} onChangeText={(t) => handleEditChange('houseNo', t)} />
+              <TextInput style={styles.input} placeholder="Street" value={editForm.street} onChangeText={(t) => handleEditChange('street', t)} />
               <TextInput style={styles.input} placeholder="City" value={editForm.city} onChangeText={(t) => handleEditChange('city', t)} />
               <TextInput style={styles.input} placeholder="State" value={editForm.state} onChangeText={(t) => handleEditChange('state', t)} />
               <TextInput style={styles.input} placeholder="Pincode" value={editForm.pincode} onChangeText={(t) => handleEditChange('pincode', t)} />
-              <TextInput style={styles.input} placeholder="Street" value={editForm.street} onChangeText={(t) => handleEditChange('street', t)} />
-              <TextInput style={styles.input} placeholder="Landmark" value={editForm.landmark} onChangeText={(t) => handleEditChange('landmark', t)} />
-              <TextInput style={styles.input} placeholder="House No." value={editForm.houseNo} onChangeText={(t) => handleEditChange('houseNo', t)} />
-
-              <TouchableOpacity style={tw`bg-green-600 py-3 rounded-lg mt-3`} onPress={handleUpdateAddress}>
+              <TouchableOpacity style={tw`bg-[#124CB8] py-3 rounded-xl mt-3`} onPress={handleUpdateAddress}>
                 <Text style={tw`text-center text-white font-bold`}>Update Address</Text>
               </TouchableOpacity>
-
-              <TouchableOpacity style={tw`bg-red-600 py-3 rounded-lg mt-2`} onPress={() => setEditModalVisible(false)}>
-                <Text style={tw`text-center text-white font-bold`}>Cancel</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
-
-        {/* OTP VERIFY MODAL */}
-        <Modal visible={otpModalVisible} transparent animationType="slide">
-          <View style={styles.modalContainer}>
-            <View style={styles.modalBox}>
-              <Text style={tw`text-lg font-bold text-green-800 mb-3`}>Enter OTP</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter OTP"
-                keyboardType="numeric"
-                value={otpValue}
-                onChangeText={setOtpValue}
-              />
-              <TouchableOpacity style={tw`bg-green-600 py-3 rounded-lg mt-3`} onPress={handleVerifyEmailOtp}>
-                <Text style={tw`text-center text-white font-bold`}>Verify OTP</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={tw`bg-red-600 py-3 rounded-lg mt-2`} onPress={() => { setOtpModalVisible(false); setOtpValue(''); }}>
-                <Text style={tw`text-center text-white font-bold`}>Cancel</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
-
-        {/* EDIT PROFILE MODAL */}
-        <Modal visible={editProfileVisible} transparent animationType="slide">
-          <View style={styles.modalContainer}>
-            <View style={styles.modalBox}>
-              <Text style={tw`text-lg font-bold text-green-800 mb-3`}>Edit Profile</Text>
-
-              <TouchableOpacity
-                onPress={() => setShowEditDatePicker(true)}
-                style={tw`bg-white px-4 py-3 rounded-lg border border-gray-200 mb-3`}
-              >
-                <Text>{editDob ? editDob.toDateString() : 'Select Date of Birth'}</Text>
-              </TouchableOpacity>
-              {showEditDatePicker && (
-                <DateTimePicker
-                  value={editDob || new Date(2000, 0, 1)}
-                  mode="date"
-                  maximumDate={new Date()}
-                  display={Platform.OS === 'ios' ? 'inline' : 'default'}
-                  onChange={(e, d) => {
-                    setShowEditDatePicker(Platform.OS === 'ios');
-                    if (d) setEditDob(d);
-                  }}
-                />
-              )}
-
-              <View style={tw`flex-row justify-between mb-3`}>
-                {['Male', 'Female', 'Others'].map((g) => (
-                  <TouchableOpacity
-                    key={g}
-                    onPress={() => setEditGender(g as any)}
-                    style={tw`flex-1 mx-1 py-2 rounded-lg border ${editGender === g ? 'bg-green-600 border-green-600' : 'bg-white border-gray-200'}`}
-                  >
-                    <Text style={tw`${editGender === g ? 'text-white' : 'text-gray-700'} text-center`}>{g}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-
-              <TouchableOpacity style={tw`bg-green-600 py-3 rounded-lg mt-1`} onPress={handleEditProfileSubmit} disabled={editLoading}>
-                <Text style={tw`text-center text-white font-bold`}>{editLoading ? 'Saving...' : 'Save'}</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={tw`bg-red-600 py-3 rounded-lg mt-2`} onPress={() => setEditProfileVisible(false)}>
-                <Text style={tw`text-center text-white font-bold`}>Cancel</Text>
+              <TouchableOpacity style={tw`bg-gray-200 py-3 rounded-xl mt-2`} onPress={() => setEditModalVisible(false)}>
+                <Text style={tw`text-center text-gray-800 font-bold`}>Cancel</Text>
               </TouchableOpacity>
             </View>
           </View>
         </Modal>
 
       </ScrollView>
-    </PageLayout>
+    </SafeAreaView>
   );
 };
 
-const Detail = ({ label, value }) => (
-  <View style={tw`mb-3`}>
-    <Text style={tw`text-xs text-gray-600`}>{label}</Text>
-    <Text style={tw`text-base text-green-900 font-semibold`}>{value || 'N/A'}</Text>
-  </View>
-);
-
 const styles = {
+  profileCard: {
+    // width: 358,
+    // height: 216,
+    backgroundColor: '#D8E2FF',
+    borderRadius: 24,
+  },
+  editBtn: {
+    width: 40,
+    height: 40,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+  },
+  avatarShadow: {
+    borderWidth: 4,
+    borderColor: '#FFFFFF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  activeDot: {
+    position: 'absolute',
+    width: 24,
+    height: 24,
+    right: 0,
+    bottom: 0,
+    backgroundColor: '#22C55E',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+    borderRadius: 12,
+    zIndex: 1,
+  },
+  bentoCard: {
+    width: 358,
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.8)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
+    borderRadius: 24,
+  },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    borderRadius: 8,
+    borderColor: '#E5E7EB',
+    backgroundColor: '#F9FAFB',
+    padding: 12,
+    borderRadius: 12,
     marginBottom: 10,
+    color: '#1F2937',
   },
   modalContainer: {
     flex: 1,
-    backgroundColor: '#00000099',
+    backgroundColor: 'rgba(0,0,0,0.4)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalBox: {
     width: '85%',
     backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 12,
+    padding: 24,
+    borderRadius: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 10,
   },
 };
 

@@ -295,7 +295,7 @@ const AddDoctorScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const { accessToken } = useAccessToken();
   const [isLoading, setIsLoading] = useState(false);
-  
+
   // State now handles an array of emails strings
   const [emails, setEmails] = useState<string[]>(['']);
 
@@ -345,7 +345,7 @@ const AddDoctorScreen = () => {
       console.log('Submitting doctor emails:', apiPayload);
 
       // 4. Call API
-      const response = await fetch('https://landing.docapp.co.in/api/hospital/create-accounts', {
+      const response = await fetch('https://api.docapp.co.in/api/hospital/create-accounts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -365,11 +365,11 @@ const AddDoctorScreen = () => {
         const refusedCount = data.refusedAccounts?.length || 0;
 
         let message = '';
-        
+
         if (createdCount > 0) {
           message += `✅ Successfully created ${createdCount} account(s).\n`;
         }
-        
+
         if (refusedCount > 0) {
           message += `⚠️ Refused ${refusedCount} account(s) (likely duplicates).`;
         }
@@ -412,7 +412,7 @@ const AddDoctorScreen = () => {
 
       <ScrollView style={tw`flex-1`} showsVerticalScrollIndicator={false}>
         <View style={tw`p-6`}>
-          
+
           <Text style={tw`text-green-800 text-base mb-4`}>
             Enter the email addresses of the doctors you wish to register. Accounts will be created instantly.
           </Text>
@@ -433,10 +433,10 @@ const AddDoctorScreen = () => {
                   onChangeText={(text) => handleEmailChange(text, index)}
                 />
               </View>
-              
+
               {/* Show delete button if there is more than one field */}
               {emails.length > 1 && (
-                <TouchableOpacity 
+                <TouchableOpacity
                   onPress={() => removeEmailField(index)}
                   style={tw`ml-2 p-3 bg-red-100 rounded-lg border border-red-200`}
                 >

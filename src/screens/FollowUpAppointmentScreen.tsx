@@ -64,7 +64,7 @@ const FollowUpAppointmentScreen: React.FC = () => {
       try {
         setLoadingSlots(true);
         const response = await fetch(
-          `https://landing.docapp.co.in/api/auth/show-slots/${parentAppointment.doctor_id}`,
+          `https://api.docapp.co.in/api/auth/show-slots/${parentAppointment.doctor_id}`,
           {
             headers: {
               'Authorization': `Bearer ${accessToken}`,
@@ -95,7 +95,7 @@ const FollowUpAppointmentScreen: React.FC = () => {
         const filteredSlots = parsedSlots.filter((slot) => {
           const slotDate = new Date(slot.date);
           slotDate.setHours(0, 0, 0, 0);
-          
+
           // Only show future dates
           if (slotDate <= today) return false;
 
@@ -187,7 +187,7 @@ const FollowUpAppointmentScreen: React.FC = () => {
 
     try {
       const response = await fetch(
-        "https://landing.docapp.co.in/api/appointment/schedule-checkup-appointment",
+        "https://api.docapp.co.in/api/appointment/schedule-checkup-appointment",
         {
           method: "POST",
           headers: {
@@ -282,28 +282,24 @@ const FollowUpAppointmentScreen: React.FC = () => {
           <View style={tw`flex-row bg-green-100 rounded-xl p-2`}>
             <TouchableOpacity
               onPress={() => setFollowUpType("online_video")}
-              style={tw`flex-1 py-3 rounded-lg ${
-                followUpType === "online_video" ? "bg-green-600" : "bg-transparent"
-              }`}
+              style={tw`flex-1 py-3 rounded-lg ${followUpType === "online_video" ? "bg-green-600" : "bg-transparent"
+                }`}
             >
               <Text
-                style={tw`text-center font-semibold ${
-                  followUpType === "online_video" ? "text-white" : "text-green-800"
-                }`}
+                style={tw`text-center font-semibold ${followUpType === "online_video" ? "text-white" : "text-green-800"
+                  }`}
               >
                 Online Video
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setFollowUpType("in_person")}
-              style={tw`flex-1 py-3 rounded-lg ${
-                followUpType === "in_person" ? "bg-green-600" : "bg-transparent"
-              }`}
+              style={tw`flex-1 py-3 rounded-lg ${followUpType === "in_person" ? "bg-green-600" : "bg-transparent"
+                }`}
             >
               <Text
-                style={tw`text-center font-semibold ${
-                  followUpType === "in_person" ? "text-white" : "text-green-800"
-                }`}
+                style={tw`text-center font-semibold ${followUpType === "in_person" ? "text-white" : "text-green-800"
+                  }`}
               >
                 In Person
               </Text>
@@ -329,18 +325,16 @@ const FollowUpAppointmentScreen: React.FC = () => {
                   return (
                     <TouchableOpacity
                       key={date}
-                      style={tw`px-4 py-3 mr-3 rounded-xl ${
-                        selectedDate === date ? "bg-green-600" : "bg-green-100"
-                      }`}
+                      style={tw`px-4 py-3 mr-3 rounded-xl ${selectedDate === date ? "bg-green-600" : "bg-green-100"
+                        }`}
                       onPress={() => {
                         setSelectedDate(date);
                         setSelectedSlot("");
                       }}
                     >
                       <Text
-                        style={tw`text-base font-semibold ${
-                          selectedDate === date ? "text-white" : "text-green-800"
-                        }`}
+                        style={tw`text-base font-semibold ${selectedDate === date ? "text-white" : "text-green-800"
+                          }`}
                       >
                         {new Date(date).toLocaleDateString("en-US", {
                           weekday: "short",
@@ -349,9 +343,8 @@ const FollowUpAppointmentScreen: React.FC = () => {
                         })}
                       </Text>
                       <Text
-                        style={tw`text-xs mt-1 ${
-                          selectedDate === date ? "text-green-100" : pricing.free ? "text-green-600" : "text-yellow-600"
-                        }`}
+                        style={tw`text-xs mt-1 ${selectedDate === date ? "text-green-100" : pricing.free ? "text-green-600" : "text-yellow-600"
+                          }`}
                       >
                         {pricing.free ? "FREE" : pricing.eligible ? "PAID" : "N/A"}
                       </Text>
@@ -363,22 +356,20 @@ const FollowUpAppointmentScreen: React.FC = () => {
               {/* Pricing indicator for selected date */}
               {selectedDate && (
                 <View
-                  style={tw`p-3 rounded-lg mb-4 ${
-                    getFollowUpPricing(parentAppointment.appointment_date, selectedDate).free
+                  style={tw`p-3 rounded-lg mb-4 ${getFollowUpPricing(parentAppointment.appointment_date, selectedDate).free
                       ? "bg-green-100"
                       : getFollowUpPricing(parentAppointment.appointment_date, selectedDate).eligible
-                      ? "bg-yellow-100"
-                      : "bg-red-100"
-                  }`}
+                        ? "bg-yellow-100"
+                        : "bg-red-100"
+                    }`}
                 >
                   <Text
-                    style={tw`text-sm text-center font-medium ${
-                      getFollowUpPricing(parentAppointment.appointment_date, selectedDate).free
+                    style={tw`text-sm text-center font-medium ${getFollowUpPricing(parentAppointment.appointment_date, selectedDate).free
                         ? "text-green-800"
                         : getFollowUpPricing(parentAppointment.appointment_date, selectedDate).eligible
-                        ? "text-yellow-800"
-                        : "text-red-800"
-                    }`}
+                          ? "text-yellow-800"
+                          : "text-red-800"
+                      }`}
                   >
                     {getFollowUpPricing(parentAppointment.appointment_date, selectedDate).message}
                   </Text>
@@ -399,16 +390,14 @@ const FollowUpAppointmentScreen: React.FC = () => {
                     return (
                       <TouchableOpacity
                         onPress={() => setSelectedSlot(item)}
-                        style={tw`px-3 py-3 rounded-xl flex-1 mx-1 border ${
-                          isSelected
+                        style={tw`px-3 py-3 rounded-xl flex-1 mx-1 border ${isSelected
                             ? "bg-green-600 border-green-700"
                             : "bg-green-100 border-green-300"
-                        }`}
+                          }`}
                       >
                         <Text
-                          style={tw`${
-                            isSelected ? "text-white" : "text-green-800"
-                          } font-semibold text-xs text-center`}
+                          style={tw`${isSelected ? "text-white" : "text-green-800"
+                            } font-semibold text-xs text-center`}
                         >
                           {item}
                         </Text>

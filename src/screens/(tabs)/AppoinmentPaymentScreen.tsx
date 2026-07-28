@@ -67,7 +67,7 @@
 
 // // // // // // // // //         {/* Appointment Summary */}
 // // // // // // // // //         <View style={tw`bg-white rounded-lg p-4 shadow-sm mb-4`}>
-        
+
 
 // // // // // // // // //           {/* Doctor Info */}
 // // // // // // // // //           <View style={tw`flex-row items-center mb-4`}>
@@ -247,7 +247,7 @@
 // // // // // // // //   // 🔹 Create Razorpay Order
 // // // // // // // //   const createOrder = async () => {
 // // // // // // // //     try {
-// // // // // // // //       const response = await fetch('https://landing.docapp.co.in/api/payment/create-order', {
+// // // // // // // //       const response = await fetch('https://api.docapp.co.in/api/payment/create-order', {
 // // // // // // // //         method: 'POST',
 // // // // // // // //         headers: {
 // // // // // // // //           'Content-Type': 'application/json',
@@ -473,7 +473,7 @@
 // // // // // // //   const createAppointment = async () => {
 // // // // // // //     try {
 // // // // // // //       const response = await fetch(
-// // // // // // //         'https://landing.docapp.co.in/api/appointment/create-appointment',
+// // // // // // //         'https://api.docapp.co.in/api/appointment/create-appointment',
 // // // // // // //         {
 // // // // // // //           method: 'POST',
 // // // // // // //           headers: { 'Content-Type': 'application/json' },
@@ -506,7 +506,7 @@
 // // // // // // //   // 🔹 Step 2: Create Razorpay Order
 // // // // // // //   const createOrder = async (appointmentId: number) => {
 // // // // // // //     try {
-// // // // // // //       const response = await fetch('https://landing.docapp.co.in/api/payment/create-order', {
+// // // // // // //       const response = await fetch('https://api.docapp.co.in/api/payment/create-order', {
 // // // // // // //         method: 'POST',
 // // // // // // //         headers: { 'Content-Type': 'application/json' },
 // // // // // // //         body: JSON.stringify({
@@ -751,7 +751,7 @@
 // // // // // //   const createAppointment = async () => {
 // // // // // //     try {
 // // // // // //       const response = await fetch(
-// // // // // //         'https://landing.docapp.co.in/api/appointment/create-appointment',
+// // // // // //         'https://api.docapp.co.in/api/appointment/create-appointment',
 // // // // // //         {
 // // // // // //           method: 'POST',
 // // // // // //           headers: { 'Content-Type': 'application/json' },
@@ -781,7 +781,7 @@
 // // // // // //   // Step 2: Create Razorpay Order
 // // // // // //   const createOrder = async (appointmentId: number) => {
 // // // // // //     try {
-// // // // // //       const response = await fetch('https://landing.docapp.co.in/api/payment/create-order', {
+// // // // // //       const response = await fetch('https://api.docapp.co.in/api/payment/create-order', {
 // // // // // //         method: 'POST',
 // // // // // //         headers: { 'Content-Type': 'application/json' },
 // // // // // //         body: JSON.stringify({
@@ -1012,7 +1012,7 @@
 // // // // //         type: consultationType === 'video' ? 'online' : 'offline',
 // // // // //         payment_mode: 'online',
 // // // // //       };
-// // // // //       const response = await fetch('https://landing.docapp.co.in/api/appointment/create-appointment', {
+// // // // //       const response = await fetch('https://api.docapp.co.in/api/appointment/create-appointment', {
 // // // // //         method: 'POST',
 // // // // //         headers: { 'Content-Type': 'application/json' },
 // // // // //         body: JSON.stringify(payload),
@@ -1042,7 +1042,7 @@
 // // // // //         appointmentDate: date,
 // // // // //         appointmentTime: slot,
 // // // // //       };
-// // // // //       const response = await fetch('https://landing.docapp.co.in/api/payment/create-order', {
+// // // // //       const response = await fetch('https://api.docapp.co.in/api/payment/create-order', {
 // // // // //         method: 'POST',
 // // // // //         headers: { 'Content-Type': 'application/json' },
 // // // // //         body: JSON.stringify(payload),
@@ -1268,7 +1268,7 @@
 // // // //       };
 
 // // // //       const response = await fetch(
-// // // //         'https://landing.docapp.co.in/api/appointment/create-appointment',
+// // // //         'https://api.docapp.co.in/api/appointment/create-appointment',
 // // // //         {
 // // // //           method: 'POST',
 // // // //           headers: { 'Content-Type': 'application/json' },
@@ -1307,7 +1307,7 @@
 // // // //       };
 
 // // // //       const response = await fetch(
-// // // //         'https://landing.docapp.co.in/api/payment/create-order',
+// // // //         'https://api.docapp.co.in/api/payment/create-order',
 // // // //         {
 // // // //           method: 'POST',
 // // // //           headers: { 'Content-Type': 'application/json' },
@@ -1338,7 +1338,7 @@
 // // // //   ) => {
 // // // //     try {
 // // // //       const response = await fetch(
-// // // //         'https://landing.docapp.co.in/api/payment/verify',
+// // // //         'https://api.docapp.co.in/api/payment/verify',
 // // // //         {
 // // // //           method: 'POST',
 // // // //           headers: { 'Content-Type': 'application/json' },
@@ -1561,7 +1561,7 @@
 // // //       console.log('📤 Sending appointment payload:', payload);
 
 // // //       const response = await fetch(
-// // //         'https://landing.docapp.co.in/api/appointment/create-appointment',
+// // //         'https://api.docapp.co.in/api/appointment/create-appointment',
 // // //         {
 // // //           method: 'POST',
 // // //           headers: { 'Content-Type': 'application/json' },
@@ -1611,7 +1611,7 @@
 // // //       console.log('📤 Creating Razorpay Order with payload:', payload);
 
 // // //       const response = await fetch(
-// // //         'https://landing.docapp.co.in/api/payment/create-order',
+// // //         'https://api.docapp.co.in/api/payment/create-order',
 // // //         {
 // // //           method: 'POST',
 // // //           headers: { 'Content-Type': 'application/json' },
@@ -1658,7 +1658,7 @@
 // // //       console.log('📤 Verifying Payment with payload:', payload);
 
 // // //       const response = await fetch(
-// // //         'https://landing.docapp.co.in/api/payment/verify',
+// // //         'https://api.docapp.co.in/api/payment/verify',
 // // //         {
 // // //           method: 'POST',
 // // //           headers: { 'Content-Type': 'application/json' },
@@ -1884,7 +1884,7 @@
 // //       console.log('📤 Sending appointment payload:', payload);
 
 // //       const response = await fetch(
-// //         'https://landing.docapp.co.in/api/appointment/create-appointment',
+// //         'https://api.docapp.co.in/api/appointment/create-appointment',
 // //         {
 // //           method: 'POST',
 // //           headers: { 'Content-Type': 'application/json' },
@@ -2077,7 +2077,7 @@
 //       console.log('📤 Sending appointment payload:', payload);
 
 //       const response = await fetch(
-//         'https://landing.docapp.co.in/api/appointment/create-appointment',
+//         'https://api.docapp.co.in/api/appointment/create-appointment',
 //         {
 //           method: 'POST',
 //           headers: { 'Content-Type': 'application/json' },
@@ -2246,19 +2246,23 @@ const PaymentScreen = () => {
 
   const createAppointment = async () => {
     try {
+      console.log('--- CREATING APPOINTMENT INIT ---');
+      console.log('Params:', { doctorId, slot, date, consultationType, amount });
+      console.log('Access Token present:', !!accessToken);
+
       const payload = {
         doctor_id: String(doctorId), // ✅ use sent doctorId
         date: date,
         start: slot.split('-')[0]?.trim() || '09:00',
         end: slot.split('-')[1]?.trim() || '09:30',
-        type: consultationType === 'video' ? 'online' : 'offline',
+        type: ['video', 'online', 'online_video'].includes(consultationType) ? 'online_video' : 'offline',
         payment_mode: 'card',
       };
 
-      console.log('📤 Sending Appointment Payload:', payload);
+      console.log('📤 Sending Appointment Payload:', JSON.stringify(payload, null, 2));
 
       const response = await fetch(
-        'https://landing.docapp.co.in/api/appointment/create-appointment',
+        'https://api.docapp.co.in/api/appointment/create-appointment',
         {
           method: 'POST',
           headers: {
@@ -2269,46 +2273,37 @@ const PaymentScreen = () => {
         }
       );
 
+      console.log('📥 Response Status:', response.status);
+
       const data = await response.json();
-      console.log('📥 Appointment Response:', data);
-
-      // if (response.ok && data?.createdAppointment?.id) {
-      //   navigation.navigate('RazorpayPaymentScreen', {
-      //     appointmentId: data.createdAppointment.id,
-      //     doctor,
-      //     slot,
-      //     date,
-      //     consultationType,
-      //     amount,
-      //   });
-      // } else {
-      //   Alert.alert('❌ Failed', data?.message || 'Could not schedule appointment.');
-      // }
-
+      console.log('📥 Appointment Response Data:', JSON.stringify(data, null, 2));
 
       if (response.ok && data?.success === true) {
-  navigation.navigate('RazorpayPaymentScreen', {
-    // appointmentId: data?.appointment_id || null, // if your backend returns it later
-    appointmentId: data?.createdAppointment?.id,
-    doctor,
-    slot,
-    date,
-    consultationType,
-    amount,
-    doctorId,
-  });
-} else {
-  Alert.alert('❌ Failed', data?.message || 'Could not schedule appointment.');
-}
-
-
-
+        console.log('✅ Appointment Created successfully. Navigating to Payment.');
+        navigation.navigate('RazorpayPaymentScreen', {
+          appointmentId: data?.createdAppointment?.id,
+          doctor,
+          slot,
+          date,
+          consultationType,
+          amount,
+          doctorId,
+        });
+      } else {
+        console.warn('❌ Failed response data:', data);
+        Alert.alert('❌ Failed', data?.message || 'Could not schedule appointment.');
+      }
 
     } catch (error: any) {
-      console.error('🚨 API Error:', error);
+      console.error('🚨 API Error (Create Appointment):', error);
+      console.error('🚨 Error Message:', error?.message);
+      if (error?.response) {
+        console.error('🚨 Error Response:', error.response);
+      }
       Alert.alert('Error', 'Failed to create appointment. Please try again.');
     } finally {
       setIsProcessing(false);
+      console.log('--- CREATING APPOINTMENT FINISHED ---');
     }
   };
 

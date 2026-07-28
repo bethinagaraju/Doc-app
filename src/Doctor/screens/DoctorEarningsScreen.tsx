@@ -4,8 +4,8 @@ import { Text } from 'react-native-paper';
 import { BadgeDollarSign } from 'lucide-react-native';
 import tw from 'twrnc';
 import DoctorHeader from '../components/DoctorHeader';
-import VideoCall from '@/screens/(tabs)/VideoCall';
-// import VideoCall from '@/screens/(tabs)/VideoCall';
+import VideoCall from '../../screens/(tabs)/VideoCall';
+// import VideoCall from '../../screens/(tabs)/VideoCall';
 
 const DoctorEarningsScreen = () => {
   const earnings = {

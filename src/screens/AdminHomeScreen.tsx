@@ -143,7 +143,7 @@ const AdminHomeScreen = () => {
   // Fetch stats API (send Bearer token when available)
   const fetchStats = async () => {
     try {
-      const response = await fetch("https://landing.docapp.co.in/api/admin/stats", {
+      const response = await fetch("https://api.docapp.co.in/api/admin/stats", {
         headers: {
           ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
@@ -344,7 +344,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  
+
 });
 
 export default AdminHomeScreen;

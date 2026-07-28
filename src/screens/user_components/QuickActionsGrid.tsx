@@ -2,8 +2,10 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 const QuickActionsGrid = () => {
+    const navigation = useNavigation<NavigationProp<any>>();
     // Data array for easy rendering and logic preservation
     const actions = [
         {
@@ -65,7 +67,13 @@ const QuickActionsGrid = () => {
                     <TouchableOpacity
                         key={action.id}
                         activeOpacity={0.7}
-                        onPress={() => { }} // Hook up navigation or press logic here
+                        onPress={() => {
+                            if (action.id === 'find-doctor') {
+                                navigation.navigate('Doctors');
+                            } else if (action.id === 'records') {
+                                navigation.navigate('MedicalRecords');
+                            }
+                        }}
                         style={[
                             tw`flex-col items-center`,
                             {

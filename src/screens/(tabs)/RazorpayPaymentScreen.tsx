@@ -79,7 +79,7 @@
 //       };
 
 //       const response = await fetch(
-//         'https://landing.docapp.co.in/api/payment/create-order',
+//         'https://api.docapp.co.in/api/payment/create-order',
 //         {
 //           method: 'POST',
 //           headers: {
@@ -112,7 +112,7 @@
 //   ) => {
 //     try {
 //       const response = await fetch(
-//         'https://landing.docapp.co.in/api/verify-payment',
+//         'https://api.docapp.co.in/api/verify-payment',
 //         {
 //           method: 'POST',
 //           headers: {
@@ -311,7 +311,7 @@ const RazorpayPaymentScreen = () => {
   //     };
 
   //     const response = await fetch(
-  //       'https://landing.docapp.co.in/api/payment/order',
+  //       'https://api.docapp.co.in/api/payment/order',
   //       {
   //         method: 'POST',
   //         headers: {
@@ -337,49 +337,42 @@ const RazorpayPaymentScreen = () => {
   // };
 
   const createOrder = async () => {
-  try {
-    const payload = {
-      amount,
-      appointmentId,
-      doctorId: doctorId,
+    try {
+      const payload = {
+        amount: Number(amount),
+        appointmentId: appointmentId,
+        doctorId: Number(doctor?.id),
+      };
 
+      console.log('📤 Payload:', payload);
 
-            // ✅ ADD THESE (missing before)
-      patientName: user?.username || 'Patient',
-      patientEmail: user?.email || '',
-      appointmentDate: date,
-      appointmentTime: slot,
-    };
+      const response = await fetch(
+        'https://api.docapp.co.in/api/payment/order',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+          },
+          credentials: 'include',
+          body: JSON.stringify(payload),
+        } as any
+      );
 
-    console.log('📤 Payload:', payload);
+      const data = await response.json();
 
-    const response = await fetch(
-      'https://landing.docapp.co.in/api/payment/order',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-        },
-        credentials: 'include',
-        body: JSON.stringify(payload),
-      } as any
-    );
+      console.log('📥 Order API Response:', data);
 
-    const data = await response.json();
+      if (!response.ok || !data?.orderId) {
+        throw new Error(data?.message || 'Order creation failed');
+      }
 
-    console.log('📥 Order API Response:', data);
-
-    if (!response.ok || !data?.orderId) {
-      throw new Error(data?.message || 'Order creation failed');
+      return data;
+    } catch (error) {
+      console.log('❌ Create order error:', error);
+      return null;
     }
-
-    return data;
-  } catch (error) {
-    console.log('❌ Create order error:', error);
-    return null;
-  }
-};
+  };
 
 
   /* ------------------ HANDLE PAYMENT ------------------ */

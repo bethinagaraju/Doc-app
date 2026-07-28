@@ -48,7 +48,7 @@
 
 // // // // // //   const fetchUnverifiedDoctors = async () => {
 // // // // // //     try {
-// // // // // //       const response = await fetch('https://landing.docapp.co.in/api/admin/get-unverified-acc', {
+// // // // // //       const response = await fetch('https://api.docapp.co.in/api/admin/get-unverified-acc', {
 // // // // // //         method: 'GET',
 // // // // // //         headers: {
 // // // // // //           'Content-Type': 'application/json',
@@ -359,7 +359,7 @@
 
 // // // // //   const fetchUnverifiedDoctors = async () => {
 // // // // //     try {
-// // // // //       const response = await fetch('https://landing.docapp.co.in/api/admin/get-unverified-acc', {
+// // // // //       const response = await fetch('https://api.docapp.co.in/api/admin/get-unverified-acc', {
 // // // // //         method: 'GET',
 // // // // //         headers: {
 // // // // //           'Content-Type': 'application/json',
@@ -726,7 +726,7 @@
 // // // //   const fetchUnverifiedDoctors = async () => {
 // // // //     try {
 // // // //       const response = await fetch(
-// // // //         'https://landing.docapp.co.in/api/admin/get-unverified-acc',
+// // // //         'https://api.docapp.co.in/api/admin/get-unverified-acc',
 // // // //         {
 // // // //           method: 'GET',
 // // // //           headers: {
@@ -999,7 +999,7 @@
 // // //   const fetchUnverifiedDoctors = async () => {
 // // //     try {
 // // //       const response = await fetch(
-// // //         'https://landing.docapp.co.in/api/admin/get-unverified-acc',
+// // //         'https://api.docapp.co.in/api/admin/get-unverified-acc',
 // // //         {
 // // //           method: 'GET',
 // // //           headers: {
@@ -1025,7 +1025,7 @@
 // // //   // Approve doctor API call
 // // //   const handleApprove = async (doctorId: number) => {
 // // //     try {
-// // //       const response = await fetch('https://landing.docapp.co.in/api/admin/approve-doctor', {
+// // //       const response = await fetch('https://api.docapp.co.in/api/admin/approve-doctor', {
 // // //         method: 'PUT',
 // // //         headers: {
 // // //           'Content-Type': 'application/json',
@@ -1311,7 +1311,7 @@
 // //   const fetchUnverifiedAccounts = async () => {
 // //     try {
 // //       const response = await fetch(
-// //         'https://landing.docapp.co.in/api/admin/get-unverified-acc',
+// //         'https://api.docapp.co.in/api/admin/get-unverified-acc',
 // //         {
 // //           method: 'GET',
 // //           headers: {
@@ -1336,7 +1336,7 @@
 
 // //   const handleApproveDoctor = async (doctorId: number) => {
 // //     try {
-// //       const response = await fetch('https://landing.docapp.co.in/api/admin/approve-doctor', {
+// //       const response = await fetch('https://api.docapp.co.in/api/admin/approve-doctor', {
 // //         method: 'PUT',
 // //         headers: { 'Content-Type': 'application/json' },
 // //         body: JSON.stringify({ doctor_id: doctorId }),
@@ -1367,14 +1367,14 @@
 // //           onPress: async () => {
 // //             try {
 // //               // REPLACE THIS URL WITH YOUR ACTUAL ORG APPROVAL ENDPOINT
-// //               const response = await fetch('https://landing.docapp.co.in/api/admin/approve-organisation', {
+// //               const response = await fetch('https://api.docapp.co.in/api/admin/approve-organisation', {
 // //                 method: 'PUT',
 // //                 headers: { 'Content-Type': 'application/json' },
 // //                 body: JSON.stringify({ organisation_id: orgId }),
 // //               });
-        
+
 // //               const result = await response.json();
-        
+
 // //               if (response.ok) {
 // //                 Alert.alert('Success', 'Organisation approved successfully');
 // //                 fetchUnverifiedAccounts();
@@ -1454,12 +1454,12 @@
 // //           <Text style={styles.detailText}>📞 {item.user.phone_number}</Text>
 // //         </View>
 // //       </View>
-      
+
 // //       <View style={styles.cardBody}>
 // //         {item.specialization && <Text style={styles.detailText}>Spec: {item.specialization}</Text>}
 // //         {item.experience_years !== null && <Text style={styles.detailText}>Exp: {item.experience_years} Years</Text>}
 // //         {item.license_number && <Text style={styles.detailText}>License: {item.license_number}</Text>}
-        
+
 // //         {renderDocuments(item.user.documents)}
 // //         {renderAddress(item.user.address)}
 // //       </View>
@@ -1499,7 +1499,7 @@
 // //                  </Text>
 // //              </TouchableOpacity>
 // //         )}
-        
+
 // //         {renderDocuments(item.user.documents)}
 // //         {renderAddress(item.user.address)}
 // //       </View>
@@ -1573,7 +1573,7 @@
 // //       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
 // //         <Text style={styles.backButtonText}>Back to Dashboard</Text>
 // //       </TouchableOpacity>
-      
+
 // //       <View style={{height: 40}} />
 
 // //       {/* Image Modal */}
@@ -1600,15 +1600,15 @@
 // //   container: { flex: 1, backgroundColor: '#f2f4f8', padding: 15 },
 // //   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
 // //   loadingText: { marginTop: 10, fontSize: 16, color: '#555' },
-  
+
 // //   screenTitle: { fontSize: 26, fontWeight: 'bold', color: '#1a237e', textAlign: 'center', marginBottom: 20, marginTop: 10 },
-  
+
 // //   summaryContainer: { flexDirection: 'row', backgroundColor: 'white', borderRadius: 12, padding: 20, marginBottom: 25, elevation: 2, justifyContent: 'space-around', alignItems: 'center' },
 // //   summaryItem: { alignItems: 'center' },
 // //   summaryCount: { fontSize: 24, fontWeight: 'bold', color: '#2e7d32' },
 // //   summaryLabel: { fontSize: 14, color: '#666' },
 // //   verticalDivider: { width: 1, height: '80%', backgroundColor: '#eee' },
-  
+
 // //   sectionHeader: { fontSize: 20, fontWeight: 'bold', color: '#333', marginBottom: 15, marginLeft: 5 },
 // //   emptyText: { fontStyle: 'italic', color: '#888', marginLeft: 10, marginBottom: 20 },
 // //   divider: { height: 1, backgroundColor: '#ddd', marginVertical: 20 },
@@ -1620,17 +1620,17 @@
 // //   headerInfo: { flex: 1 },
 // //   name: { fontSize: 18, fontWeight: 'bold', color: '#333' },
 // //   roleLabel: { fontSize: 12, color: '#1976d2', fontWeight: 'bold', marginBottom: 4, textTransform: 'uppercase' },
-  
+
 // //   cardBody: { backgroundColor: '#f9f9f9', borderRadius: 8, padding: 10, marginBottom: 15 },
 // //   detailText: { fontSize: 14, color: '#555', marginBottom: 4 },
-  
+
 // //   documentsContainer: { marginTop: 10, borderTopWidth: 1, borderTopColor: '#eee', paddingTop: 8 },
 // //   subHeaderTitle: { fontSize: 13, fontWeight: 'bold', color: '#444', marginBottom: 5 },
 // //   docList: { flexDirection: 'row', flexWrap: 'wrap' },
 // //   docBadge: { backgroundColor: '#e8eaf6', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 15, marginRight: 8, marginBottom: 5 },
 // //   documentLink: { fontSize: 12, color: '#3949ab' },
 // //   noDocumentsText: { fontSize: 12, fontStyle: 'italic', color: '#999' },
-  
+
 // //   addressContainer: { marginTop: 8 },
 // //   addressText: { fontSize: 13, color: '#666' },
 
@@ -1745,7 +1745,7 @@
 //   const fetchUnverifiedAccounts = async () => {
 //     try {
 //       const response = await fetch(
-//         'https://landing.docapp.co.in/api/admin/get-unverified-acc',
+//         'https://api.docapp.co.in/api/admin/get-unverified-acc',
 //         {
 //           method: 'GET',
 //           headers: {
@@ -1784,7 +1784,7 @@
 
 //               console.log("Verifying doctor_id:", doctorId);
 
-//               const response = await fetch('https://landing.docapp.co.in/api/admin/approve-doctor', {
+//               const response = await fetch('https://api.docapp.co.in/api/admin/approve-doctor', {
 //                 method: 'PUT',
 //                 headers: { 
 //                   'Content-Type': 'application/json' 
@@ -1827,15 +1827,15 @@
 //           onPress: async () => {
 //             try {
 //               setActionLoading(true);
-//               const response = await fetch('https://landing.docapp.co.in/api/admin/approve-organisation', {
+//               const response = await fetch('https://api.docapp.co.in/api/admin/approve-organisation', {
 //                 method: 'PUT',
 //                 headers: { 'Content-Type': 'application/json' },
 //                 credentials: 'include',
 //                 body: JSON.stringify({ organisation_id: orgId }),
 //               });
-        
+
 //               const result = await response.json();
-        
+
 //               if (response.ok) {
 //                 Alert.alert('Success', 'Organisation approved successfully');
 //                 fetchUnverifiedAccounts();
@@ -1920,12 +1920,12 @@
 //           <Text style={styles.detailText}>📞 {item.user.phone_number}</Text>
 //         </View>
 //       </View>
-      
+
 //       <View style={styles.cardBody}>
 //         {item.specialization && <Text style={styles.detailText}>Spec: {item.specialization}</Text>}
 //         {item.experience_years !== null && <Text style={styles.detailText}>Exp: {item.experience_years} Years</Text>}
 //         {item.license_number && <Text style={styles.detailText}>License: {item.license_number}</Text>}
-        
+
 //         {renderDocuments(item.user.documents)}
 //         {renderAddress(item.user.address)}
 //       </View>
@@ -1938,7 +1938,7 @@
 //         >
 //           <Text style={styles.buttonText}>Verify</Text>
 //         </TouchableOpacity>
-        
+
 //         <TouchableOpacity 
 //           style={[styles.actionButton, styles.rejectButton]} 
 //           onPress={() => handleReject(item.user_id, 'doctor')}
@@ -1973,7 +1973,7 @@
 //                  </Text>
 //              </TouchableOpacity>
 //         )}
-        
+
 //         {renderDocuments(item.user.documents)}
 //         {renderAddress(item.user.address)}
 //       </View>
@@ -2057,7 +2057,7 @@
 //         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
 //           <Text style={styles.backButtonText}>Back to Dashboard</Text>
 //         </TouchableOpacity>
-        
+
 //         <View style={{height: 40}} />
 //       </ScrollView>
 
@@ -2093,7 +2093,7 @@
 //   container: { flex: 1, backgroundColor: '#f2f4f8', padding: 15 },
 //   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
 //   loadingText: { marginTop: 10, fontSize: 16, color: '#555' },
-  
+
 //   loadingOverlay: {
 //     position: 'absolute', left: 0, right: 0, top: 0, bottom: 0,
 //     backgroundColor: 'rgba(0,0,0,0.5)',
@@ -2103,13 +2103,13 @@
 //   overlayText: { color: 'white', marginTop: 10, fontWeight: 'bold' },
 
 //   screenTitle: { fontSize: 26, fontWeight: 'bold', color: '#1a237e', textAlign: 'center', marginBottom: 20, marginTop: 10 },
-  
+
 //   summaryContainer: { flexDirection: 'row', backgroundColor: 'white', borderRadius: 12, padding: 20, marginBottom: 25, elevation: 2, justifyContent: 'space-around', alignItems: 'center' },
 //   summaryItem: { alignItems: 'center' },
 //   summaryCount: { fontSize: 24, fontWeight: 'bold', color: '#2e7d32' },
 //   summaryLabel: { fontSize: 14, color: '#666' },
 //   verticalDivider: { width: 1, height: '80%', backgroundColor: '#eee' },
-  
+
 //   sectionHeader: { fontSize: 20, fontWeight: 'bold', color: '#333', marginBottom: 15, marginLeft: 5 },
 //   emptyText: { fontStyle: 'italic', color: '#888', marginLeft: 10, marginBottom: 20 },
 //   divider: { height: 1, backgroundColor: '#ddd', marginVertical: 20 },
@@ -2121,17 +2121,17 @@
 //   headerInfo: { flex: 1 },
 //   name: { fontSize: 18, fontWeight: 'bold', color: '#333' },
 //   roleLabel: { fontSize: 12, color: '#1976d2', fontWeight: 'bold', marginBottom: 4, textTransform: 'uppercase' },
-  
+
 //   cardBody: { backgroundColor: '#f9f9f9', borderRadius: 8, padding: 10, marginBottom: 15 },
 //   detailText: { fontSize: 14, color: '#555', marginBottom: 4 },
-  
+
 //   documentsContainer: { marginTop: 10, borderTopWidth: 1, borderTopColor: '#eee', paddingTop: 8 },
 //   subHeaderTitle: { fontSize: 13, fontWeight: 'bold', color: '#444', marginBottom: 5 },
 //   docList: { flexDirection: 'row', flexWrap: 'wrap' },
 //   docBadge: { backgroundColor: '#e8eaf6', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 15, marginRight: 8, marginBottom: 5 },
 //   documentLink: { fontSize: 12, color: '#3949ab' },
 //   noDocumentsText: { fontSize: 12, fontStyle: 'italic', color: '#999' },
-  
+
 //   addressContainer: { marginTop: 8 },
 //   addressText: { fontSize: 13, color: '#666' },
 
@@ -2246,7 +2246,7 @@ const DoctorApprovalsScreen = () => {
   const fetchUnverifiedAccounts = async () => {
     try {
       const response = await fetch(
-        'https://landing.docapp.co.in/api/admin/get-unverified-acc',
+        'https://api.docapp.co.in/api/admin/get-unverified-acc',
         {
           method: 'GET',
           headers: {
@@ -2282,7 +2282,7 @@ const DoctorApprovalsScreen = () => {
           onPress: async () => {
             try {
               setActionLoading(true);
-              const response = await fetch('https://landing.docapp.co.in/api/admin/approve-doctor', {
+              const response = await fetch('https://api.docapp.co.in/api/admin/approve-doctor', {
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json',
@@ -2322,14 +2322,14 @@ const DoctorApprovalsScreen = () => {
       "Are you sure you want to approve this hospital/organization?",
       [
         { text: "Cancel", style: "cancel" },
-        { 
-          text: "Approve", 
+        {
+          text: "Approve",
           onPress: async () => {
             try {
               setActionLoading(true);
-              
+
               // Updated Endpoint and Body key based on request
-              const response = await fetch('https://landing.docapp.co.in/api/admin/approve-hospital', {
+              const response = await fetch('https://api.docapp.co.in/api/admin/approve-hospital', {
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json',
@@ -2337,12 +2337,12 @@ const DoctorApprovalsScreen = () => {
                 },
                 credentials: 'include',
                 body: JSON.stringify({
-                    org_id: orgId  // Changed from organisation_id to org_id
+                  org_id: orgId  // Changed from organisation_id to org_id
                 }),
               });
-        
+
               const result = await response.json();
-        
+
               if (response.ok) {
                 Alert.alert('Success', result.message || 'Organisation approved successfully');
                 fetchUnverifiedAccounts(); // Refresh the list
@@ -2355,7 +2355,7 @@ const DoctorApprovalsScreen = () => {
             } finally {
               setActionLoading(false);
             }
-          } 
+          }
         }
       ]
     );
@@ -2372,7 +2372,7 @@ const DoctorApprovalsScreen = () => {
   };
 
   const openUrl = (url: string) => {
-    if(url) Linking.openURL(url.startsWith('http') ? url : `https://${url}`).catch(err => console.error("Couldn't load page", err));
+    if (url) Linking.openURL(url.startsWith('http') ? url : `https://${url}`).catch(err => console.error("Couldn't load page", err));
   };
 
   // --- Render Helpers ---
@@ -2415,9 +2415,9 @@ const DoctorApprovalsScreen = () => {
   const renderDoctorItem = ({ item }: { item: UnverifiedDoctor }) => (
     <View style={styles.card}>
       <View style={styles.cardHeader}>
-        <Image 
-          source={{ uri: item.profile_picture || 'https://via.placeholder.com/150' }} 
-          style={styles.profileImage} 
+        <Image
+          source={{ uri: item.profile_picture || 'https://via.placeholder.com/150' }}
+          style={styles.profileImage}
         />
         <View style={styles.headerInfo}>
           <Text style={styles.name}>{item.user.username}</Text>
@@ -2426,27 +2426,27 @@ const DoctorApprovalsScreen = () => {
           <Text style={styles.detailText}>📞 {item.user.phone_number}</Text>
         </View>
       </View>
-      
+
       <View style={styles.cardBody}>
         {item.specialization && <Text style={styles.detailText}>Spec: {item.specialization}</Text>}
         {item.experience_years !== null && <Text style={styles.detailText}>Exp: {item.experience_years} Years</Text>}
         {item.license_number && <Text style={styles.detailText}>License: {item.license_number}</Text>}
-        
+
         {renderDocuments(item.user.documents)}
         {renderAddress(item.user.address)}
       </View>
 
       <View style={styles.actionButtons}>
-        <TouchableOpacity 
-          style={[styles.actionButton, styles.approveButton]} 
+        <TouchableOpacity
+          style={[styles.actionButton, styles.approveButton]}
           onPress={() => handleApproveDoctor(item.user_id)}
           disabled={actionLoading}
         >
           <Text style={styles.buttonText}>Verify</Text>
         </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={[styles.actionButton, styles.rejectButton]} 
+
+        <TouchableOpacity
+          style={[styles.actionButton, styles.rejectButton]}
           onPress={() => handleReject(item.user_id, 'doctor')}
           disabled={actionLoading}
         >
@@ -2460,7 +2460,7 @@ const DoctorApprovalsScreen = () => {
     <View style={styles.card}>
       <View style={styles.cardHeader}>
         <View style={styles.orgIcon}>
-            <Text style={{fontSize: 30}}>🏥</Text>
+          <Text style={{ fontSize: 30 }}>🏥</Text>
         </View>
         <View style={styles.headerInfo}>
           <Text style={styles.name}>{item.organisation_name || item.user.username}</Text>
@@ -2473,29 +2473,29 @@ const DoctorApprovalsScreen = () => {
       <View style={styles.cardBody}>
         {item.regestration_number && <Text style={styles.detailText}>Reg No: {item.regestration_number}</Text>}
         {item.website_url && (
-             <TouchableOpacity onPress={() => openUrl(item.website_url!)}>
-                 <Text style={[styles.detailText, {color: 'blue', textDecorationLine: 'underline'}]}>
-                     🌐 {item.website_url}
-                 </Text>
-             </TouchableOpacity>
+          <TouchableOpacity onPress={() => openUrl(item.website_url!)}>
+            <Text style={[styles.detailText, { color: 'blue', textDecorationLine: 'underline' }]}>
+              🌐 {item.website_url}
+            </Text>
+          </TouchableOpacity>
         )}
-        
+
         {renderDocuments(item.user.documents)}
         {renderAddress(item.user.address)}
       </View>
 
       <View style={styles.actionButtons}>
-        <TouchableOpacity 
-            style={[styles.actionButton, styles.approveButton]} 
-            onPress={() => handleApproveOrg(item.user_id)}
-            disabled={actionLoading}
+        <TouchableOpacity
+          style={[styles.actionButton, styles.approveButton]}
+          onPress={() => handleApproveOrg(item.user_id)}
+          disabled={actionLoading}
         >
           <Text style={styles.buttonText}>Approve Org</Text>
         </TouchableOpacity>
-        <TouchableOpacity 
-            style={[styles.actionButton, styles.rejectButton]} 
-            onPress={() => handleReject(item.user_id, 'org')}
-            disabled={actionLoading}
+        <TouchableOpacity
+          style={[styles.actionButton, styles.rejectButton]}
+          onPress={() => handleReject(item.user_id, 'org')}
+          disabled={actionLoading}
         >
           <Text style={styles.buttonText}>Reject</Text>
         </TouchableOpacity>
@@ -2515,20 +2515,20 @@ const DoctorApprovalsScreen = () => {
   }
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <ScrollView style={styles.container}>
         <Text style={styles.screenTitle}>Verification Requests</Text>
 
         {/* Summary Section */}
         <View style={styles.summaryContainer}>
           <View style={styles.summaryItem}>
-              <Text style={styles.summaryCount}>{data?.total_unverified_doctors || 0}</Text>
-              <Text style={styles.summaryLabel}>Doctors</Text>
+            <Text style={styles.summaryCount}>{data?.total_unverified_doctors || 0}</Text>
+            <Text style={styles.summaryLabel}>Doctors</Text>
           </View>
           <View style={styles.verticalDivider} />
           <View style={styles.summaryItem}>
-              <Text style={styles.summaryCount}>{data?.total_unverified_organisations || 0}</Text>
-              <Text style={styles.summaryLabel}>Organisations</Text>
+            <Text style={styles.summaryCount}>{data?.total_unverified_organisations || 0}</Text>
+            <Text style={styles.summaryLabel}>Organisations</Text>
           </View>
         </View>
 
@@ -2563,8 +2563,8 @@ const DoctorApprovalsScreen = () => {
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Text style={styles.backButtonText}>Back to Dashboard</Text>
         </TouchableOpacity>
-        
-        <View style={{height: 40}} />
+
+        <View style={{ height: 40 }} />
       </ScrollView>
 
       {/* Global Loading Overlay for Actions */}
@@ -2587,7 +2587,7 @@ const DoctorApprovalsScreen = () => {
             />
           )}
           <TouchableOpacity style={styles.closeModalButton} onPress={() => setModalVisible(false)}>
-              <Text style={{color: 'white', fontWeight: 'bold'}}>Close</Text>
+            <Text style={{ color: 'white', fontWeight: 'bold' }}>Close</Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -2599,7 +2599,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f2f4f8', padding: 15 },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   loadingText: { marginTop: 10, fontSize: 16, color: '#555' },
-  
+
   loadingOverlay: {
     position: 'absolute', left: 0, right: 0, top: 0, bottom: 0,
     backgroundColor: 'rgba(0,0,0,0.5)',
@@ -2609,13 +2609,13 @@ const styles = StyleSheet.create({
   overlayText: { color: 'white', marginTop: 10, fontWeight: 'bold' },
 
   screenTitle: { fontSize: 26, fontWeight: 'bold', color: '#1a237e', textAlign: 'center', marginBottom: 20, marginTop: 10 },
-  
+
   summaryContainer: { flexDirection: 'row', backgroundColor: 'white', borderRadius: 12, padding: 20, marginBottom: 25, elevation: 2, justifyContent: 'space-around', alignItems: 'center' },
   summaryItem: { alignItems: 'center' },
   summaryCount: { fontSize: 24, fontWeight: 'bold', color: '#2e7d32' },
   summaryLabel: { fontSize: 14, color: '#666' },
   verticalDivider: { width: 1, height: '80%', backgroundColor: '#eee' },
-  
+
   sectionHeader: { fontSize: 20, fontWeight: 'bold', color: '#333', marginBottom: 15, marginLeft: 5 },
   emptyText: { fontStyle: 'italic', color: '#888', marginLeft: 10, marginBottom: 20 },
   divider: { height: 1, backgroundColor: '#ddd', marginVertical: 20 },
@@ -2627,17 +2627,17 @@ const styles = StyleSheet.create({
   headerInfo: { flex: 1 },
   name: { fontSize: 18, fontWeight: 'bold', color: '#333' },
   roleLabel: { fontSize: 12, color: '#1976d2', fontWeight: 'bold', marginBottom: 4, textTransform: 'uppercase' },
-  
+
   cardBody: { backgroundColor: '#f9f9f9', borderRadius: 8, padding: 10, marginBottom: 15 },
   detailText: { fontSize: 14, color: '#555', marginBottom: 4 },
-  
+
   documentsContainer: { marginTop: 10, borderTopWidth: 1, borderTopColor: '#eee', paddingTop: 8 },
   subHeaderTitle: { fontSize: 13, fontWeight: 'bold', color: '#444', marginBottom: 5 },
   docList: { flexDirection: 'row', flexWrap: 'wrap' },
   docBadge: { backgroundColor: '#e8eaf6', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 15, marginRight: 8, marginBottom: 5 },
   documentLink: { fontSize: 12, color: '#3949ab' },
   noDocumentsText: { fontSize: 12, fontStyle: 'italic', color: '#999' },
-  
+
   addressContainer: { marginTop: 8 },
   addressText: { fontSize: 13, color: '#666' },
 

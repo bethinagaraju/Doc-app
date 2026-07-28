@@ -35,7 +35,7 @@
     "react": "19.1.0",
     "react-dom": "^19.1.0",
     "react-native": "0.80.0",
-    "react-native-calendars": "^1.1312.1",
+    "react-native-calendars": "^1.1314.0",
     "react-native-device-info": "^14.0.4",
     "react-native-file-access": "^3.2.0",
     "react-native-file-picker": "^0.0.21",

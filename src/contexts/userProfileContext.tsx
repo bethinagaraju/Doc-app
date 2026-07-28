@@ -49,7 +49,7 @@ export const UserProfileProvider = ({ children }: { children: ReactNode }) => {
   const [userData, setUserData] = useState<UserData | null>(null)
 
   const fetchAndStoreUserData = async (token: string): Promise<UserData | null> => {
-    const res = await fetch('https://landing.docapp.co.in/api/auth/get-user-data', {
+    const res = await fetch('https://api.docapp.co.in/api/auth/get-user-data', {
       method: 'GET',
       headers: {
         Accept: 'application/json',

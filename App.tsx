@@ -57,6 +57,7 @@ import WalletScreen from './src/screens/(tabs)/wallet';
 import CartScreen from './src/screens/(tabs)/CartScreen';
 import AppointmentBooking from './src/screens/(tabs)/AppointemntBooking';
 import DoctorProfileScreen from './src/screens/doctor profile/[id]';
+import DoctorSlotsScreen from './src/screens/DoctorSlotsScreen';
 import AppoinmentPaymentScreen from './src/screens/(tabs)/AppoinmentPaymentScreen';
 import RazorpayPaymentScreen from './src/screens/(tabs)/RazorpayPaymentScreen';
 import DoctorNavigator from './src/Doctor/navigation/DoctorNavigator';
@@ -71,6 +72,7 @@ import AddDoctorScreen from './src/screens/AddDoctorScreen';
 import ViewDoctorsScreen from './src/screens/ViewDoctorsScreen';
 import HospitalAppointmentsScreen from './src/screens/HospitalAppointmentsScreen';
 import FollowUpAppointmentScreen from './src/screens/FollowUpAppointmentScreen';
+import AppointmentDetailsScreen from './src/screens/(tabs)/AppointmentDetailsScreen';
 
 const Stack = createStackNavigator();
 
@@ -140,6 +142,7 @@ function RootNavigator() {
         <Stack.Screen name="VideoConsultationScreen" component={VideoConsultationScreen} />
         <Stack.Screen name="AppointmentSuccess" component={AppointmentSuccessScreen} />
         <Stack.Screen name="Appointments" component={AppointmentsScreen} />
+        <Stack.Screen name="AppointmentDetails" component={AppointmentDetailsScreen} />
         <Stack.Screen name="NotFound" component={NotFoundScreen} />
         <Stack.Screen name="AuthLayout" component={AuthLayout} />
         <Stack.Screen name="DoctorLogin" component={DoctorLoginScreen} />
@@ -168,6 +171,7 @@ function RootNavigator() {
         <Stack.Screen name="Cart" component={CartScreen} />
         <Stack.Screen name="AppointmentBooking" component={AppointmentBooking} />
         <Stack.Screen name="DoctorProfile" component={DoctorProfileScreen} />
+        <Stack.Screen name="DoctorSlots" component={DoctorSlotsScreen} />
         <Stack.Screen name="AppoinmentPaymentScreen" component={AppoinmentPaymentScreen} />
         <Stack.Screen name="RazorpayPaymentScreen" component={RazorpayPaymentScreen} />
         <Stack.Screen name="DoctorNavigator" component={DoctorNavigator} />
@@ -188,25 +192,25 @@ function RootNavigator() {
 
 export default function App() {
   return (
-    
+
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AccessTokenProvider>
         <UserProfileProvider>
           <UserProvider>
-          <LoadingProvider>
-            <SafeAreaProvider>
-              <View style={{ flex: 1, backgroundColor: '#16a34a' }}>
-                <StatusBar backgroundColor="#16a34a" barStyle="light-content" translucent />
-                <CallProvider>
-                <RootNavigator />
-                </CallProvider>
-              </View>
-            </SafeAreaProvider>
-          </LoadingProvider>
+            <LoadingProvider>
+              <SafeAreaProvider>
+                <View style={{ flex: 1, backgroundColor: '#f8f9ff' }}>
+                  <StatusBar backgroundColor="#f8f9ff" barStyle="dark-content" translucent />
+                  <CallProvider>
+                    <RootNavigator />
+                  </CallProvider>
+                </View>
+              </SafeAreaProvider>
+            </LoadingProvider>
           </UserProvider>
         </UserProfileProvider>
       </AccessTokenProvider>
     </GestureHandlerRootView>
-    
+
   );
 }

@@ -48,7 +48,7 @@ const AddSpecializationScreen = () => {
               returnKeyType="next"
             />
             <TextInput
-              style={[styles.input, {height: 80}]}
+              style={[styles.input, { height: 80 }]}
               placeholder="Description"
               placeholderTextColor="#aaa"
               value={description}

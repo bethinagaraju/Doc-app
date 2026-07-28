@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import tw from 'twrnc';
 import PageLayout from '../../components/PageLayout';
+import AppointmentCard from '../../components/AppointmentCard';
 
 type Appointment = {
   id: number;
@@ -30,7 +31,7 @@ export default function AppointmentHistoryScreen() {
   const fetchAppointments = async () => {
     try {
       const response = await fetch(
-        'https://landing.docapp.co.in/api/appointment/list-appointments',
+        'https://api.docapp.co.in/api/appointment/list-appointments',
         {
           credentials: 'include',
         }
@@ -52,7 +53,7 @@ export default function AppointmentHistoryScreen() {
   const handleDelete = async (id: number) => {
     try {
       const response = await fetch(
-        'https://landing.docapp.co.in/api/appointment/delete-appointment',
+        'https://api.docapp.co.in/api/appointment/delete-appointment',
         {
           method: 'DELETE',
           headers: {
@@ -96,14 +97,12 @@ export default function AppointmentHistoryScreen() {
           <TouchableOpacity
             key={tab}
             onPress={() => setSelectedTab(tab)}
-            style={tw`px-4 py-2 rounded-full ${
-              selectedTab === tab ? 'bg-green-600' : 'bg-gray-200'
-            }`}
+            style={tw`px-4 py-2 rounded-full ${selectedTab === tab ? 'bg-green-600' : 'bg-gray-200'
+              }`}
           >
             <Text
-              style={tw`text-sm font-semibold ${
-                selectedTab === tab ? 'text-white' : 'text-gray-700'
-              }`}
+              style={tw`text-sm font-semibold ${selectedTab === tab ? 'text-white' : 'text-gray-700'
+                }`}
             >
               {tab}
             </Text>
@@ -119,35 +118,16 @@ export default function AppointmentHistoryScreen() {
           </Text>
         ) : (
           filteredAppointments.map((item) => (
-            <View
-              key={item.id}
-              style={tw`bg-white p-4 mb-4 rounded-xl shadow-sm border border-gray-200`}
-            >
-              <Text style={tw`text-lg font-bold text-green-700`}>
-                Doctor ID: #{item.doctor_id}
-              </Text>
-              <Text style={tw`text-gray-800`}>
-                Date: {new Date(item.appointment_date).toDateString()}
-              </Text>
-              <Text style={tw`text-gray-800`}>
-                Time: {item.appointment_start_time} - {item.appointment_end_time}
-              </Text>
-              <Text style={tw`text-gray-800 capitalize`}>
-                Type: {item.appointment_type}
-              </Text>
-              <Text style={tw`text-gray-800 capitalize`}>
-                Status: {item.appointment_status}
-              </Text>
-
+            <AppointmentCard key={item.id} appointment={item as any}>
               <TouchableOpacity
                 onPress={() => handleDelete(item.id)}
-                style={tw`mt-3 bg-red-500 py-2 px-4 rounded-full`}
+                style={tw`mt-1 bg-red-500 py-2 px-4 rounded-full`}
               >
                 <Text style={tw`text-white text-center font-semibold`}>
                   Delete Appointment
                 </Text>
               </TouchableOpacity>
-            </View>
+            </AppointmentCard>
           ))
         )}
       </ScrollView>

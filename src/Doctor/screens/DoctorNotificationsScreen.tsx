@@ -3,8 +3,8 @@ import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import DoctorHeader from '../components/DoctorHeader';
 import tw from 'twrnc';
-import VideoCall from '@/screens/(tabs)/VideoCall';
-import VideoCallScreen from '@/screens/VideoCallScreen';
+import VideoCall from '../../screens/(tabs)/VideoCall';
+import VideoCallScreen from '../../screens/VideoCallScreen';
 
 const DoctorNotificationsScreen = () => {
   const notifications = [

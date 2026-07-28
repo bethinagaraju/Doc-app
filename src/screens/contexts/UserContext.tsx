@@ -47,7 +47,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const fetchUserData = async () => {
     try {
-      const response = await fetch('https://landing.docapp.co.in/api/auth/get-user-data', {
+      const response = await fetch('https://api.docapp.co.in/api/auth/get-user-data', {
         method: 'GET',
         credentials: 'include', // send cookie
       });

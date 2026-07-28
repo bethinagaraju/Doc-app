@@ -81,7 +81,7 @@
 //     try {
 //       setRemoving(doctorId);
 
-//       const response = await fetch('https://landing.docapp.co.in/api/hospital/remove-staff', {
+//       const response = await fetch('https://api.docapp.co.in/api/hospital/remove-staff', {
 //         method: 'DELETE',
 //         headers: {
 //           'Content-Type': 'application/json',
@@ -237,7 +237,7 @@
 //   const loadDoctors = async () => {
 //     try {
 //       setLoading(true);
-//       const response = await fetch('https://landing.docapp.co.in/api/hospital/get-doctors', {
+//       const response = await fetch('https://api.docapp.co.in/api/hospital/get-doctors', {
 //         method: 'GET',
 //         headers: {
 //           'Content-Type': 'application/json',
@@ -276,7 +276,7 @@
 //   const confirmRemoveDoctor = async (doctorId: number) => {
 //     try {
 //       setRemoving(doctorId);
-//       const response = await fetch('https://landing.docapp.co.in/api/hospital/remove-staff', {
+//       const response = await fetch('https://api.docapp.co.in/api/hospital/remove-staff', {
 //         method: 'DELETE',
 //         headers: {
 //           'Content-Type': 'application/json',
@@ -319,7 +319,7 @@
 //   try {
 //     setAdding(true);
 
-//     const response = await fetch('https://landing.docapp.co.in/api/hospital/create-accounts', {
+//     const response = await fetch('https://api.docapp.co.in/api/hospital/create-accounts', {
 //       method: 'POST',
 //       headers: {
 //         'Content-Type': 'application/json',

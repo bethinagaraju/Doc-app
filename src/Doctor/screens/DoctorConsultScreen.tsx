@@ -59,7 +59,7 @@
 // //     const fetchData = async () => {
 // //       try {
 // //         // Fetch user data
-// //         const userResponse = await fetch('https://landing.docapp.co.in/api/auth/get-user-data', {
+// //         const userResponse = await fetch('https://api.docapp.co.in/api/auth/get-user-data', {
 // //           method: 'GET',
 // //           credentials: 'include',
 // //           headers: { Accept: 'application/json' },
@@ -75,7 +75,7 @@
 // //         }
 
 // //         // Fetch slots for the doctor
-// //         const slotsResponse = await fetch(`https://landing.docapp.co.in/api/auth/show-slots/${userData.userData.id}`, {
+// //         const slotsResponse = await fetch(`https://api.docapp.co.in/api/auth/show-slots/${userData.userData.id}`, {
 // //           method: 'GET',
 // //           credentials: 'include',
 // //           headers: { Accept: 'application/json' },
@@ -141,7 +141,7 @@
 // //         appointment_slot: 30,
 // //       };
 
-// //       const response = await fetch('https://landing.docapp.co.in/api/auth/profile/complete/extra-doc-info', {
+// //       const response = await fetch('https://api.docapp.co.in/api/auth/profile/complete/extra-doc-info', {
 // //         method: 'PUT',
 // //         credentials: 'include',
 // //         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
@@ -156,7 +156,7 @@
 // //         setTimeout(() => setSuccess(null), 3000);
 // //         setModalVisible(false);
 // //         // Refresh slots
-// //         const slotsResponse = await fetch(`https://landing.docapp.co.in/api/auth/show-slots/${result.userData?.id || '21'}`, {
+// //         const slotsResponse = await fetch(`https://api.docapp.co.in/api/auth/show-slots/${result.userData?.id || '21'}`, {
 // //           method: 'GET',
 // //           credentials: 'include',
 // //           headers: { Accept: 'application/json' },
@@ -258,7 +258,7 @@
 // //         type: schedule.mode === 'online' ? 'online_video' : 'in_person',
 // //       };
 
-// //       const response = await fetch('https://landing.docapp.co.in/api/appointment/create-appointment', {
+// //       const response = await fetch('https://api.docapp.co.in/api/appointment/create-appointment', {
 // //         method: 'POST',
 // //         credentials: 'include',
 // //         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
@@ -272,7 +272,7 @@
 // //         setSuccess('Appointment created successfully!');
 // //         setTimeout(() => setSuccess(null), 3000);
 // //         // Refresh slots
-// //         const slotsResponse = await fetch(`https://landing.docapp.co.in/api/auth/show-slots/${appointmentData.doctor_id}`, {
+// //         const slotsResponse = await fetch(`https://api.docapp.co.in/api/auth/show-slots/${appointmentData.doctor_id}`, {
 // //           method: 'GET',
 // //           credentials: 'include',
 // //           headers: { Accept: 'application/json' },
@@ -592,7 +592,7 @@
 //     setError(null);
 //     try {
 //       // Fetch user data
-//       const userResponse = await fetch('https://landing.docapp.co.in/api/auth/get-user-data', {
+//       const userResponse = await fetch('https://api.docapp.co.in/api/auth/get-user-data', {
 //         method: 'GET',
 //         credentials: 'include',
 //         headers: { Accept: 'application/json' },
@@ -611,7 +611,7 @@
 //       }
 
 //       // Fetch slots for the doctor
-//       const slotsResponse = await fetch(`https://landing.docapp.co.in/api/auth/show-slots/${fetchedUserId}`, {
+//       const slotsResponse = await fetch(`https://api.docapp.co.in/api/auth/show-slots/${fetchedUserId}`, {
 //         method: 'GET',
 //         credentials: 'include',
 //         headers: { Accept: 'application/json' },
@@ -674,7 +674,7 @@
 //         appointment_slot: 30,
 //       };
 
-//       const response = await fetch('https://landing.docapp.co.in/api/auth/profile/complete/extra-doc-info', {
+//       const response = await fetch('https://api.docapp.co.in/api/auth/profile/complete/extra-doc-info', {
 //         method: 'PUT',
 //         credentials: 'include',
 //         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
@@ -690,7 +690,7 @@
 //         setModalVisible(false);
 
 //         // Refresh slots
-//         const slotsResponse = await fetch(`https://landing.docapp.co.in/api/auth/show-slots/${userId}`, { // <-- Use userId from state
+//         const slotsResponse = await fetch(`https://api.docapp.co.in/api/auth/show-slots/${userId}`, { // <-- Use userId from state
 //           method: 'GET',
 //           credentials: 'include',
 //           headers: { Accept: 'application/json' },
@@ -796,7 +796,7 @@
 //         type: schedule.mode === 'online' ? 'online_video' : 'in_person',
 //       };
 
-//       const response = await fetch('https://landing.docapp.co.in/api/appointment/create-appointment', {
+//       const response = await fetch('https://api.docapp.co.in/api/appointment/create-appointment', {
 //         method: 'POST',
 //         credentials: 'include',
 //         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
@@ -810,7 +810,7 @@
 //         setSuccess('Appointment created successfully!');
 //         setTimeout(() => setSuccess(null), 3000);
 //         // Refresh slots
-//         const slotsResponse = await fetch(`https://landing.docapp.co.in/api/auth/show-slots/${userId}`, { // <-- Use userId from state
+//         const slotsResponse = await fetch(`https://api.docapp.co.in/api/auth/show-slots/${userId}`, { // <-- Use userId from state
 //           method: 'GET',
 //           credentials: 'include',
 //           headers: { Accept: 'application/json' },
@@ -1123,7 +1123,7 @@ const DoctorConsultScreen: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  
+
   // --- Modal State ---
   const [modalVisible, setModalVisible] = useState(false);
   const [isEditing, setIsEditing] = useState(false); // <-- New state to track modal mode
@@ -1154,7 +1154,7 @@ const DoctorConsultScreen: React.FC = () => {
     setError(null);
     try {
       // Fetch user data
-      const userResponse = await fetch('https://landing.docapp.co.in/api/auth/get-user-data', {
+      const userResponse = await fetch('https://api.docapp.co.in/api/auth/get-user-data', {
         method: 'GET',
         credentials: 'include',
         headers: { Accept: 'application/json' },
@@ -1173,7 +1173,7 @@ const DoctorConsultScreen: React.FC = () => {
       }
 
       // Fetch slots for the doctor
-      const slotsResponse = await fetch(`https://landing.docapp.co.in/api/auth/show-slots/${fetchedUserId}`, {
+      const slotsResponse = await fetch(`https://api.docapp.co.in/api/auth/show-slots/${fetchedUserId}`, {
         method: 'GET',
         credentials: 'include',
         headers: { Accept: 'application/json' },
@@ -1276,7 +1276,7 @@ const DoctorConsultScreen: React.FC = () => {
         appointment_slot: 30,
       };
 
-      const response = await fetch('https://landing.docapp.co.in/api/auth/profile/complete/extra-doc-info', {
+      const response = await fetch('https://api.docapp.co.in/api/auth/profile/complete/extra-doc-info', {
         method: 'PUT',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
@@ -1292,7 +1292,7 @@ const DoctorConsultScreen: React.FC = () => {
         closeModal(); // <-- Use new close function on success
 
         // Refresh slots from server
-        const slotsResponse = await fetch(`https://landing.docapp.co.in/api/auth/show-slots/${userId}`, {
+        const slotsResponse = await fetch(`https://api.docapp.co.in/api/auth/show-slots/${userId}`, {
           method: 'GET',
           credentials: 'include',
           headers: { Accept: 'application/json' },
@@ -1330,30 +1330,30 @@ const DoctorConsultScreen: React.FC = () => {
       setError('Invalid day. Must be a valid weekday (e.g., "monday").');
       return;
     }
-    
+
     // Allow empty times/mode for "Unavailable" days (like Sunday)
     // But if one time is entered, the other is required.
     if ((newSlotLoginTime && !newSlotLogoutTime) || (!newSlotLoginTime && newSlotLogoutTime)) {
-        setError('Both Login Time and Logout Time are required.');
-        return;
+      setError('Both Login Time and Logout Time are required.');
+      return;
     }
 
     // Validate time format (HH:mm) if times exist
     const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
     if (newSlotLoginTime && !timeRegex.test(newSlotLoginTime)) {
-        setError('Invalid Login Time format. Use HH:mm (e.g., 09:00)');
-        return;
+      setError('Invalid Login Time format. Use HH:mm (e.g., 09:00)');
+      return;
     }
-     if (newSlotLogoutTime && !timeRegex.test(newSlotLogoutTime)) {
-        setError('Invalid Logout Time format. Use HH:mm (e.g., 17:00)');
-        return;
+    if (newSlotLogoutTime && !timeRegex.test(newSlotLogoutTime)) {
+      setError('Invalid Logout Time format. Use HH:mm (e.g., 17:00)');
+      return;
     }
-    
+
     // Validate mode if times exist
     const validModes = ['online', 'offline', 'hybrid', ''];
     if (newSlotLoginTime && !validModes.includes(newSlotMode.toLowerCase())) {
-        setError('Invalid mode. Choose from: online, offline, hybrid.');
-        return;
+      setError('Invalid mode. Choose from: online, offline, hybrid.');
+      return;
     }
 
     // Validate breaks
@@ -1552,7 +1552,7 @@ const DoctorConsultScreen: React.FC = () => {
 
               {/* Show modal-specific errors */}
               {error && (
-                 <Text style={tw`text-red-600 text-base text-center px-4 mb-2`}>{error}</Text>
+                <Text style={tw`text-red-600 text-base text-center px-4 mb-2`}>{error}</Text>
               )}
 
               <TextInput

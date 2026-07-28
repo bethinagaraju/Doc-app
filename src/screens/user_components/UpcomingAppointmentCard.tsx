@@ -6,31 +6,11 @@ import tw from 'twrnc';
 const UpcomingAppointmentCard = () => {
     return (
         <View
-            style={[
-                tw`mx-4 mt-5 px-6 py-6 rounded-2xl w-full max-w-[320px] self-center overflow-hidden`,
-                {
-                    backgroundColor: '#3766D2',
-                    shadowColor: 'rgba(37, 88, 195, 0.15)',
-                    shadowOffset: { width: 0, height: 10 },
-                    shadowOpacity: 1,
-                    shadowRadius: 30,
-                    elevation: 8,
-                },
-            ]}>
+            style={tw`mx-4 mt-5 px-6 py-6 rounded-2xl w-full max-w-[320px] self-center overflow-hidden bg-[#3766D2] shadow-2xl shadow-[#2558C3]/15`}>
 
             {/* Abstract Pulse Decoration using the provided PNG */}
             <View
-                style={[
-                    tw`absolute`,
-                    {
-                        width: 149.33,
-                        height: 117.33,
-                        right: 2,
-                        top: 7,
-                        opacity: 1, // Adjusted opacity for subtle overlay
-
-                    }
-                ]}
+                style={tw`absolute w-[149px] h-[117px] right-[2px] top-[7px] opacity-100`}
                 pointerEvents="none"
             >
                 <Image
@@ -45,15 +25,8 @@ const UpcomingAppointmentCard = () => {
                 {/* Top Row / Header Container */}
                 <View style={tw`flex-row items-center gap-2`}>
                     <View
-                        style={[
-                            tw`justify-center items-center`,
-                            {
-                                width: 24,
-                                height: 24,
-                                backgroundColor: 'rgba(235, 238, 255, 0.2)',
-                                borderRadius: 6,
-                            }
-                        ]}>
+                        style={tw`justify-center items-center w-6 h-6 bg-[#EBEEFF]/20 rounded-md`}
+                    >
                         <Icon
                             name="calendar-outline"
                             size={14}
@@ -68,7 +41,7 @@ const UpcomingAppointmentCard = () => {
                 {/* Middle Content: Doctor Details & Date Badge */}
                 <View style={tw`flex-row justify-between items-start w-full gap-4`}>
                     <View style={tw`flex-1 gap-1 justify-center`}>
-                        <Text style={[tw`text-xl font-semibold text-[#EBEEFF]`, { lineHeight: 28, letterSpacing: -0.24 }]}>
+                        <Text style={tw`text-xl font-semibold text-[#EBEEFF] leading-[28px] tracking-[-0.24px]`}>
                             Dr. Sarah Mitchell
                         </Text>
 
@@ -79,16 +52,8 @@ const UpcomingAppointmentCard = () => {
 
                     {/* Date Badge */}
                     <View
-                        style={[
-                            tw`items-center justify-center rounded-full self-center`,
-                            {
-                                width: 56,
-                                height: 56,
-                                paddingVertical: 4,
-                                paddingHorizontal: 8,
-                                backgroundColor: 'rgba(235, 238, 255, 0.2)',
-                            },
-                        ]}>
+                        style={tw`items-center justify-center rounded-full self-center w-[56px] h-[56px] py-1 px-2 bg-[#EBEEFF]/20`}
+                    >
                         <Text style={tw`text-xl font-semibold text-center text-[#EBEEFF]`}>12</Text>
                         <Text style={tw`text-[14px] font-semibold text-center tracking-[0.6px] text-[#EBEEFF]`}>
                             OCT
@@ -115,20 +80,11 @@ const UpcomingAppointmentCard = () => {
                     <TouchableOpacity
                         activeOpacity={0.8}
                         style={[
-                            tw`flex-row justify-center items-center bg-white rounded-full px-5 py-3`,
-                            {
-                                shadowColor: '#000',
-                                shadowOffset: { width: 0, height: 4 },
-                                shadowOpacity: 0.1,
-                                shadowRadius: 6,
-                                elevation: 3,
-                            },
+                            tw`flex-row justify-center items-center bg-white rounded-full px-5 py-3 shadow-md`,
+                            { elevation: 3 },
                         ]}>
                         <Text
-                            style={[
-                                tw`text-xs font-bold text-center tracking-[0.6px] mr-2`,
-                                { color: '#124CB8' }
-                            ]}>
+                            style={tw`text-xs font-bold text-center tracking-[0.6px] mr-2 text-[#124CB8]`}>
                             Join Telehealth
                         </Text>
                         <Icon name="arrow-forward" size={12} color="#124CB8" />

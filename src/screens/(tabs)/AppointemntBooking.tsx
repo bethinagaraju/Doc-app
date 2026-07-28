@@ -8,71 +8,71 @@ const AppointmentConfirmationScreen = ({ route, navigation }) => {
   const [paymentMode, setPaymentMode] = useState(null);
   const [loading, setLoading] = useState(false);
 
- const handleConfirm = async () => {
-  if (!paymentMode) return Alert.alert('Please select a payment mode');
+  const handleConfirm = async () => {
+    if (!paymentMode) return Alert.alert('Please select a payment mode');
 
-  if (paymentMode === 'offline') {
-    try {
-      setLoading(true);
+    if (paymentMode === 'offline') {
+      try {
+        setLoading(true);
 
-      console.log("Selected Slot: ", selectedSlot);
- 
-
-      // Extract start and end time from time string
-      const [start, end] = selectedSlot.time.split('-');
-
-      const res = await fetch('https://landing.docapp.co.in/api/appointment/create-appointment', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        
-        
-        body: JSON.stringify({
-          doctor_id: doctor.user_id,
-          date: selectedSlot.date,
-          start: start.trim(),
-          end: end.trim(),
-          type: 'offline',
-          
-        }),
-      });
-      
- 
+        console.log("Selected Slot: ", selectedSlot);
 
 
-      const json = await res.json();
-      console.log("Create appointment response:", json);
+        // Extract start and end time from time string
+        const [start, end] = selectedSlot.time.split('-');
 
-      if (json?.message?.includes('successfully')) {
-        Toast.show({
-          type: 'success',
-          text1: 'Appointment Booked',
-          text2: 'Offline payment selected',
+        const res = await fetch('https://api.docapp.co.in/api/appointment/create-appointment', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+
+
+          body: JSON.stringify({
+            doctor_id: doctor.user_id,
+            date: selectedSlot.date,
+            start: start.trim(),
+            end: end.trim(),
+            type: 'online_video',
+            payment_mode: 'card',
+          }),
         });
-        navigation.popToTop();
-      } else {
-        Alert.alert('Booking Failed', json?.message || 'Try again.');
-      }
-    } catch (err) {
-      console.error(err);
-      Alert.alert('Error', 'Something went wrong.');
-    } finally {
-      setLoading(false);
-    }
-  } else {
-    navigation.navigate('AppoinmentPaymentScreen', {
-  doctor,
-  slot: selectedSlot.time,
-  date: selectedSlot.date,
-  consultationType: selectedSlot.mode === 'online_video' ? 'video' : 'inclinic',
-  amount: doctor.consultation_fee,
-  
-});
 
-  }
-};
+
+
+
+        const json = await res.json();
+        console.log("Create appointment response:", json);
+
+        if (json?.message?.includes('successfully')) {
+          Toast.show({
+            type: 'success',
+            text1: 'Appointment Booked',
+            text2: 'Offline payment selected',
+          });
+          navigation.popToTop();
+        } else {
+          Alert.alert('Booking Failed', json?.message || 'Try again.');
+        }
+      } catch (err) {
+        console.error(err);
+        Alert.alert('Error', 'Something went wrong.');
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      navigation.navigate('AppoinmentPaymentScreen', {
+        doctor,
+        slot: selectedSlot.time,
+        date: selectedSlot.date,
+        consultationType: selectedSlot.mode === 'online_video' ? 'video' : 'inclinic',
+        amount: doctor.consultation_fee,
+
+      });
+
+    }
+  };
 
   return (
     <ScrollView style={tw`flex-1 bg-green-50`} contentContainerStyle={tw`pt-12 px-4 pb-8`}>
@@ -88,17 +88,17 @@ const AppointmentConfirmationScreen = ({ route, navigation }) => {
         )}
         <Text style={tw`text-gray-600 text-base mb-1`}>{doctor.consultation_fee}</Text>
         <Text style={tw`text-green-700`}>
-      {[
-        doctor.user.address[0]?.house_no,
-        doctor.user.address[0]?.street,
-        doctor.user.address[0]?.landmark,
-        doctor.user.address[0]?.city,
-        doctor.user.address[0]?.state,
-        doctor.user.address[0]?.pincode,
-      ]
-        .filter((item) => item && item.trim() !== '')
-        .join(', ')}
-    </Text>
+          {[
+            doctor.user.address[0]?.house_no,
+            doctor.user.address[0]?.street,
+            doctor.user.address[0]?.landmark,
+            doctor.user.address[0]?.city,
+            doctor.user.address[0]?.state,
+            doctor.user.address[0]?.pincode,
+          ]
+            .filter((item) => item && item.trim() !== '')
+            .join(', ')}
+        </Text>
         {doctor?.address && (
           <Text style={tw`text-gray-500 text-sm`}>{doctor.address}</Text>
         )}

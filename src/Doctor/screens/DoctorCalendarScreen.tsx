@@ -17,7 +17,7 @@
 
 //   const fetchAppointments = async () => {
 //     try {
-//       const res = await fetch('https://landing.docapp.co.in/api/appointment/list-appointments', {
+//       const res = await fetch('https://api.docapp.co.in/api/appointment/list-appointments', {
 //         method: 'GET',
 //         credentials: 'include',
 //       });
@@ -66,7 +66,7 @@
 
 //   const initiateCall = async (callToUserId: number) => {
 //     try {
-//       const response = await fetch('https://landing.docapp.co.in/api/call/initialise-call', {
+//       const response = await fetch('https://api.docapp.co.in/api/call/initialise-call', {
 //         method: 'POST',
 //         headers: { 'Content-Type': 'application/json' },
 //         credentials: 'include',
@@ -194,7 +194,7 @@ export default function CallerScreen() {
     const offer = await connection.createOffer();
     await connection.setLocalDescription(offer);
 
-    const response = await fetch('https://landing.docapp.co.in/api/call/initialise-call', {
+    const response = await fetch('https://api.docapp.co.in/api/call/initialise-call', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ call_to_user: 33, offer }),

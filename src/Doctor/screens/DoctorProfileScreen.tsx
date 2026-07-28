@@ -26,7 +26,7 @@ import { DoctorStackParamList } from '../types/navigation';
 import DoctorHeader from '../components/DoctorHeader';
 import { useAccessToken } from '../../screens/contexts/AccessTokenContext';
 
-const API_GET_USER = 'https://landing.docapp.co.in/api/auth/get-user-data';
+const API_GET_USER = 'https://api.docapp.co.in/api/auth/get-user-data';
 
 type DoctorNavigationProp = NativeStackNavigationProp<DoctorStackParamList>;
 
@@ -143,28 +143,28 @@ const DoctorProfileScreen = () => {
       <DoctorHeader title="Profile" showSettings showNotifications />
       <ScrollView contentContainerStyle={tw`pb-6`}>
         {/* Profile Card */}
-        <View style={tw`p-4 shadow-sm bg-green-50`}> 
+        <View style={tw`p-4 shadow-sm bg-green-50`}>
           <View style={tw`flex-row`}>
             <Image
               source={{ uri: doctorInfo.profilePicture }}
               style={tw`w-24 h-24 rounded-2xl`}
             />
             <View style={tw`ml-4 flex-1`}>
-          <Text style={tw`text-xl font-bold text-green-700`}>{doctorInfo.name}</Text>
-          <Text style={tw`text-base text-green-600`}>{doctorInfo.specialization}</Text>
-          <View style={tw`flex-row items-center mt-2`}>
-            <MapPin size={16} color="#059669" />
-            <Text style={tw`ml-1 text-green-600`}>{doctorInfo.location}</Text>
-          </View>
-          <View style={tw`flex-row items-center mt-1`}>
-            <Clock size={16} color="#059669" />
-            <Text style={tw`ml-1 text-green-600`}>{doctorInfo.experience} Experience</Text>
-          </View>
+              <Text style={tw`text-xl font-bold text-green-700`}>{doctorInfo.name}</Text>
+              <Text style={tw`text-base text-green-600`}>{doctorInfo.specialization}</Text>
+              <View style={tw`flex-row items-center mt-2`}>
+                <MapPin size={16} color="#059669" />
+                <Text style={tw`ml-1 text-green-600`}>{doctorInfo.location}</Text>
+              </View>
+              <View style={tw`flex-row items-center mt-1`}>
+                <Clock size={16} color="#059669" />
+                <Text style={tw`ml-1 text-green-600`}>{doctorInfo.experience} Experience</Text>
+              </View>
             </View>
           </View>
 
           {/* Fee and License */}
-          <View style={tw`mt-4 p-4 rounded-xl bg-green-100`}> 
+          <View style={tw`mt-4 p-4 rounded-xl bg-green-100`}>
             <Text style={tw`text-base text-green-700`}>
               <Text style={tw`font-bold`}>Consultation Fee: </Text> {doctorInfo.consultationFee}
             </Text>
@@ -174,7 +174,7 @@ const DoctorProfileScreen = () => {
           </View>
 
           {/* Stats */}
-          <View style={tw`flex-row justify-between mt-4 p-4 rounded-xl bg-green-100`}> 
+          <View style={tw`flex-row justify-between mt-4 p-4 rounded-xl bg-green-100`}>
             <View style={tw`items-center`}>
               <Text style={tw`text-lg font-bold text-green-700`}>{doctorInfo.rating}</Text>
               <View style={tw`flex-row items-center`}>

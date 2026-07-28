@@ -61,7 +61,7 @@ const PrivacySecurityScreen = () => {
     try {
       setChangingPassword(true);
 
-      const response = await fetch('https://landing.docapp.co.in/api/auth/change-password', {
+      const response = await fetch('https://api.docapp.co.in/api/auth/change-password', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

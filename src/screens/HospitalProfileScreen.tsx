@@ -107,7 +107,7 @@
 // // //       console.log('Saving profile data:', payload);
 
 // // //       // Make API call
-// // //       const response = await fetch('https://landing.docapp.co.in/api/auth/profile/complete/hospital_organisation', {
+// // //       const response = await fetch('https://api.docapp.co.in/api/auth/profile/complete/hospital_organisation', {
 // // //         method: 'PUT',
 // // //         headers: {
 // // //           'Content-Type': 'application/json',
@@ -370,7 +370,7 @@
 // //   const loadProfileData = async () => {
 // //     try {
 // //       setLoading(true);
-// //       const response = await fetch('https://landing.docapp.co.in/api/auth/get-user-data');
+// //       const response = await fetch('https://api.docapp.co.in/api/auth/get-user-data');
 // //       const data = await response.json();
 
 // //       if (response.ok && data.userData?.organisationProfile) {
@@ -435,7 +435,7 @@
 // //       };
 
 // //       const response = await fetch(
-// //         'https://landing.docapp.co.in/api/auth/profile/complete/hospital_organisation',
+// //         'https://api.docapp.co.in/api/auth/profile/complete/hospital_organisation',
 // //         {
 // //           method: 'PUT',
 // //           headers: {
@@ -745,7 +745,7 @@
 //   const loadProfileData = async () => {
 //     try {
 //       setLoading(true);
-//       const response = await fetch('https://landing.docapp.co.in/api/auth/get-user-data');
+//       const response = await fetch('https://api.docapp.co.in/api/auth/get-user-data');
 //       const data = await response.json();
 
 //       if (response.ok && data.userData?.organisationProfile) {
@@ -809,7 +809,7 @@
 //       } as any);
 
 //       const uploadResponse = await fetch(
-//         'https://landing.docapp.co.in/api/auth/profile/update/profile-picture/organisation',
+//         'https://api.docapp.co.in/api/auth/profile/update/profile-picture/organisation',
 //         {
 //           method: 'PUT',
 //           headers: {
@@ -868,7 +868,7 @@
 //       };
 
 //       const response = await fetch(
-//         'https://landing.docapp.co.in/api/auth/profile/complete/hospital_organisation',
+//         'https://api.docapp.co.in/api/auth/profile/complete/hospital_organisation',
 //         {
 //           method: 'PUT',
 //           headers: {
@@ -950,7 +950,7 @@
 // </View> */}
 
 //       <ScrollView style={tw`flex-1`} contentContainerStyle={tw`p-4`}>
-        
+
 //         {/* IMAGE UPLOAD */}
 //         <TouchableOpacity
 //           onPress={handleImageUpload}
@@ -1142,7 +1142,7 @@ import { useUser } from './contexts/UserContext';
 import { useAccessToken } from './contexts/AccessTokenContext';
 
 // ======================= API CONSTANTS =======================
-const API_BASE = 'https://landing.docapp.co.in';
+const API_BASE = 'https://api.docapp.co.in';
 const API_GET_USER = `${API_BASE}/api/auth/get-user-data`;
 const API_PROFILE_UPDATE = `${API_BASE}/api/auth/profile/complete/hospital_organisation`;
 const API_IMAGE_UPDATE = `${API_BASE}/api/auth/profile/update/profile-picture/organisation`;
@@ -1179,7 +1179,7 @@ const HospitalProfileScreen = () => {
   const navigation = useNavigation<HospitalProfileNavigationProp>();
   const { user } = useUser();
   const { accessToken } = useAccessToken();
-  
+
   // 🔀 Tab State
   const [activeTab, setActiveTab] = useState<'profile' | 'address'>('profile');
 
@@ -1294,7 +1294,7 @@ const HospitalProfileScreen = () => {
         },
       });
       const data = await response.json();
-      
+
       if (response.ok && data.addresses) {
         setAddresses(data.addresses);
       }
@@ -1365,7 +1365,7 @@ const HospitalProfileScreen = () => {
         type: image.type || 'image/jpeg',
       } as any);
 
-      const uploadResponse = await fetch('https://landing.docapp.co.in/api/auth/upload-photo', {
+      const uploadResponse = await fetch('https://api.docapp.co.in/api/auth/upload-photo', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
@@ -1511,14 +1511,14 @@ const HospitalProfileScreen = () => {
 
           {/* 🔀 Custom Tab Switcher */}
           <View style={tw`flex-row bg-white rounded-lg p-1 mb-6 border border-green-200`}>
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => setActiveTab('profile')}
               style={tw`flex-1 py-3 rounded-md items-center ${activeTab === 'profile' ? 'bg-green-600' : 'bg-transparent'}`}
             >
               <Text style={tw`font-bold ${activeTab === 'profile' ? 'text-white' : 'text-gray-500'}`}>Profile</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => setActiveTab('address')}
               style={tw`flex-1 py-3 rounded-md items-center ${activeTab === 'address' ? 'bg-green-600' : 'bg-transparent'}`}
             >
@@ -1657,9 +1657,9 @@ const HospitalProfileScreen = () => {
                 <Text style={tw`text-lg font-bold text-green-800 mb-4 flex-row items-center`}>
                   <Building2 size={20} color="#166534" /> Saved Locations
                 </Text>
-                
+
                 {addressLoading && addresses.length === 0 ? (
-                   <ActivityIndicator color="green" />
+                  <ActivityIndicator color="green" />
                 ) : addresses.length === 0 ? (
                   <Text style={tw`text-gray-500 italic`}>No addresses added yet.</Text>
                 ) : (
@@ -1714,8 +1714,8 @@ const HospitalProfileScreen = () => {
                   onChangeText={(t: string) => setAddressForm({ ...addressForm, state: t })}
                 />
 
-                <TouchableOpacity 
-                  style={tw`bg-green-600 rounded-lg p-4 items-center mt-2 flex-row justify-center`} 
+                <TouchableOpacity
+                  style={tw`bg-green-600 rounded-lg p-4 items-center mt-2 flex-row justify-center`}
                   onPress={handleAddAddress}
                   disabled={addressLoading}
                 >

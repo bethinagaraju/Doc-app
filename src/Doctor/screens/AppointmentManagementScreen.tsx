@@ -62,7 +62,7 @@ const AppointmentManagementScreen = () => {
 
   const fetchDoctorData = async () => {
     try {
-      const response = await fetch('https://landing.docapp.co.in/api/auth/get-user-data', {
+      const response = await fetch('https://api.docapp.co.in/api/auth/get-user-data', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
@@ -263,10 +263,10 @@ const AppointmentManagementScreen = () => {
 
     try {
       const response = await fetch(
-        'https://landing.docapp.co.in/api/auth/profile/complete/extra-doc-info',
+        'https://api.docapp.co.in/api/auth/profile/complete/extra-doc-info',
         {
           method: 'PUT',
-          headers: { 
+          headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${accessToken}`,
           },

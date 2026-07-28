@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -12,7 +12,7 @@ import {
   Dimensions,
   StatusBar,
 } from 'react-native';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { useNavigation, NavigationProp, useFocusEffect } from '@react-navigation/native';
 import {
   Home,
   Calendar,
@@ -101,42 +101,46 @@ const HomeScreen = () => {
   const user = useUser();
   const { accessToken } = useAccessToken();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const profileImageUri = userData?.generalUser?.profile_picture || 'https://randomuser.me/api/portraits/men/4.jpg';
+  const baseProfilePic = userData?.generalUser?.profile_picture;
+  const lastUpdated = userData?.generalUser?.updatedAt || '1';
+  const profileImageUri = baseProfilePic ? `${baseProfilePic}?t=${new Date(lastUpdated).getTime() || lastUpdated}` : 'https://randomuser.me/api/portraits/men/4.jpg';
+  
   const [selectedLanguage, setSelectedLanguage] = useState('English');
   const [showLanguageModal, setShowLanguageModal] = useState(false);
 
+  useFocusEffect(
+    useCallback(() => {
+      const fetchUserData = async () => {
+        try {
+          const response = await fetch('https://api.docapp.co.in/api/auth/get-user-data', {
+            method: 'GET',
+            headers: {
+              ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+              'Content-Type': 'application/json',
+            },
+          });
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch('https://landing.docapp.co.in/api/auth/get-user-data', {
-          method: 'GET',
-          headers: {
-            ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-            'Content-Type': 'application/json',
-          },
-        });
+          const result = await response.json();
 
-        const result = await response.json();
+          if (!response.ok) {
+            console.error('Fetch failed:', result);
+            return;
+          }
 
-        if (!response.ok) {
-          console.error('Fetch failed:', result);
-          return;
+          if (result?.userData) {
+            setUserData(result.userData);
+            console.log('User Data in HomeScreen:', result.userData);
+          } else {
+            console.log('No user data found');
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
         }
+      };
 
-        if (result?.userData) {
-          setUserData(result.userData);
-          console.log('User Data in HomeScreen:', result.userData);
-        } else {
-          console.log('No user data found');
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
-    };
-
-    fetchUserData();
-  }, [user?.token]);
+      fetchUserData();
+    }, [accessToken])
+  );
 
   const languages = [
     { name: 'English', code: 'en' },
@@ -484,7 +488,7 @@ const HomeScreen = () => {
               Welcome back
             </Text>
             <Text style={[tw`text-[20px] font-semibold`, { color: '#011D35', height: 28, lineHeight: 28 }]}>
-              Hello, John!
+              Hello, {userData?.username || user?.user?.username || 'User'}!
             </Text>
           </View>
 

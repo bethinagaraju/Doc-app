@@ -18,7 +18,7 @@
 
 // // // // // // // // // // // // // // const SpecializationsScreen = () => {
 // // // // // // // // // // // // // //   const navigation = useNavigation<DoctorNavigationProp>();
-  
+
 // // // // // // // // // // // // // //   const specializations: Specialization[] = [
 // // // // // // // // // // // // // //     {
 // // // // // // // // // // // // // //       title: 'Cardiology',
@@ -102,7 +102,7 @@
 // // // // // // // // // // // // // //             </View>
 // // // // // // // // // // // // // //           ))}
 // // // // // // // // // // // // // //         </View>
-        
+
 // // // // // // // // // // // // // //         <TouchableOpacity
 // // // // // // // // // // // // // //           style={tw`mt-6 bg-[#1d9be3] rounded-full px-6 py-3 items-center`}
 // // // // // // // // // // // // // //           activeOpacity={0.85}
@@ -216,7 +216,7 @@
 
 // // // // // // // // // // // // // const SpecializationsScreen = () => {
 // // // // // // // // // // // // //   const navigation = useNavigation<DoctorNavigationProp>();
-  
+
 // // // // // // // // // // // // //   // --- STATE MANAGEMENT ---
 // // // // // // // // // // // // //   const [specializations, setSpecializations] = useState<Specialization[]>(initialSpecializations);
 // // // // // // // // // // // // //   const [certifications, setCertifications] = useState(initialCertifications);
@@ -253,11 +253,11 @@
 // // // // // // // // // // // // //       onPress: () => navigation.goBack()
 // // // // // // // // // // // // //     }]);
 // // // // // // // // // // // // //   };
-  
+
 // // // // // // // // // // // // //   return (
 // // // // // // // // // // // // //     <View style={tw`flex-1 bg-green-50`}>
 // // // // // // // // // // // // //       <DoctorHeader title="Specializations" showSettings showNotifications />
-      
+
 // // // // // // // // // // // // //       <View style={tw`flex-row justify-end px-4 py-2 bg-white border-b border-green-100`}>
 // // // // // // // // // // // // //         <TouchableOpacity
 // // // // // // // // // // // // //           style={tw`bg-emerald-500 p-2 rounded-full`}
@@ -281,7 +281,7 @@
 // // // // // // // // // // // // //         ))}
 
 // // // // // // // // // // // // //         <CertificationsCard certifications={certifications} />
-        
+
 // // // // // // // // // // // // //         <TouchableOpacity
 // // // // // // // // // // // // //           style={tw`mt-6 bg-[#1d9be3] rounded-full px-6 py-3 items-center`}
 // // // // // // // // // // // // //           activeOpacity={0.85}
@@ -426,7 +426,7 @@
 // // // // // // // // // // //       const [file] = await DocumentPicker.pickSingle({
 // // // // // // // // // // //         type: [DocumentPicker.types.allFiles],
 // // // // // // // // // // //       });
-      
+
 // // // // // // // // // // //       // Set the file object if it exists (i.e., not cancelled)
 // // // // // // // // // // //       if (file) {
 // // // // // // // // // // //           setSelectedFile(file);
@@ -452,7 +452,7 @@
 // // // // // // // // // // //     const formData = new FormData();
 // // // // // // // // // // //     // Assuming 'documentName' is a separate field for the server
 // // // // // // // // // // //     formData.append('documentName', selectedFile.name || 'example');
-    
+
 // // // // // // // // // // //     // The main file object for multipart/form-data upload
 // // // // // // // // // // //     formData.append('document', {
 // // // // // // // // // // //       uri: selectedFile.uri,
@@ -566,7 +566,7 @@
 // // // // // // // // // //     setLoading(true);
 // // // // // // // // // //     try {
 // // // // // // // // // //       const response = await axios.post(
-// // // // // // // // // //         'https://landing.docapp.co.in/api/documents/upload-document',
+// // // // // // // // // //         'https://api.docapp.co.in/api/documents/upload-document',
 // // // // // // // // // //         formData,
 // // // // // // // // // //         {
 // // // // // // // // // //           headers: {
@@ -661,7 +661,7 @@
 // // // // // // // // //     setLoading(true);
 // // // // // // // // //     try {
 // // // // // // // // //       const response = await axios.post(
-// // // // // // // // //         'https://landing.docapp.co.in/api/documents/upload-document',
+// // // // // // // // //         'https://api.docapp.co.in/api/documents/upload-document',
 // // // // // // // // //         formData,
 // // // // // // // // //         {
 // // // // // // // // //           headers: {
@@ -791,7 +791,7 @@
 // // // // // // // //     setLoading(true);
 // // // // // // // //     try {
 // // // // // // // //       const response = await axios.post(
-// // // // // // // //         'https://landing.docapp.co.in/api/documents/upload-document',
+// // // // // // // //         'https://api.docapp.co.in/api/documents/upload-document',
 // // // // // // // //         formData,
 // // // // // // // //         { headers: { 'Content-Type': 'multipart/form-data' } }
 // // // // // // // //       );
@@ -886,7 +886,7 @@
 // // // // // // //     setLoading(true);
 // // // // // // //     try {
 // // // // // // //       const response = await axios.post(
-// // // // // // //         'https://landing.docapp.co.in/api/documents/upload-document',
+// // // // // // //         'https://api.docapp.co.in/api/documents/upload-document',
 // // // // // // //         formData,
 // // // // // // //         { headers: { 'Content-Type': 'multipart/form-data' } }
 // // // // // // //       );
@@ -986,7 +986,7 @@
 // // // // // //     setLoading(true);
 // // // // // //     try {
 // // // // // //       const response = await axios.post(
-// // // // // //         'https://landing.docapp.co.in/api/documents/upload-document',
+// // // // // //         'https://api.docapp.co.in/api/documents/upload-document',
 // // // // // //         formData,
 // // // // // //         { headers: { 'Content-Type': 'multipart/form-data' } }
 // // // // // //       );
@@ -1087,7 +1087,7 @@
 // // // // //     setLoading(true);
 // // // // //     try {
 // // // // //       const response = await axios.post(
-// // // // //         'https://landing.docapp.co.in/api/documents/upload-document',
+// // // // //         'https://api.docapp.co.in/api/documents/upload-document',
 // // // // //         formData,
 // // // // //         { headers: { 'Content-Type': 'multipart/form-data' } }
 // // // // //       );
@@ -1194,7 +1194,7 @@
 // // // //     setLoading(true);
 // // // //     try {
 // // // //       const response = await axios.post(
-// // // //         'https://landing.docapp.co.in/api/documents/upload-document',
+// // // //         'https://api.docapp.co.in/api/documents/upload-document',
 // // // //         formData,
 // // // //         { headers: { 'Content-Type': 'multipart/form-data' } }
 // // // //       );
@@ -1211,7 +1211,7 @@
 // // // //   };
 
 // // // //   return (
-    
+
 // // // //     <View style={tw`flex-1 bg-green-50 p-5`}>
 // // // //       {/* 🔙 Header */}
 // // // //       <View style={tw`flex-row items-center mb-6 mt-6`}>
@@ -1225,7 +1225,7 @@
 // // // //           KYC Verification
 // // // //         </Text>
 // // // //       </View>
-    
+
 // // // //       {/* 🪪 Title */}
 // // // //       <View style={tw`items-center justify-center mb-6`}>
 // // // //         <Text style={tw`text-2xl font-bold text-green-800 text-center`}>
@@ -1277,7 +1277,7 @@
 // // // //         )}
 // // // //       </TouchableOpacity>
 // // // //     </View>
-    
+
 // // // //   );
 // // // // };
 
@@ -1317,9 +1317,9 @@
 // // //   // 📋 Fetch documents from API
 // // //   const fetchDocuments = async () => {
 // // //     try {
-// // //       const response = await axios.get('https://landing.docapp.co.in/api/documents/get-documents');
+// // //       const response = await axios.get('https://api.docapp.co.in/api/documents/get-documents');
 // // //       console.log('Documents Response:', response.data);
-      
+
 // // //       if (response.data && response.data.userDocuments) {
 // // //         setDocuments(response.data.userDocuments);
 // // //       }
@@ -1379,7 +1379,7 @@
 // // //     setLoading(true);
 // // //     try {
 // // //       const response = await axios.post(
-// // //         'https://landing.docapp.co.in/api/documents/upload-document',
+// // //         'https://api.docapp.co.in/api/documents/upload-document',
 // // //         formData,
 // // //         { headers: { 'Content-Type': 'multipart/form-data' } }
 // // //       );
@@ -1387,7 +1387,7 @@
 // // //       console.log('Upload Response:', response.data);
 // // //       Alert.alert('✅ Success', 'Document uploaded successfully!');
 // // //       setSelectedImage(null);
-      
+
 // // //       // Refresh documents list after successful upload
 // // //       fetchDocuments();
 // // //     } catch (error) {
@@ -1445,7 +1445,7 @@
 // // //         </View>
 // // //         <StatusIndicator status={item.document_status} />
 // // //       </View>
-      
+
 // // //       <Image
 // // //         source={{ uri: item.document_url }}
 // // //         style={tw`w-full h-40 rounded-lg bg-gray-100`}
@@ -1607,7 +1607,7 @@
 // // } from 'lucide-react-native';
 
 // // /* ================= CONFIG ================= */
-// // const API_BASE = 'https://landing.docapp.co.in/api';
+// // const API_BASE = 'https://api.docapp.co.in/api';
 // // const DOCTOR_ID = 36; // 🔴 replace with logged-in doctor id
 
 // // /* ================= COMPONENT ================= */
@@ -1960,7 +1960,7 @@
 // } from 'lucide-react-native';
 
 // /* ================= CONFIG ================= */
-// const API_BASE = 'https://landing.docapp.co.in/api';
+// const API_BASE = 'https://api.docapp.co.in/api';
 // const DOCTOR_ID = 50;
 
 // /* ================= COMPONENT ================= */
@@ -2326,7 +2326,7 @@
 // import { ArrowLeft, CheckCircle, Clock } from 'lucide-react-native';
 
 // /* ================= CONFIG ================= */
-// const API_BASE = 'https://landing.docapp.co.in/api';
+// const API_BASE = 'https://api.docapp.co.in/api';
 // const DOCTOR_ID = 53;
 
 // /* ================= COMPONENT ================= */
@@ -2537,7 +2537,7 @@ import { ArrowLeft, CheckCircle, Clock } from 'lucide-react-native';
 import { useUser } from '../../screens/contexts/UserContext';
 
 /* ================= CONFIG ================= */
-const API_BASE = 'https://landing.docapp.co.in/api';
+const API_BASE = 'https://api.docapp.co.in/api';
 
 
 /* ================= COMPONENT ================= */
@@ -2692,7 +2692,7 @@ const SpecializationsScreen = () => {
                 </Text>
               )}
             </TouchableOpacity>
-            
+
           </>
         ) : (
           <View style={tw`bg-white p-5 rounded-xl`}>
