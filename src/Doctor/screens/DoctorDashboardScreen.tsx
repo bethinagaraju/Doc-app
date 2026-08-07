@@ -5,9 +5,9 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
-  SafeAreaView,
   StatusBar,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Settings,
   Bell,
@@ -29,6 +29,12 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import tw from 'twrnc';
 import { DoctorStackParamList } from '../types/navigation';
 import DoctorHeader from '../components/DoctorHeader';
+import DoctorBottomBar from '../components/DoctorBottomBar';
+import DocProfileTopBar from '../components/DocProfileTopBar';
+import WelcomeStatusToggle from '../components/WelcomeStatusToggle';
+import EarningsSnapshot from '../components/EarningsSnapshot';
+import TodaysAppointments from '../components/TodaysAppointments';
+import ClinicInfo from '../components/ClinicInfo';
 
 type DoctorNavigationProp = NativeStackNavigationProp<DoctorStackParamList>;
 
@@ -114,11 +120,11 @@ const DoctorDashboardScreen = () => {
 
   return (
     <>
-    {/* 🤖 Sticky AI Bot Button */}
-<TouchableOpacity
-  onPress={() => navigation.navigate('AIDoctorChat')}
-  activeOpacity={0.8}
-  style={tw`
+      {/* 🤖 Sticky AI Bot Button */}
+      <TouchableOpacity
+        onPress={() => navigation.navigate('AIDoctorChat')}
+        activeOpacity={0.8}
+        style={tw`
     absolute
     bottom-24
     right-6
@@ -131,86 +137,132 @@ const DoctorDashboardScreen = () => {
     shadow-lg
     z-50
   `}
->
-  <Bot size={32} color="#ffffff" />
-</TouchableOpacity>
-
-    <SafeAreaView style={tw`flex-1 bg-green-50`}>
-      <StatusBar backgroundColor="#059669" barStyle="light-content" />
-      <DoctorHeader title="DASHBOARD" showDoctorInfo />
-      
-      <ScrollView 
-        style={tw`flex-1 bg-green-50`}
-        contentContainerStyle={tw`p-4`}
-        showsVerticalScrollIndicator={false}
       >
-        <View style={tw`flex-row flex-wrap justify-between`}>
-          {menuItems.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              style={tw`w-[31%] bg-green-100 rounded-2xl p-4 mb-4 shadow-sm items-center justify-center`}
-              onPress={() => navigation.navigate(item.route)}
-            >
-              <View style={tw`items-center`}>
-                {item.icon}
-                <Text style={tw`text-green-700 text-xs font-medium mt-2 text-center`}>
-                  {item.title}
-                </Text>
-                {item.count && (
-                  <View style={tw`absolute -top-2 -right-2 bg-green-600 rounded-full px-2 py-0.5`}>
-                    <Text style={tw`text-white text-xs font-bold`}>{item.count}</Text>
-                  </View>
-                )}
-              </View>
-            </TouchableOpacity>
-          ))}
+        <Bot size={32} color="#ffffff" />
+      </TouchableOpacity>
+
+      <SafeAreaView style={tw`flex-1 bg-[#F8F9FF]`}>
+        {/* <StatusBar backgroundColor="#059669" barStyle="light-content" /> */}
+        <View>
+          <DocProfileTopBar />
         </View>
 
-        {/* Quick Stats */}
-        <View style={tw`mt-4`}>
-          <Text style={tw`text-lg font-bold text-green-700 mb-4`}>Quick Stats</Text>
-          <View style={tw`bg-green-100 rounded-2xl p-4 shadow-sm`}>
-            <View style={tw`flex-row justify-between mb-4`}>
-              <View>
-                <Text style={tw`text-green-600`}>Today's Appointments</Text>
-                <Text style={tw`text-2xl font-bold text-green-700`}>12</Text>
+        {/* <DoctorHeader title="DASHBOARD" showDoctorInfo /> */}
+
+        <ScrollView
+          style={tw`flex-1`}
+          contentContainerStyle={tw`p-4`}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={tw`mb-1`}>
+            <WelcomeStatusToggle />
+          </View>
+
+          <View style={tw`mb-6`}>
+            <EarningsSnapshot />
+          </View>
+
+          <View style={tw`mb-6`}>
+            <ClinicInfo />
+          </View>
+
+          <View style={tw`mb-6`}>
+            <TodaysAppointments />
+          </View>
+
+          <View style={tw`flex-row flex-wrap justify-between`}>
+            {menuItems.map((item) => (
+              <TouchableOpacity
+                key={item.id}
+                style={tw`w-[31%] bg-green-100 rounded-2xl p-4 mb-4 shadow-sm items-center justify-center`}
+                onPress={() => navigation.navigate(item.route)}
+              >
+                <View style={tw`items-center`}>
+                  {item.icon}
+                  <Text style={tw`text-green-700 text-xs font-medium mt-2 text-center`}>
+                    {item.title}
+                  </Text>
+                  {item.count && (
+                    <View style={tw`absolute -top-2 -right-2 bg-green-600 rounded-full px-2 py-0.5`}>
+                      <Text style={tw`text-white text-xs font-bold`}>{item.count}</Text>
+                    </View>
+                  )}
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {/* Quick Stats */}
+          <View style={tw`mt-4`}>
+            <Text style={tw`text-lg font-bold text-green-700 mb-4`}>Quick Stat</Text>
+            <View style={tw`bg-green-100 rounded-2xl p-4 shadow-sm`}>
+
+              <View style={tw`flex-row justify-between mb-4`}>
+
+                <View>
+                  <Text style={tw`text-green-600`}>Today's Appointments</Text>
+                  <Text style={tw`text-2xl font-bold text-green-700`}>12</Text>
+                </View>
+
+                <View>
+                  <Text style={tw`text-green-600`}>Total Patients</Text>
+                  <Text style={tw`text-2xl font-bold text-green-700`}>1,234</Text>
+                </View>
               </View>
-              <View>
-                <Text style={tw`text-green-600`}>Total Patients</Text>
-                <Text style={tw`text-2xl font-bold text-green-700`}>1,234</Text>
-              </View>
-            </View>
-            <View style={tw`flex-row justify-between`}>
-              <View>
-                <Text style={tw`text-green-600`}>This Month's Earnings</Text>
-                <Text style={tw`text-2xl font-bold text-green-700`}>₹46,000</Text>
-              </View>
-              <View>
-                <Text style={tw`text-green-600`}>Rating</Text>
-                <Text style={tw`text-2xl font-bold text-green-700`}>4.8 ⭐</Text>
+
+              <View style={tw`flex-row justify-between`}>
+                <View>
+                  <Text style={tw`text-green-600`}>This Month's Earnings</Text>
+                  <Text style={tw`text-2xl font-bold text-green-700`}>₹46,000</Text>
+                </View>
+                <View>
+                  <Text style={tw`text-green-600`}>Rating</Text>
+                  <Text style={tw`text-2xl font-bold text-green-700`}>4.8 ⭐</Text>
+                </View>
               </View>
             </View>
           </View>
-        </View>
 
-        {/* Recent Activities */}
-        <View style={tw`mt-6 mb-6`}>
-          <Text style={tw`text-lg font-bold text-green-700 mb-4`}>Recent Activities</Text>
-          <View style={tw`bg-green-100 rounded-2xl p-4 shadow-sm`}>
-            <View style={tw`border-l-4 border-green-600 pl-3 mb-4`}>
-              <Text style={tw`text-green-700 font-medium`}>New Appointment</Text>
-              <Text style={tw`text-green-600 text-sm`}>John Smith booked for 2:30 PM</Text>
-              <Text style={tw`text-xs text-green-400 mt-1`}>2 mins ago</Text>
-            </View>
-            <View style={tw`border-l-4 border-green-600 pl-3`}>
-              <Text style={tw`text-green-700 font-medium`}>Review Posted</Text>
-              <Text style={tw`text-green-600 text-sm`}>Sarah gave you a 5-star rating</Text>
-              <Text style={tw`text-xs text-green-400 mt-1`}>1 hour ago</Text>
+          {/* Recent Activities */}
+          <View style={tw`mt-6 mb-6`}>
+            <Text style={tw`text-lg font-bold text-green-700 mb-4`}>Recent Activities</Text>
+            <View style={tw`bg-green-100 rounded-2xl p-4 shadow-sm`}>
+              <View style={tw`border-l-4 border-green-600 pl-3 mb-4`}>
+                <Text style={tw`text-green-700 font-medium`}>New Appointment</Text>
+                <Text style={tw`text-green-600 text-sm`}>John Smith booked for 2:30 PM</Text>
+                <Text style={tw`text-xs text-green-400 mt-1`}>2 mins ago</Text>
+              </View>
+              <View style={tw`border-l-4 border-green-600 pl-3`}>
+                <Text style={tw`text-green-700 font-medium`}>Review Posted</Text>
+                <Text style={tw`text-green-600 text-sm`}>Sarah gave you a 5-star rating</Text>
+                <Text style={tw`text-xs text-green-400 mt-1`}>1 hour ago</Text>
+              </View>
             </View>
           </View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+        </ScrollView>
+
+
+        <DoctorBottomBar
+          activeTab="Dashboard"
+          onTabPress={(tab) => {
+            switch (tab) {
+              case "Dashboard":
+                navigation.navigate("DoctorDashboard");
+                break;
+              case "Visits":
+                navigation.navigate("AppointmentsScreen");
+                break;
+              case "Schedule":
+                navigation.navigate("AppointmentManagement");
+                break;
+              case "Profile":
+                navigation.navigate("DoctorProfile");
+                break;
+            }
+          }}
+        />
+
+      </SafeAreaView>
     </>
   );
 };

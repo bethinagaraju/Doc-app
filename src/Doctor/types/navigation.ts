@@ -29,4 +29,5 @@ export type DoctorStackParamList = {
   OpenSourceLicenses: undefined;
   PrivacySecurityHospital: undefined;
   AIDoctorChat: undefined;
+  AppointmentsScreen: undefined;
 };

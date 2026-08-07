@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, Image } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, Image, Animated } from 'react-native';
 import tw from 'twrnc';
 import { User, Calendar as CalendarIcon } from 'lucide-react-native';
 import { useUser } from '../screens/contexts/UserContext';
@@ -42,7 +42,7 @@ export default function AppointmentCard({ appointment, children }: AppointmentCa
   // Clean up time if it's like 10:30-11:00 or something, but we'll display as-is if short
   const timeText = appointment.appointment_start_time;
 
-  const isDoctor = user?.role === 'doctor';
+  const isDoctor = user?.role?.toLowerCase() === 'doctor' || !!appointment.patient;
 
   const displayName = isDoctor
     ? appointment.patient?.username || appointment.patientName || `Patient #${appointment.user_id || appointment.id}`
@@ -106,6 +106,60 @@ export default function AppointmentCard({ appointment, children }: AppointmentCa
 
         {/* Action Button (Children) */}
         {children && <View>{children}</View>}
+      </View>
+    </View>
+  );
+}
+
+export function AppointmentCardSkeleton() {
+  const opacity = useRef(new Animated.Value(0.3)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(opacity, {
+          toValue: 0.7,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          toValue: 0.3,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, [opacity]);
+
+  return (
+    <View style={tw`bg-white p-4 mb-4 rounded-[12px] border border-[#DAE1E7] flex-col relative`}>
+      {/* Top Header */}
+      <View style={tw`flex-row justify-between items-start mb-3`}>
+        {/* Left Side: Icon + Details */}
+        <View style={tw`flex-row items-center gap-3`}>
+          {/* Avatar Background */}
+          <Animated.View style={[tw`w-12 h-12 bg-gray-200 rounded-lg`, { opacity }]} />
+
+          {/* Name & Type */}
+          <View style={tw`flex-col justify-center h-12 gap-2`}>
+            <Animated.View style={[tw`w-32 h-5 bg-gray-200 rounded`, { opacity }]} />
+            <Animated.View style={[tw`w-16 h-4 bg-gray-200 rounded`, { opacity }]} />
+          </View>
+        </View>
+
+        {/* Right Side: Time */}
+        <Animated.View style={[tw`w-12 h-4 bg-gray-200 rounded mt-2`, { opacity }]} />
+      </View>
+
+      {/* Date Row */}
+      <View style={tw`flex-row items-center gap-2 mb-3`}>
+        <Animated.View style={[tw`w-24 h-4 bg-gray-200 rounded`, { opacity }]} />
+      </View>
+
+      {/* Footer / Status Row */}
+      <View style={tw`flex-row justify-between items-center pt-3 border-t border-[#DAE1E7]`}>
+        {/* Status Pill */}
+        <Animated.View style={[tw`w-20 h-6 bg-gray-200 rounded-full`, { opacity }]} />
       </View>
     </View>
   );

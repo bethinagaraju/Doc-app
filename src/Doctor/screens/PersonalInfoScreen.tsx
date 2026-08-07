@@ -1,445 +1,6 @@
-// import React, { useState, useEffect } from 'react';
-// import { View, Text, ScrollView, TouchableOpacity, Image, Alert, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
-// import { useNavigation } from '@react-navigation/native';
-// import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-// import { DoctorStackParamList } from '../types/navigation';
-// import DoctorHeader from '../components/DoctorHeader';
-// import tw from 'twrnc';
-// import { launchImageLibrary } from 'react-native-image-picker';
-
-// type DoctorNavigationProp = NativeStackNavigationProp<DoctorStackParamList>;
-
-// const API_GET_USER = 'https://api.docapp.co.in/api/auth/get-user-data';
-// const API_UPDATE_PROFILE = 'https://api.docapp.co.in/api/auth/profile/complete/doctor';
-// const API_UPLOAD_PHOTO = 'https://api.docapp.co.in/api/auth/upload-photo';
-// const API_UPLOAD_BANK = 'https://api.docapp.co.in/api/auth/upload/bank-details';
-
-// const PersonalInfoScreen = () => {
-//   const navigation = useNavigation<DoctorNavigationProp>();
-//   const [personalInfo, setPersonalInfo] = useState<any>(null);
-//   const [loading, setLoading] = useState(true);
-
-//   // 🔀 Tab State: 'personal' | 'bank'
-//   const [activeTab, setActiveTab] = useState<'personal' | 'bank'>('personal');
-
-//   // 📝 Personal Form State
-//   const [form, setForm] = useState({
-//     date_of_birth: '',
-//     gender: '',
-//     specialization: '',
-//     license_number: '',
-//     experience_years: '',
-//   });
-
-//   // 🏦 Bank Form State
-//   const [bankForm, setBankForm] = useState({
-//     beneficiary_name: '',
-//     account_number: '',
-//     confirm_account_number: '', // Field for validation
-//     ifsc_code: '',
-//   });
-
-//   // ================================================================================================
-//   // 🔄 Fetch profile data
-//   // ================================================================================================
-//   const fetchData = async () => {
-//     try {
-//       const response = await fetch(API_GET_USER, {
-//         method: 'GET',
-//         credentials: 'include',
-//       });
-
-//       const data = await response.json();
-
-//       if (response.ok && data.userData) {
-//         const user = data.userData;
-//         const profile = user.doctorProfile;
-
-//         setPersonalInfo({
-//           name: `Dr. ${user.username}`,
-//           email: user.email,
-//           phone: user.phone_number,
-//           specialization: profile?.specialization || '',
-//           experience: profile?.experience_years || '',
-//           consultationFee: profile?.consultation_fee || '',
-//           dateOfBirth: profile?.date_of_birth ? profile.date_of_birth.split('T')[0] : '',
-//           gender: profile?.gender || '',
-//           licenseNumber: profile?.license_number || '',
-//           profilePicture:
-//             profile?.profile_picture ||
-//             'https://res.cloudinary.com/dwshjkk42/image/upload/v1751270760/doctor_8997187_mgopyu.png',
-//         });
-
-//         // prefill personal form values
-//         setForm({
-//           date_of_birth: profile?.date_of_birth ? profile.date_of_birth.split('T')[0] : '',
-//           gender: profile?.gender || '',
-//           specialization: profile?.specialization || '',
-//           license_number: profile?.license_number || '',
-//           experience_years: profile?.experience_years?.toString() || '',
-//         });
-//       } else {
-//         Alert.alert('Error', data.message || 'Failed to load profile');
-//       }
-//     } catch (error) {
-//       console.error('❌ Network Error:', error);
-//       Alert.alert('Network Error', 'Please try again later.');
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchData();
-//   }, []);
-
-//   // ================================================================================================
-//   // 🚀 Profile Photo Upload Handler
-//   // ================================================================================================
-//   const handlePhotoUpload = async () => {
-//     try {
-//       const result = await launchImageLibrary({ mediaType: 'photo', quality: 0.7 });
-//       if (result.didCancel || !result.assets?.[0]) return;
-
-//       const photo = result.assets[0];
-//       const formData = new FormData();
-//       formData.append('image', {
-//         uri: photo.uri,
-//         type: photo.type,
-//         name: photo.fileName || 'profile.jpg',
-//       });
-
-//       setLoading(true);
-//       const res = await fetch(API_UPLOAD_PHOTO, {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'multipart/form-data' },
-//         credentials: 'include',
-//         body: formData,
-//       });
-//       const data = await res.json();
-
-//       if (!res.ok) {
-//         Alert.alert('Error', data.message || 'Upload failed');
-//         return;
-//       }
-//       Alert.alert('Success', 'Profile picture updated!');
-//       fetchData();
-//     } catch (error) {
-//       console.log(error);
-//       Alert.alert('Error', 'Failed to upload photo');
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   // ================================================================================================
-//   // 🔄 Update Personal Profile
-//   // ================================================================================================
-//   const handleUpdateProfile = async () => {
-//     try {
-//       const payload = {
-//         ...form,
-//         experience_years: form.experience_years ? parseInt(form.experience_years) : 0,
-//       };
-
-//       const response = await fetch(API_UPDATE_PROFILE, {
-//         method: 'PUT',
-//         headers: { 'Content-Type': 'application/json' },
-//         credentials: 'include',
-//         body: JSON.stringify(payload),
-//       });
-
-//       const data = await response.json();
-
-//       if (response.ok) {
-//         Alert.alert('Success', data.message || 'Profile updated successfully');
-//         fetchData(); 
-//       } else {
-//         Alert.alert('Error', data.message || 'Failed to update profile');
-//       }
-//     } catch (error) {
-//       console.error('❌ Network Error:', error);
-//       Alert.alert('Network Error', 'Please try again later.');
-//     }
-//   };
-
-//   // ================================================================================================
-//   // 🏦 Update Bank Details
-//   // ================================================================================================
-//   const handleUpdateBankDetails = async () => {
-//     // 1. Validation
-//     if (!bankForm.beneficiary_name || !bankForm.account_number || !bankForm.ifsc_code) {
-//       Alert.alert("Missing Fields", "Please fill in all bank details.");
-//       return;
-//     }
-
-//     // 2. Account Number Match Check
-//     if (bankForm.account_number !== bankForm.confirm_account_number) {
-//       Alert.alert("Mismatch", "Account numbers do not match. Please verify.");
-//       return;
-//     }
-
-//     try {
-//       setLoading(true);
-
-//       // Prepare payload (exclude confirm_account_number)
-//       const payload = {
-//         beneficiary_name: bankForm.beneficiary_name,
-//         account_number: bankForm.account_number,
-//         ifsc_code: bankForm.ifsc_code
-//       };
-
-//       const response = await fetch(API_UPLOAD_BANK, {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         credentials: 'include',
-//         body: JSON.stringify(payload),
-//       });
-
-//       const data = await response.json();
-
-//       if (response.ok) {
-//         Alert.alert('Success', 'Bank details updated successfully!');
-//         // Optional: Clear form or navigate
-//         setBankForm({ beneficiary_name: '', account_number: '', confirm_account_number: '', ifsc_code: '' });
-//       } else {
-//         Alert.alert('Error', data.message || 'Failed to update bank details');
-//       }
-//     } catch (error) {
-//       console.error('❌ Network Error:', error);
-//       Alert.alert('Network Error', 'Please try again later.');
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   // ================================================================================================
-//   // 🗑 Delete Profile Photo
-//   // ================================================================================================
-//   const handleDeletePhoto = async () => {
-//     Alert.alert(
-//       "Delete Profile Picture",
-//       "Are you sure you want to delete your profile photo?",
-//       [
-//         { text: "Cancel", style: "cancel" },
-//         {
-//           text: "Delete",
-//           style: "destructive",
-//           onPress: async () => {
-//             try {
-//               setLoading(true);
-//               const res = await fetch("https://api.docapp.co.in/api/auth/delete-profile-pic", {
-//                 method: "DELETE",
-//                 credentials: "include",
-//               });
-//               const data = await res.json();
-//               if (!res.ok) {
-//                 Alert.alert("Error", data.message || "Unable to delete picture");
-//                 return;
-//               }
-//               Alert.alert("Success", "Profile picture removed successfully!");
-//               fetchData();
-//             } catch (error) {
-//               console.log(error);
-//               Alert.alert("Error", "Network issue, try again.");
-//             } finally {
-//               setLoading(false);
-//             }
-//           },
-//         },
-//       ]
-//     );
-//   };
-
-//   if (loading || !personalInfo) {
-//     return (
-//       <View style={tw`flex-1 bg-green-700 justify-center items-center`}>
-//         <ActivityIndicator size="large" color="#fff" />
-//         <Text style={tw`text-green-100 text-lg mt-3`}>Loading...</Text>
-//       </View>
-//     );
-//   }
-
-//   return (
-//     <View style={tw`flex-1 bg-green-50`}>
-//       <DoctorHeader title="Profile Settings" showSettings showNotifications />
-
-//       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={tw`flex-1`}>
-//         <ScrollView contentContainerStyle={tw`p-5 pb-20`}>
-
-//           {/* 🔀 Tabs Switcher */}
-//           <View style={tw`flex-row justify-center mb-6 bg-white rounded-full p-1 shadow-sm`}>
-//             <TouchableOpacity 
-//               onPress={() => setActiveTab('personal')}
-//               style={tw`flex-1 py-3 rounded-full items-center ${activeTab === 'personal' ? 'bg-green-600' : 'bg-transparent'}`}
-//             >
-//               <Text style={tw`font-bold ${activeTab === 'personal' ? 'text-white' : 'text-gray-500'}`}>
-//                 Personal Info
-//               </Text>
-//             </TouchableOpacity>
-
-//             <TouchableOpacity 
-//               onPress={() => setActiveTab('bank')}
-//               style={tw`flex-1 py-3 rounded-full items-center ${activeTab === 'bank' ? 'bg-green-600' : 'bg-transparent'}`}
-//             >
-//               <Text style={tw`font-bold ${activeTab === 'bank' ? 'text-white' : 'text-gray-500'}`}>
-//                 Bank A/c Info
-//               </Text>
-//             </TouchableOpacity>
-//           </View>
-
-//           {/* ============================================================================
-//                                     VIEW 1: PERSONAL INFO
-//           ============================================================================ */}
-//           {activeTab === 'personal' && (
-//             <>
-//               {/* Profile Photo Section */}
-//               <View style={tw`items-center mb-6`}>
-//                 <Image source={{ uri: personalInfo.profilePicture }} style={tw`w-28 h-28 rounded-full`} />
-//                 <View style={tw`flex-row mt-3`}>
-//                   <TouchableOpacity style={tw`bg-green-600 px-4 py-2 rounded-full mr-2`} onPress={handlePhotoUpload}>
-//                     <Text style={tw`text-white font-semibold`}>Upload Photo</Text>
-//                   </TouchableOpacity>
-//                   <TouchableOpacity style={tw`bg-red-500 px-4 py-2 rounded-full`} onPress={handleDeletePhoto}>
-//                     <Text style={tw`text-white font-semibold`}>Delete</Text>
-//                   </TouchableOpacity>
-//                 </View>
-//                 <Text style={tw`text-green-700 text-xl font-bold mt-3`}>{personalInfo.name}</Text>
-//                 <Text style={tw`text-emerald-500 text-base`}>{personalInfo.specialization}</Text>
-//               </View>
-
-//               {/* Read-Only Info */}
-//               <View style={tw`bg-white rounded-2xl p-5 shadow-sm mb-5`}>
-//                 <Text style={tw`text-lg font-bold text-green-700 mb-4`}>Current Details</Text>
-//                 <Text style={tw`mb-1 text-gray-700`}>Email: {personalInfo.email}</Text>
-//                 <Text style={tw`mb-1 text-gray-700`}>Phone: {personalInfo.phone}</Text>
-//                 <Text style={tw`mb-1 text-gray-700`}>Experience: {personalInfo.experience} years</Text>
-//               </View>
-
-//               {/* Editable Form */}
-//               <View style={tw`bg-white rounded-2xl p-5 shadow-sm`}>
-//                 <Text style={tw`text-lg font-bold text-green-700 mb-4`}>Update Personal Info</Text>
-
-//                 <Text style={tw`text-xs text-gray-500 mb-1 ml-1`}>Date of Birth</Text>
-//                 <TextInput
-//                   placeholder="YYYY-MM-DD"
-//                   value={form.date_of_birth}
-//                   onChangeText={(t) => setForm({ ...form, date_of_birth: t })}
-//                   style={tw`border border-gray-300 rounded p-3 mb-3 bg-gray-50`}
-//                 />
-
-//                 <Text style={tw`text-xs text-gray-500 mb-1 ml-1`}>Gender</Text>
-//                 <TextInput
-//                   placeholder="Male / Female"
-//                   value={form.gender}
-//                   onChangeText={(t) => setForm({ ...form, gender: t })}
-//                   style={tw`border border-gray-300 rounded p-3 mb-3 bg-gray-50`}
-//                 />
-
-//                 <Text style={tw`text-xs text-gray-500 mb-1 ml-1`}>Specialization</Text>
-//                 <TextInput
-//                   placeholder="e.g. Cardiologist"
-//                   value={form.specialization}
-//                   onChangeText={(t) => setForm({ ...form, specialization: t })}
-//                   style={tw`border border-gray-300 rounded p-3 mb-3 bg-gray-50`}
-//                 />
-
-//                 <Text style={tw`text-xs text-gray-500 mb-1 ml-1`}>License Number</Text>
-//                 <TextInput
-//                   placeholder="Medical License No."
-//                   value={form.license_number}
-//                   onChangeText={(t) => setForm({ ...form, license_number: t })}
-//                   style={tw`border border-gray-300 rounded p-3 mb-3 bg-gray-50`}
-//                 />
-
-//                 <Text style={tw`text-xs text-gray-500 mb-1 ml-1`}>Experience (Years)</Text>
-//                 <TextInput
-//                   placeholder="0"
-//                   value={form.experience_years}
-//                   keyboardType="numeric"
-//                   onChangeText={(t) => setForm({ ...form, experience_years: t })}
-//                   style={tw`border border-gray-300 rounded p-3 mb-5 bg-gray-50`}
-//                 />
-
-//                 <TouchableOpacity style={tw`bg-emerald-500 rounded-full px-6 py-3 items-center`} onPress={handleUpdateProfile}>
-//                   <Text style={tw`text-white font-bold text-base`}>Save Personal Info</Text>
-//                 </TouchableOpacity>
-//               </View>
-//             </>
-//           )}
-
-//           {/* ============================================================================
-//                                     VIEW 2: BANK INFO
-//           ============================================================================ */}
-//           {activeTab === 'bank' && (
-//             <View style={tw`bg-white rounded-2xl p-5 shadow-sm`}>
-//               <Text style={tw`text-lg font-bold text-green-700 mb-2`}>Bank Account Details</Text>
-//               <Text style={tw`text-gray-500 text-sm mb-6`}>Please provide your bank details to receive payouts.</Text>
-
-//               <Text style={tw`text-xs text-gray-500 mb-1 ml-1`}>Beneficiary Name</Text>
-//               <TextInput
-//                 placeholder="Name as per Bank Records"
-//                 value={bankForm.beneficiary_name}
-//                 onChangeText={(t) => setBankForm({ ...bankForm, beneficiary_name: t })}
-//                 style={tw`border border-gray-300 rounded p-3 mb-4 bg-gray-50`}
-//               />
-
-//               <Text style={tw`text-xs text-gray-500 mb-1 ml-1`}>Account Number</Text>
-//               <TextInput
-//                 placeholder="Enter Account Number"
-//                 value={bankForm.account_number}
-//                 keyboardType="number-pad"
-//                 secureTextEntry={true} // Hidden for security until confirmed
-//                 onChangeText={(t) => setBankForm({ ...bankForm, account_number: t })}
-//                 style={tw`border border-gray-300 rounded p-3 mb-4 bg-gray-50`}
-//               />
-
-//               <Text style={tw`text-xs text-gray-500 mb-1 ml-1`}>Confirm Account Number</Text>
-//               <TextInput
-//                 placeholder="Re-enter Account Number"
-//                 value={bankForm.confirm_account_number}
-//                 keyboardType="number-pad"
-//                 onChangeText={(t) => setBankForm({ ...bankForm, confirm_account_number: t })}
-//                 style={tw`border border-gray-300 rounded p-3 mb-4 bg-gray-50`}
-//               />
-
-//               <Text style={tw`text-xs text-gray-500 mb-1 ml-1`}>IFSC Code</Text>
-//               <TextInput
-//                 placeholder="e.g. HDFC0001234"
-//                 value={bankForm.ifsc_code}
-//                 autoCapitalize="characters"
-//                 onChangeText={(t) => setBankForm({ ...bankForm, ifsc_code: t })}
-//                 style={tw`border border-gray-300 rounded p-3 mb-6 bg-gray-50`}
-//               />
-
-//               <TouchableOpacity 
-//                 style={tw`bg-emerald-500 rounded-full px-6 py-3 items-center`} 
-//                 onPress={handleUpdateBankDetails}
-//               >
-//                 <Text style={tw`text-white font-bold text-base`}>Save Bank Details</Text>
-//               </TouchableOpacity>
-//             </View>
-//           )}
-
-//         </ScrollView>
-//       </KeyboardAvoidingView>
-//     </View>
-//   );
-// };
-
-// export default PersonalInfoScreen;
-
-
-
-
-
-
-
-
-
-
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image, Alert, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { DoctorStackParamList } from '../types/navigation';
@@ -447,6 +8,10 @@ import DoctorHeader from '../components/DoctorHeader';
 import tw from 'twrnc';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useAccessToken } from '../../screens/contexts/AccessTokenContext';
+import DocProfileTopBar from '../components/DocProfileTopBar';
+import ProfilePhotoSection from '../components/ProfilePhotoSection';
+import DocStatCard from '../components/DocStatCard';
+import AccountSecuritySettings from '../components/AccountSecuritySettings';
 
 type DoctorNavigationProp = NativeStackNavigationProp<DoctorStackParamList>;
 
@@ -812,8 +377,12 @@ const PersonalInfoScreen = () => {
   }
 
   return (
-    <View style={tw`flex-1 bg-green-50`}>
-      <DoctorHeader title="Profile Settings" showSettings showNotifications />
+    <SafeAreaView style={tw`flex-1 bg-[#F8F9FF]`}>
+
+      <View>
+        <DocProfileTopBar />
+      </View>
+
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={tw`flex-1`}>
         <ScrollView contentContainerStyle={tw`p-5 pb-20`}>
@@ -854,19 +423,13 @@ const PersonalInfoScreen = () => {
           {activeTab === 'personal' && (
             <>
               {/* Profile Photo Section */}
-              <View style={tw`items-center mb-6`}>
-                <Image source={{ uri: personalInfo.profilePicture }} style={tw`w-28 h-28 rounded-full`} />
-                <View style={tw`flex-row mt-3`}>
-                  <TouchableOpacity style={tw`bg-green-600 px-4 py-2 rounded-full mr-2`} onPress={handlePhotoUpload}>
-                    <Text style={tw`text-white font-semibold`}>Upload Photo</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={tw`bg-red-500 px-4 py-2 rounded-full`} onPress={handleDeletePhoto}>
-                    <Text style={tw`text-white font-semibold`}>Delete</Text>
-                  </TouchableOpacity>
-                </View>
-                <Text style={tw`text-green-700 text-xl font-bold mt-3`}>{personalInfo.name}</Text>
-                <Text style={tw`text-emerald-500 text-base`}>{personalInfo.specialization}</Text>
-              </View>
+              <ProfilePhotoSection
+                profilePicture={personalInfo.profilePicture}
+                name={personalInfo.name}
+                specialization={personalInfo.specialization}
+                onUploadPress={handlePhotoUpload}
+                onDeletePress={handleDeletePhoto}
+              />
 
               {/* Read-Only Info */}
               <View style={tw`bg-white rounded-2xl p-5 shadow-sm mb-5`}>
@@ -874,6 +437,14 @@ const PersonalInfoScreen = () => {
                 <Text style={tw`mb-1 text-gray-700`}>Email: {personalInfo.email}</Text>
                 <Text style={tw`mb-1 text-gray-700`}>Phone: {personalInfo.phone}</Text>
                 <Text style={tw`mb-1 text-gray-700`}>Experience: {personalInfo.experience} years</Text>
+              </View>
+
+              {/* Stats Card */}
+              <View style={tw`mb-6`}>
+                <DocStatCard
+                  patientSatisfaction="4.9/5.0"
+                  totalConsultations="1,240+"
+                />
               </View>
 
               {/* Editable Form */}
@@ -925,6 +496,12 @@ const PersonalInfoScreen = () => {
                   <Text style={tw`text-white font-bold text-base`}>Save Personal Info</Text>
                 </TouchableOpacity>
               </View>
+
+              <View style={tw`mt-6`}>
+                <AccountSecuritySettings />
+              </View>
+
+
             </>
           )}
 
@@ -1064,7 +641,7 @@ const PersonalInfoScreen = () => {
 
         </ScrollView>
       </KeyboardAvoidingView>
-    </View>
+    </SafeAreaView>
   );
 };
 

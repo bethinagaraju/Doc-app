@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
-  SafeAreaView,
   StatusBar,
   TouchableOpacity,
   ScrollView,
@@ -14,12 +13,17 @@ import {
   TextInput,
   KeyboardAvoidingView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import tw from 'twrnc';
 import DoctorHeader from '../components/DoctorHeader';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useAccessToken } from '../../screens/contexts/AccessTokenContext';
+import ProfileTopBar from '../../components/ProfileTopBar';
+import SlotDurationCard from '../components/SlotDurationCard';
+import ConsultationFeesCard from '../components/ConsultationFeesCard';
+import DoctorExperienceCard from '../components/DoctorExperienceCard';
 
 interface ScheduleItem {
   day: string;
@@ -42,9 +46,6 @@ const AppointmentManagementScreen = () => {
   const { accessToken } = useAccessToken();
   const [activeView, setActiveView] = useState('cards'); // 'cards' or 'schedule'
   const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
-  const [consultationFee, setConsultationFee] = useState('');
-  const [experienceYears, setExperienceYears] = useState('');
-  const [appointmentSlot, setAppointmentSlot] = useState('');
   const [loading, setLoading] = useState(true);
   const [timePicker, setTimePicker] = useState<{
     visible: boolean;
@@ -59,6 +60,9 @@ const AppointmentManagementScreen = () => {
     breakIndex: null,
     breakField: null,
   });
+  const [slotDuration, setSlotDuration] = useState<15 | 30 | 45 | 60>(30);
+  const [fee, setFee] = useState("120");
+  const [experience, setExperience] = useState("5");
 
   const fetchDoctorData = async () => {
     try {
@@ -66,6 +70,9 @@ const AppointmentManagementScreen = () => {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
         },
         credentials: 'include',
       });
@@ -73,10 +80,11 @@ const AppointmentManagementScreen = () => {
 
       if (response.ok && data?.userData?.doctorProfile) {
         const doctor = data.userData.doctorProfile;
-        // Note: example uses "consultation_fee", "experience_years", "appointment_slot"
-        setConsultationFee(String(doctor.consultation_fee ?? ''));
-        setExperienceYears(String(doctor.experience_years ?? ''));
-        setAppointmentSlot(String(doctor.appointment_slot ?? ''));
+
+        setFee(String(doctor.consultation_fee ?? ''));
+        setExperience(String(doctor.experience_years ?? ''));
+        const slot = Number(doctor.appointment_time) || 30;
+        setSlotDuration(slot as 15 | 30 | 45 | 60);
 
         const parsedSchedule: ParsedScheduleItem[] = doctor.availability_schedule
           ? JSON.parse(doctor.availability_schedule)
@@ -200,15 +208,15 @@ const AppointmentManagementScreen = () => {
 
   const validateSchedule = (schedules: ScheduleItem[]): boolean => {
     // Ensure numeric fields are present
-    if (!consultationFee || isNaN(Number(consultationFee))) {
+    if (!fee || isNaN(Number(fee))) {
       Alert.alert('Missing/Invalid', 'Please enter a valid consultation fee.');
       return false;
     }
-    if (!experienceYears || isNaN(Number(experienceYears))) {
+    if (!experience || isNaN(Number(experience))) {
       Alert.alert('Missing/Invalid', 'Please enter valid experience (years).');
       return false;
     }
-    if (!appointmentSlot || isNaN(Number(appointmentSlot))) {
+    if (!slotDuration || isNaN(Number(slotDuration))) {
       Alert.alert('Missing/Invalid', 'Please enter a valid appointment slot (minutes).');
       return false;
     }
@@ -238,7 +246,7 @@ const AppointmentManagementScreen = () => {
     return true;
   };
 
-  const handleSubmitAll = async () => {
+  const handleSubmitAll = async (overrides?: { slotDuration?: number }) => {
     if (!validateSchedule(schedule)) return;
 
     const formattedSchedule = schedule.map((day) => ({
@@ -253,13 +261,14 @@ const AppointmentManagementScreen = () => {
 
     const payload = {
       availability_schedule: formattedSchedule,
-      consultation_fee: Number(consultationFee),
-      experience_years: Number(experienceYears),
-      appointment_slot: Number(appointmentSlot),
+      consultation_fee: Number(fee),
+      experience_years: Number(experience),
+      appointment_slot: Number(overrides?.slotDuration || slotDuration),
     };
 
     // helpful: log payload to debug in dev
-    // console.log('Payload ->', JSON.stringify(payload, null, 2));
+    console.log('Updating Slot Duration:', Number(overrides?.slotDuration || slotDuration));
+    console.log('Full Payload ->', JSON.stringify(payload, null, 2));
 
     try {
       const response = await fetch(
@@ -278,7 +287,6 @@ const AppointmentManagementScreen = () => {
 
       if (response.ok) {
         Alert.alert('Success', 'Full weekly schedule saved successfully!');
-        fetchDoctorData();
       } else {
         Alert.alert('Error', resText || 'Invalid format or missing fields.');
       }
@@ -290,151 +298,126 @@ const AppointmentManagementScreen = () => {
   if (loading) {
     return (
       <SafeAreaView style={tw`flex-1 items-center justify-center`}>
-        <ActivityIndicator size="large" color="#059669" />
+        <ActivityIndicator size="large" color="#F8F9FF" />
         <Text style={tw`text-green-700 mt-2`}>Loading Doctor Data...</Text>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={tw`flex-1 bg-green-50`}>
-      <StatusBar backgroundColor="#059669" barStyle="light-content" />
-      <DoctorHeader title="APPOINTMENT MANAGEMENT" />
+    <SafeAreaView style={tw`flex-1 bg-[#F8F9FF]`}>
+
+
+      <ProfileTopBar />
+
+
+      <StatusBar backgroundColor="#F8F9FF" barStyle="light-content" />
+      {/* <DoctorHeader title="APPOINTMENT MANAGEMENT" /> */}
+
+
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={tw`flex-1`}>
         <ScrollView style={tw`p-4`}>
-          {activeView === 'cards' ? (
-            <>
-              <TouchableOpacity
-                style={tw`bg-white p-6 mb-4 rounded-2xl shadow`}
-                onPress={() => setActiveView('schedule')}
-              >
-                <Text style={tw`text-lg text-green-800 font-bold text-center`}>Appoint schedule</Text>
-              </TouchableOpacity>
 
-              <TouchableOpacity
-                style={tw`bg-white p-6 mb-4 rounded-2xl shadow`}
-                onPress={() => navigation.navigate('Appointments')}
-              >
-                <Text style={tw`text-lg text-green-800 font-bold text-center`}>Your appointments</Text>
-              </TouchableOpacity>
-            </>
-          ) : (
-            <>
-              <TouchableOpacity
-                style={tw`bg-green-600 py-2 px-4 rounded-lg mb-4`}
-                onPress={() => setActiveView('cards')}
-              >
-                <Text style={tw`text-white text-center font-semibold`}>Back</Text>
-              </TouchableOpacity>
+          <View style={tw`gap-4`}>
+            <SlotDurationCard
+              selected={slotDuration}
+              onChange={(duration) => {
+                setSlotDuration(duration);
+                handleSubmitAll({ slotDuration: duration });
+              }}
+            />
 
-              <Text style={tw`text-lg text-green-800 font-bold mb-4`}>Doctor Info</Text>
+            <ConsultationFeesCard
+              fee={fee}
+              onChangeFee={setFee}
+              onUpdate={handleSubmitAll}
+            />
 
-              <View style={tw`bg-white p-4 mb-4 rounded-2xl shadow`}>
-                <Text style={tw`text-sm text-green-700 mb-2 font-semibold`}>Consultation Fee (₹)</Text>
-                <TextInput
-                  value={consultationFee}
-                  onChangeText={setConsultationFee}
-                  keyboardType="numeric"
-                  placeholder="e.g., 540"
-                  style={tw`border border-green-200 p-2 rounded mb-3`}
-                />
+            <DoctorExperienceCard
+              experience={experience}
+              onChangeExperience={setExperience}
+              onUpdate={handleSubmitAll}
+            />
+          </View>
 
-                <Text style={tw`text-sm text-green-700 mb-2 font-semibold`}>Experience (years)</Text>
-                <TextInput
-                  value={experienceYears}
-                  onChangeText={setExperienceYears}
-                  keyboardType="numeric"
-                  placeholder="e.g., 2"
-                  style={tw`border border-green-200 p-2 rounded mb-3`}
-                />
+          <>
+            <Text style={tw`text-lg text-green-800 font-bold mb-4 mt-4`}>Set Your Weekly Schedule</Text>
 
-                <Text style={tw`text-sm text-green-700 mb-2 font-semibold`}>Appointment Slot (minutes)</Text>
-                <TextInput
-                  value={appointmentSlot}
-                  onChangeText={setAppointmentSlot}
-                  keyboardType="numeric"
-                  placeholder="e.g., 30"
-                  style={tw`border border-green-200 p-2 rounded`}
-                />
-              </View>
+            {schedule.map((item, index) => (
+              <View key={item.day} style={tw`bg-white p-4 mb-4 rounded-2xl shadow`}>
+                <Text style={tw`text-green-700 font-bold mb-2 capitalize`}>{item.day}</Text>
 
-              <Text style={tw`text-lg text-green-800 font-bold mb-4`}>Set Your Weekly Schedule</Text>
+                <TouchableOpacity
+                  style={tw`border border-green-300 p-2 rounded mb-2`}
+                  onPress={() => openTimePicker(index, 'loginTime')}
+                >
+                  <Text>{item.loginTime ? `Login Time: ${item.loginTime}` : 'Set Login Time'}</Text>
+                </TouchableOpacity>
 
-              {schedule.map((item, index) => (
-                <View key={item.day} style={tw`bg-white p-4 mb-4 rounded-2xl shadow`}>
-                  <Text style={tw`text-green-700 font-bold mb-2 capitalize`}>{item.day}</Text>
+                <TouchableOpacity
+                  style={tw`border border-green-300 p-2 rounded mb-2`}
+                  onPress={() => openTimePicker(index, 'logoutTime')}
+                >
+                  <Text>{item.logoutTime ? `Logout Time: ${item.logoutTime}` : 'Set Logout Time'}</Text>
+                </TouchableOpacity>
 
-                  <TouchableOpacity
-                    style={tw`border border-green-300 p-2 rounded mb-2`}
-                    onPress={() => openTimePicker(index, 'loginTime')}
-                  >
-                    <Text>{item.loginTime ? `Login Time: ${item.loginTime}` : 'Set Login Time'}</Text>
-                  </TouchableOpacity>
+                <Text style={tw`text-sm text-green-600 mb-1`}>Breaks:</Text>
+                {item.breaks.map((brk, brkIndex) => (
+                  <View key={brkIndex} style={tw`mb-2`}>
+                    <View style={tw`flex-row justify-between items-center mb-1`}>
 
-                  <TouchableOpacity
-                    style={tw`border border-green-300 p-2 rounded mb-2`}
-                    onPress={() => openTimePicker(index, 'logoutTime')}
-                  >
-                    <Text>{item.logoutTime ? `Logout Time: ${item.logoutTime}` : 'Set Logout Time'}</Text>
-                  </TouchableOpacity>
+                      <TouchableOpacity
+                        style={tw`border border-green-300 p-2 rounded flex-1 mr-1`}
+                        onPress={() => openTimePicker(index, 'breaks', brkIndex, 'start')}
+                      >
+                        <Text>{brk.start ? `Start: ${brk.start}` : 'Set Start'}</Text>
+                      </TouchableOpacity>
 
-                  <Text style={tw`text-sm text-green-600 mb-1`}>Breaks:</Text>
-                  {item.breaks.map((brk, brkIndex) => (
-                    <View key={brkIndex} style={tw`mb-2`}>
-                      <View style={tw`flex-row justify-between items-center mb-1`}>
+                      <TouchableOpacity
+                        style={tw`border border-green-300 p-2 rounded flex-1 ml-1`}
+                        onPress={() => openTimePicker(index, 'breaks', brkIndex, 'end')}
+                      >
+                        <Text>{brk.end ? `End: ${brk.end}` : 'Set End'}</Text>
+                      </TouchableOpacity>
+
+                      {item.breaks.length > 1 && (
                         <TouchableOpacity
-                          style={tw`border border-green-300 p-2 rounded flex-1 mr-1`}
-                          onPress={() => openTimePicker(index, 'breaks', brkIndex, 'start')}
+                          onPress={() => removeBreak(index, brkIndex)}
+                          style={tw`bg-red-500 px-3 py-1 rounded ml-2`}
                         >
-                          <Text>{brk.start ? `Start: ${brk.start}` : 'Set Start'}</Text>
+                          <Text style={tw`text-white`}>−</Text>
                         </TouchableOpacity>
-
-                        <TouchableOpacity
-                          style={tw`border border-green-300 p-2 rounded flex-1 ml-1`}
-                          onPress={() => openTimePicker(index, 'breaks', brkIndex, 'end')}
-                        >
-                          <Text>{brk.end ? `End: ${brk.end}` : 'Set End'}</Text>
-                        </TouchableOpacity>
-
-                        {item.breaks.length > 1 && (
-                          <TouchableOpacity
-                            onPress={() => removeBreak(index, brkIndex)}
-                            style={tw`bg-red-500 px-3 py-1 rounded ml-2`}
-                          >
-                            <Text style={tw`text-white`}>−</Text>
-                          </TouchableOpacity>
-                        )}
-                      </View>
+                      )}
                     </View>
-                  ))}
-
-                  <TouchableOpacity
-                    onPress={() => addBreak(index)}
-                    style={tw`bg-green-100 border border-green-400 px-3 py-1 rounded mb-2`}
-                  >
-                    <Text style={tw`text-green-700 text-center`}>+ Add Break</Text>
-                  </TouchableOpacity>
-
-                  <View style={tw`border border-green-300 rounded mb-2 bg-green-50`}>
-                    <Picker
-                      selectedValue={item.mode}
-                      onValueChange={(val) => handleChange(index, 'mode', val)}
-                    >
-                      <Picker.Item label="Select Mode" value="" />
-                      <Picker.Item label="Online" value="online" />
-                      <Picker.Item label="Offline" value="offline" />
-                      <Picker.Item label="Hybrid" value="hybrid" />
-                    </Picker>
                   </View>
-                </View>
-              ))}
+                ))}
 
-              <TouchableOpacity onPress={handleSubmitAll} style={tw`bg-green-600 py-3 rounded-lg mt-4 mb-8`}>
-                <Text style={tw`text-white text-center font-semibold text-lg`}>Save Full Weekly Schedule</Text>
-              </TouchableOpacity>
-            </>
-          )}
+                <TouchableOpacity
+                  onPress={() => addBreak(index)}
+                  style={tw`bg-green-100 border border-green-400 px-3 py-1 rounded mb-2`}
+                >
+                  <Text style={tw`text-green-700 text-center`}>+ Add Break</Text>
+                </TouchableOpacity>
+
+                <View style={tw`border border-green-300 rounded mb-2 bg-green-50`}>
+                  <Picker
+                    selectedValue={item.mode}
+                    onValueChange={(val) => handleChange(index, 'mode', val)}
+                  >
+                    <Picker.Item label="Select Mode" value="" />
+                    <Picker.Item label="Online" value="online" />
+                    <Picker.Item label="Offline" value="offline" />
+                    <Picker.Item label="Hybrid" value="hybrid" />
+                  </Picker>
+                </View>
+              </View>
+            ))}
+
+            <TouchableOpacity onPress={handleSubmitAll} style={tw`bg-green-600 py-3 rounded-lg mt-4 mb-8`}>
+              <Text style={tw`text-white text-center font-semibold text-lg`}>Save Full Weekly Schedule</Text>
+            </TouchableOpacity>
+          </>
         </ScrollView>
       </KeyboardAvoidingView>
 

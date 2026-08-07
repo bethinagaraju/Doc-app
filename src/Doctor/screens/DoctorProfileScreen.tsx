@@ -57,7 +57,7 @@ const DoctorProfileScreen = () => {
     {
       id: 3,
       title: 'Consultation Hours',
-      subtitle: 'Set your availability and consultation timings',
+      subtitle: 'Set your availability and consultation charges',
       icon: <Clock size={24} color="#16a34a" />,
       route: 'Availability' as const,
     },

@@ -18,7 +18,7 @@ import { useNavigation } from '@react-navigation/native';
 import tw from 'twrnc';
 import { ArrowLeft, Clock, Star, ThumbsUp, MapPin } from 'lucide-react-native';
 import PageHeader from '../../components/PageHeader';
-import DoctorCard from '../../components/DoctorCard';
+import DoctorCard, { DoctorCardSkeleton } from '../../components/DoctorCard';
 import UsersearchFilter from '../../components/UsersearchFilter';
 import { useAccessToken } from '../contexts/AccessTokenContext';
 import { useUser } from '../contexts/UserContext';
@@ -203,8 +203,11 @@ const FindDoctorsScreen = () => {
       </View>
 
       {loading ? (
-        <View style={tw`flex-1 justify-center items-center`}>
-          <ActivityIndicator size="large" color="#16a34a" />
+        <View style={tw`py-4`}>
+          <DoctorCardSkeleton />
+          <DoctorCardSkeleton />
+          <DoctorCardSkeleton />
+          <DoctorCardSkeleton />
         </View>
       ) : (
 

@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import CookieManager from '@react-native-cookies/cookies';
 import { Alert } from 'react-native';
+import { useAccessToken } from './AccessTokenContext';
 
 interface User {
   id: number;
@@ -19,7 +20,7 @@ interface User {
     updatedAt: string;
   };
 
-    doctorProfile?: {
+  doctorProfile?: {
     id: number;
     kyc_status: string;
     rzp_account_id?: string | null;
@@ -45,10 +46,16 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [consultationMode, setConsultationMode] = useState<'online' | 'offline'>('offline');
 
+  const { accessToken } = useAccessToken();
+
   const fetchUserData = async () => {
     try {
       const response = await fetch('https://api.docapp.co.in/api/auth/get-user-data', {
         method: 'GET',
+        headers: {
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+          'Content-Type': 'application/json',
+        },
         credentials: 'include', // send cookie
       });
 
@@ -68,7 +75,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     fetchUserData();
-  }, []);
+  }, [accessToken]);
 
   const logout = async () => {
     try {

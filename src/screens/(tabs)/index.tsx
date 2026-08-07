@@ -104,7 +104,7 @@ const HomeScreen = () => {
   const baseProfilePic = userData?.generalUser?.profile_picture;
   const lastUpdated = userData?.generalUser?.updatedAt || '1';
   const profileImageUri = baseProfilePic ? `${baseProfilePic}?t=${new Date(lastUpdated).getTime() || lastUpdated}` : 'https://randomuser.me/api/portraits/men/4.jpg';
-  
+
   const [selectedLanguage, setSelectedLanguage] = useState('English');
   const [showLanguageModal, setShowLanguageModal] = useState(false);
 
@@ -693,7 +693,7 @@ const HomeScreen = () => {
 
 
         {/* Specialties */}
-        <View style={tw`mt-6 px-6`}>
+        {/* <View style={tw`mt-6 px-6`}>
           <Text style={tw`text-lg font-semibold text-gray-900 flex-1 text-left`}>
             Find a Doctor for your Health Problems
           </Text>
@@ -722,10 +722,10 @@ const HomeScreen = () => {
               </TouchableOpacity>
             </View>
           </View>
-        </View>
+        </View> */}
 
         {/* Explore Hospitals */}
-        <View style={tw`mt-6 px-6`}>
+        {/* <View style={tw`mt-6 px-6`}>
           <View style={tw`flex-row justify-between items-center mb-2`}>
             <Text style={tw`text-lg font-semibold text-gray-900 flex-1 text-left`}>
               Top Hospitals
@@ -745,7 +745,6 @@ const HomeScreen = () => {
             contentContainerStyle={tw`px-2`}
           >
 
-
             {hospitals.map((hospital) => (
               <TouchableOpacity
                 key={hospital.id}
@@ -759,11 +758,6 @@ const HomeScreen = () => {
                   resizeMode="cover"
                 />
 
-                {/* <Image
-            source={{ uri: hospital.image }}
-            style={tw`w-full h-full absolute top-0 left-0 bg-white`}
-            resizeMode="cover"
-          /> */}
                 <View style={tw`absolute bottom-0 left-0 right-0 bg-black/50 py-1.5 px-2`}>
                   <Text style={tw`text-sm font-bold text-white`}>{hospital.name}</Text>
                   <View style={tw`flex-row items-center mt-0.5`}>
@@ -777,10 +771,10 @@ const HomeScreen = () => {
 
 
           </ScrollView>
-        </View>
+        </View> */}
 
         {/* Explore Pharmacies */}
-        <View style={tw`mt-6 px-6`}>
+        {/* <View style={tw`mt-6 px-6`}>
           <View style={tw`flex-row justify-between items-center mb-2`}>
             <Text style={tw`text-lg font-semibold text-gray-900 flex-1 text-left`}>
               Nearby Pharmacies
@@ -821,10 +815,10 @@ const HomeScreen = () => {
               </TouchableOpacity>
             ))}
           </ScrollView>
-        </View>
+        </View> */}
 
         {/* Bottom Banners */}
-        <View style={tw`mt-6 px-6`}>
+        {/* <View style={tw`mt-6 px-6`}>
 
           <View style={tw`flex-row justify-between items-center mb-2`}>
             <Text style={tw`text-lg font-semibold text-gray-900 flex-1 text-left`}>
@@ -859,7 +853,7 @@ const HomeScreen = () => {
               </TouchableOpacity>
             ))}
           </ScrollView>
-        </View>
+        </View> */}
       </ScrollView>
 
       {/* Floating Action Chat Button */}

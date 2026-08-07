@@ -19,11 +19,42 @@ import {
 } from 'lucide-react-native';
 import tw from 'twrnc';
 import PageLayout from '../../components/PageLayout';
+import { useAccessToken } from '../contexts/AccessTokenContext';
 
 const SettingsScreen = () => {
   const navigation = useNavigation();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [darkModeEnabled, setDarkModeEnabled] = useState(false);
+  const { accessToken } = useAccessToken();
+  const [userData, setUserData] = useState<any>(null);
+
+  React.useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch('https://api.docapp.co.in/api/auth/get-user-data', {
+          method: 'GET',
+          headers: {
+            ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result?.userData) {
+          setUserData(result.userData);
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, [accessToken]);
+
+  const profilePic = userData?.generalUser?.profile_picture || userData?.doctorProfile?.profile_picture || 'https://randomuser.me/api/portraits/men/4.jpg';
+  const userName = userData?.username || 'User';
+  const role = userData?.doctorProfile?.specialization || userData?.role || 'Patient';
 
   const handleLogout = () => {
     Alert.alert('Logout', 'Are you sure you want to logout?', [
@@ -45,12 +76,12 @@ const SettingsScreen = () => {
       {/* Intro Section */}
       <View style={tw`flex-row items-center my-4 bg-white p-3.5 rounded-3xl shadow-sm mx-4`}>
         <Image
-          source={{ uri: 'https://randomuser.me/api/portraits/men/65.jpg' }}
+          source={{ uri: profilePic }}
           style={tw`w-15 h-15 rounded-full mr-3.5`}
         />
         <View>
-          <Text style={tw`text-lg font-bold text-blue-500`}>Dr. John Doe</Text>
-          <Text style={tw`text-sm text-gray-600 mt-1`}>Cardiologist</Text>
+          <Text style={tw`text-lg font-bold text-blue-500`}>{userName}</Text>
+          <Text style={tw`text-sm text-gray-600 mt-1`}>{role}</Text>
         </View>
       </View>
 

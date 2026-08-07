@@ -561,6 +561,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import tw from 'twrnc';
 import Svg, { Path } from 'react-native-svg';
 import { launchImageLibrary } from 'react-native-image-picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { sendEmailOtp, verifyEmailOtp } from '../../api/verify';
 import { completeGeneralUserProfile } from '../../api/profile';
@@ -610,8 +611,8 @@ const PersonalDetailsScreen = () => {
 
   // Edit profile modal
   const [editProfileVisible, setEditProfileVisible] = useState(false);
-  const [editDob, setEditDob] = useState();
-  const [editGender, setEditGender] = useState('');
+  const [editDob, setEditDob] = useState<Date | undefined>();
+  const [editGender, setEditGender] = useState<string>('');
   const [editLoading, setEditLoading] = useState(false);
   const [showEditDatePicker, setShowEditDatePicker] = useState(false);
 
@@ -732,6 +733,45 @@ const PersonalDetailsScreen = () => {
     }
   };
 
+  // Edit Profile (Patient / General User)
+  const handleEditProfileSubmit = async () => {
+    if (!editDob || !editGender) {
+      Alert.alert('Error', 'Please provide date of birth and gender');
+      return;
+    }
+
+    setEditLoading(true);
+    try {
+      const payload = {
+        date_of_birth: editDob.toISOString().split('T')[0],
+        gender: editGender,
+      };
+
+      const response = await fetch('https://api.docapp.co.in/api/auth/profile/complete/general_user', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json();
+
+      if (response.ok || data.success) {
+        Alert.alert('Success', data.message || 'Profile updated successfully');
+        setEditProfileVisible(false);
+        fetchUserData(); // refresh data
+      } else {
+        Alert.alert('Error', data.message || 'Failed to update profile');
+      }
+    } catch (err) {
+      Alert.alert('Error', 'Network error while updating profile');
+    } finally {
+      setEditLoading(false);
+    }
+  };
+
+
   // Change Password
   const handleChangePassword = async () => {
     if (!newPassword || newPassword.length < 6) {
@@ -850,7 +890,11 @@ const PersonalDetailsScreen = () => {
           {/* Edit Button */}
           <TouchableOpacity
             style={[tw`absolute top-6 right-6 rounded-full justify-center items-center`, styles.editBtn]}
-            onPress={() => setEditProfileVisible(true)}
+            onPress={() => {
+              setEditGender(general.gender || '');
+              setEditDob(general.date_of_birth ? new Date(general.date_of_birth) : new Date(2000, 0, 1));
+              setEditProfileVisible(true);
+            }}
           >
             <Svg width="18" height="18" viewBox="0 0 18 18" fill="none">
               <Path d="M2 16H3.425L13.2 6.225L11.775 4.8L2 14.575V16ZM0 18V13.75L13.2 0.575C13.4 0.391667 13.6208 0.25 13.8625 0.15C14.1042 0.05 14.3583 0 14.625 0C14.8917 0 15.15 0.05 15.4 0.15C15.65 0.25 15.8667 0.4 16.05 0.6L17.425 2C17.625 2.18333 17.7708 2.4 17.8625 2.65C17.9542 2.9 18 3.15 18 3.4C18 3.66667 17.9542 3.92083 17.8625 4.1625C17.7708 4.40417 17.625 4.625 17.425 4.825L4.25 18H0ZM16 3.4L14.6 2L16 3.4ZM12.475 5.525L11.775 4.8L13.2 6.225L12.475 5.525Z" fill="#001A41" />
@@ -878,6 +922,16 @@ const PersonalDetailsScreen = () => {
           <Text style={tw`text-[16px] font-medium text-[#001A41]/80 mt-1 text-center`}>
             {userData.email}
           </Text>
+          {general.gender && (
+            <Text style={tw`text-[14px] font-medium text-[#001A41]/60 mt-1 text-center`}>
+              Gender: {general.gender}
+            </Text>
+          )}
+          {general.date_of_birth && (
+            <Text style={tw`text-[14px] font-medium text-[#001A41]/60 text-center`}>
+              DOB: {general.date_of_birth.split("T")[0]}
+            </Text>
+          )}
         </View>
 
 
@@ -1103,6 +1157,60 @@ const PersonalDetailsScreen = () => {
                 <Text style={tw`text-center text-white font-bold`}>Update Address</Text>
               </TouchableOpacity>
               <TouchableOpacity style={tw`bg-gray-200 py-3 rounded-xl mt-2`} onPress={() => setEditModalVisible(false)}>
+                <Text style={tw`text-center text-gray-800 font-bold`}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
+        {/* Edit Profile Modal */}
+        <Modal visible={editProfileVisible} transparent animationType="fade">
+          <View style={styles.modalContainer}>
+            <View style={styles.modalBox}>
+              <Text style={tw`text-lg font-bold text-[#001A41] mb-3`}>Edit Profile</Text>
+
+              <TouchableOpacity
+                onPress={() => setShowEditDatePicker(true)}
+                style={tw`bg-[#F9FAFB] px-4 py-3 rounded-xl border border-gray-200 mb-4`}
+              >
+                <Text style={tw`text-gray-800`}>{editDob ? editDob.toDateString() : 'Select Date of Birth'}</Text>
+              </TouchableOpacity>
+
+              {showEditDatePicker && (
+                <View style={tw`mb-4`}>
+                  <DateTimePicker
+                    value={editDob || new Date(2000, 0, 1)}
+                    mode="date"
+                    maximumDate={new Date()}
+                    display={Platform.OS === 'ios' ? 'inline' : 'default'}
+                    onChange={(e, d) => {
+                      if (Platform.OS === 'android') {
+                        setShowEditDatePicker(false);
+                      }
+                      if (d) setEditDob(d);
+                    }}
+                  />
+                </View>
+              )}
+
+              <Text style={tw`text-sm font-semibold text-gray-700 mb-2`}>Gender</Text>
+              <View style={tw`flex-row justify-between mb-4`}>
+                {['Male', 'Female', 'Others'].map((g) => (
+                  <TouchableOpacity
+                    key={g}
+                    onPress={() => setEditGender(g)}
+                    style={tw`flex-1 mx-1 py-2 rounded-xl border ${editGender === g ? 'bg-[#124CB8] border-[#124CB8]' : 'bg-white border-gray-200'}`}
+                  >
+                    <Text style={tw`${editGender === g ? 'text-white' : 'text-gray-700'} text-center`}>{g}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              <TouchableOpacity style={tw`bg-[#124CB8] py-3 rounded-xl mt-2`} onPress={handleEditProfileSubmit} disabled={editLoading}>
+                <Text style={tw`text-center text-white font-bold`}>{editLoading ? 'Saving...' : 'Save Profile'}</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={tw`bg-gray-200 py-3 rounded-xl mt-2`} onPress={() => setEditProfileVisible(false)}>
                 <Text style={tw`text-center text-gray-800 font-bold`}>Cancel</Text>
               </TouchableOpacity>
             </View>

@@ -88,8 +88,8 @@
 
 
 
-import React from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, Image, TouchableOpacity, Animated } from 'react-native';
 import tw from 'twrnc';
 import { MapPin, Star } from 'lucide-react-native';
 
@@ -159,6 +159,59 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ item, onPress }) => {
         </View>
       </View>
     </TouchableOpacity>
+  );
+};
+
+export const DoctorCardSkeleton: React.FC = () => {
+  const opacity = useRef(new Animated.Value(0.3)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(opacity, {
+          toValue: 0.7,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          toValue: 0.3,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, [opacity]);
+
+  return (
+    <View
+      style={tw`bg-white py-4 px-2 border border-[rgba(114,119,127,0.05)] shadow-sm rounded-[16px] flex-row h-[138px] mb-4`}
+    >
+      {/* Profile Image - 96x96 */}
+      <Animated.View style={[tw`w-[96px] h-[96px] rounded-[12px] bg-gray-200`, { opacity }]} />
+
+      {/* Main Content Container */}
+      <View style={tw`flex-1 ml-4 justify-center`}>
+        {/* Top Section: Name/Specialization */}
+        <View style={tw`flex-row justify-between items-start mb-3`}>
+          <View style={tw`flex-1 gap-2`}>
+            <Animated.View style={[tw`w-32 h-5 bg-gray-200 rounded`, { opacity }]} />
+            <Animated.View style={[tw`w-24 h-4 bg-gray-200 rounded`, { opacity }]} />
+          </View>
+        </View>
+
+        {/* Bottom Section: Location and Book Now Button */}
+        <View style={tw`gap-2`}>
+          <View style={tw`flex-row items-center`}>
+            <Animated.View style={[tw`w-40 h-4 bg-gray-200 rounded`, { opacity }]} />
+          </View>
+
+          <View style={tw`flex-row justify-between items-center mt-1`}>
+            <Animated.View style={[tw`w-12 h-6 bg-gray-200 rounded-[8px]`, { opacity }]} />
+            <Animated.View style={[tw`w-[90px] h-[32px] bg-gray-200 rounded-full mr-4`, { opacity }]} />
+          </View>
+        </View>
+      </View>
+    </View>
   );
 };
 

@@ -18,12 +18,28 @@ import { useAccessToken } from "../contexts/AccessTokenContext";
 import ProfileTopBar from "../../components/ProfileTopBar";
 import AppointmentCard from "../../components/AppointmentCard";
 import { SafeAreaView } from "react-native-safe-area-context";
+import PrimaryActionBanner from "../../Doctor/components/PrimaryActionBanner";
+import PatientCard from "../../Doctor/components/PatientCard";
+import PatientDocuments from "../../Doctor/components/PatientDocuments";
+import PatientPrescriptionCard from "../../Doctor/components/PatientPrescriptionCard";
+import AppointmentAdditionalInfoCard from "../../Doctor/components/AppointmentAdditionalInfoCard";
 
 type PrescriptionItem = {
   drug: string;
   qty: string;
   timing: string;
   notes: string;
+};
+
+type Patient = {
+  email?: string;
+  username?: string;
+  phone_number?: string;
+  generalUser?: {
+    gender?: string;
+    date_of_birth?: string;
+    profile_picture?: string;
+  };
 };
 
 type Appointment = {
@@ -41,6 +57,8 @@ type Appointment = {
   createdAt: string;
   updatedAt: string;
   checkupAppointment: any[];
+  patient?: Patient;
+  patientName?: string;
 };
 
 type DocumentItem = {
@@ -93,6 +111,11 @@ export default function AppointmentDetailsScreen() {
   const [reviewText, setReviewText] = useState("");
   const [reviewLoading, setReviewLoading] = useState(false);
 
+  // Fetch documents on initial screen mount
+  React.useEffect(() => {
+    fetchAppointmentDocuments(false);
+  }, []);
+
   // Helper to parse prescription
   const parsePrescription = (p: any): PrescriptionItem[] => {
     if (!p) return [];
@@ -134,14 +157,67 @@ export default function AppointmentDetailsScreen() {
     }
   };
 
-  // UPDATE appointment (close + add prescription)
-  const handleUpdateAppointment = async () => {
+  // ADD/SAVE Prescription & Close Appointment
+  const handleSavePrescription = async () => {
     const cleaned = prescriptions.filter((p) => p.drug || p.qty || p.timing || p.notes);
     if (cleaned.length === 0) {
       Alert.alert("Validation", "Please add at least one prescription item.");
       return;
     }
 
+    Alert.alert(
+      "Confirm Close Appointment",
+      "Saving prescription will close this appointment. Are you sure you want to proceed?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Confirm & Save",
+          onPress: async () => {
+            try {
+              const response = await fetch(
+                "https://api.docapp.co.in/api/appointment/doctor-update-appointment",
+                {
+                  method: "PUT",
+                  headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${accessToken}`,
+                  },
+                  credentials: "include",
+                  body: JSON.stringify({
+                    appointment_id: appointment.id,
+                    appointment_status: "closed",
+                    prescription: cleaned,
+                  }),
+                }
+              );
+
+              const data = await response.json();
+              console.log("doctor-update-appointment response:", data);
+              if (data.success || data.status === "success" || data.message?.toLowerCase().includes("updated") || data.message?.toLowerCase().includes("success")) {
+                Alert.alert("Success", "Prescription saved and appointment closed successfully.");
+                appointment.prescription = cleaned;
+                appointment.appointment_status = "closed";
+                setModalVisible(false);
+              } else {
+                const errorMsg = data.message || data.error || (typeof data === "string" ? data : JSON.stringify(data));
+                console.log("not saves " + errorMsg);
+                throw new Error(errorMsg || "Save failed");
+              }
+            } catch (err: any) {
+              console.log(err);
+              Alert.alert("Error", err.message || "Something went wrong");
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  // CLOSE appointment explicitly
+  const handleCloseAppointment = async () => {
     try {
       const response = await fetch(
         "https://api.docapp.co.in/api/appointment/doctor-update-appointment",
@@ -155,18 +231,17 @@ export default function AppointmentDetailsScreen() {
           body: JSON.stringify({
             appointment_id: appointment.id,
             appointment_status: "closed",
-            prescription: cleaned,
+            prescription: appointment.prescription || [],
           }),
         }
       );
 
       const data = await response.json();
-      if (data.message?.toLowerCase().includes("updated")) {
-        Alert.alert("Success", "Appointment updated successfully");
-        setModalVisible(false);
+      if (data.message?.toLowerCase().includes("updated") || data.success) {
+        Alert.alert("Success", "Appointment closed successfully");
         navigation.goBack();
       } else {
-        throw new Error(data.message || "Update failed");
+        throw new Error(data.message || "Close failed");
       }
     } catch (err: any) {
       Alert.alert("Error", err.message || "Something went wrong");
@@ -314,16 +389,24 @@ export default function AppointmentDetailsScreen() {
 
     setReviewLoading(true);
     try {
+      const payload = { appointment_id: appointment.id, review: reviewText.trim() };
+      console.log("🚀 Submitting doctor review payload:", payload);
+
       const response = await fetch(
         "https://api.docapp.co.in/api/reviews/doctor-review-ratings",
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`
+          },
           credentials: "include",
-          body: JSON.stringify({ appointment_id: appointment.id, review: reviewText.trim() }),
+          body: JSON.stringify(payload),
         }
       );
       const data = await response.json();
+      console.log("📥 Review Response from backend:", data);
+
       if (data.message?.toLowerCase().includes("review") || data.success) {
         Alert.alert("Success", "Review submitted successfully");
         setReviewModalVisible(false);
@@ -332,6 +415,7 @@ export default function AppointmentDetailsScreen() {
         throw new Error(data.message || "Failed to submit review");
       }
     } catch (err: any) {
+      console.error("❌ Error submitting review:", err);
       Alert.alert("Error", err.message || "Something went wrong");
     } finally {
       setReviewLoading(false);
@@ -358,228 +442,480 @@ export default function AppointmentDetailsScreen() {
           <Text style={tw`text-xl font-bold text-gray-800`}>Appointment Details</Text>
         </View> */}
 
+        <View style={tw`mb-4`}>
+          <PrimaryActionBanner
+            statusText={`${"UPCOMING"} • ${new Date(appointment.appointment_date).toLocaleDateString("en-GB")} ${appointment.appointment_start_time}`}
+            patientName={appointment.patient?.username || appointment.patientName || `Patient #${appointment.user_id || appointment.id}`}
+            onStartConsultation={() => handleStartConsultation()}
+            onReschedule={() => handleReschedule()}
+          />
+        </View>
+
         <AppointmentCard appointment={appointment as any} />
 
-        <View style={tw`bg-white p-4 mb-4 rounded-[12px] border border-[#DAE1E7]`}>
-          <Text style={tw`text-[16px] font-bold text-[#011D35] mb-2`}>Additional Info</Text>
-          <View style={tw`flex-row justify-between py-2 border-b border-[#F0F3F6]`}>
-            <Text style={tw`text-[#434653]`}>Appointment ID</Text>
-            <Text style={tw`text-[#011D35] font-semibold`}>#{appointment.id}</Text>
-          </View>
-          <View style={tw`flex-row justify-between py-2 border-b border-[#F0F3F6]`}>
-            <Text style={tw`text-[#434653]`}>Payment Mode</Text>
-            <Text style={tw`text-[#011D35] font-semibold capitalize`}>{appointment.payment_mode || "Not specified"}</Text>
-          </View>
-          <View style={tw`flex-row justify-between py-2 border-b border-[#F0F3F6]`}>
-            <Text style={tw`text-[#434653]`}>Appointment Date</Text>
-            <Text style={tw`text-[#011D35] font-semibold`}>{new Date(appointment.appointment_date).toDateString()}</Text>
-          </View>
-          <View style={tw`flex-row justify-between py-2 border-b border-[#F0F3F6]`}>
-            <Text style={tw`text-[#434653]`}>Appointment Time</Text>
-            <Text style={tw`text-[#011D35] font-semibold`}>{appointment.appointment_start_time} - {appointment.appointment_end_time}</Text>
-          </View>
-          <View style={tw`flex-row justify-between py-2 border-b border-[#F0F3F6]`}>
-            <Text style={tw`text-[#434653]`}>Status</Text>
-            <Text style={tw`text-[#011D35] font-semibold capitalize`}>{appointment.appointment_status}</Text>
-          </View>
-          <View style={tw`flex-row justify-between py-2`}>
-            <Text style={tw`text-[#434653]`}>Type</Text>
-            <Text style={tw`text-[#011D35] font-semibold capitalize`}>{appointment.appointment_type}</Text>
-          </View>
+        {(() => {
+          const name = appointment.patient?.username || appointment.patientName || `User #${appointment.user_id}`;
+          const id = `Patient ID: #${appointment.user_id || appointment.id}`;
+          const avatar = appointment.patient?.generalUser?.profile_picture || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150';
+
+          let age = 'N/A';
+          const dob = appointment.patient?.generalUser?.date_of_birth;
+          if (dob) {
+            const birthDate = new Date(dob);
+            const today = new Date();
+            let calculatedAge = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+              calculatedAge--;
+            }
+            if (!isNaN(calculatedAge)) {
+              age = `${calculatedAge} yrs`;
+            }
+          }
+          const gender = appointment.patient?.generalUser?.gender || 'N/A';
+          const ageGenderStr = `${age} / ${gender}`;
+
+          const apptDateStr = appointment.appointment_date
+            ? new Date(appointment.appointment_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+            : 'N/A';
+
+          const formatTime = (timeStr?: string) => {
+            if (!timeStr) return '';
+            const parts = timeStr.split(':');
+            if (parts.length >= 2) {
+              let hours = parseInt(parts[0], 10);
+              const minutes = parts[1];
+              const ampm = hours >= 12 ? 'PM' : 'AM';
+              hours = hours % 12 || 12;
+              return `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+            }
+            return timeStr;
+          };
+
+          const calculateDuration = (startStr?: string, endStr?: string) => {
+            if (!startStr || !endStr) return '';
+            const startParts = startStr.split(':').map(Number);
+            const endParts = endStr.split(':').map(Number);
+            if (startParts.length >= 2 && endParts.length >= 2) {
+              const startMinutes = startParts[0] * 60 + startParts[1];
+              const endMinutes = endParts[0] * 60 + endParts[1];
+              let diff = endMinutes - startMinutes;
+              if (diff < 0) diff += 24 * 60; // handle midnight wrap if any
+              if (diff >= 60) {
+                const hrs = Math.floor(diff / 60);
+                const mins = diff % 60;
+                return mins > 0 ? `${hrs}h ${mins}m` : `${hrs}h`;
+              }
+              return `${diff} mins`;
+            }
+            return '';
+          };
+
+          const durationFormatted = calculateDuration(appointment.appointment_start_time, appointment.appointment_end_time);
+
+          const apptTimeStr = durationFormatted || 'N/A';
+
+          return (
+            <View style={tw`mb-4`}>
+              <PatientCard
+                patientName={name}
+                patientId={id}
+                avatarUrl={avatar}
+                ageGender={ageGenderStr}
+                appointmentIdDisplay={`#${appointment.id}`}
+                appointmentTime={apptTimeStr}
+                appointmentType={appointment.appointment_type || 'N/A'}
+              />
+            </View>
+          );
+        })()}
+
+
+
+        <View style={tw`mb-4`}>
+          <AppointmentAdditionalInfoCard
+            appointmentId={appointment.id}
+            paymentMode={appointment.payment_mode}
+            appointmentDate={appointment.appointment_date}
+            startTime={appointment.appointment_start_time}
+            endTime={appointment.appointment_end_time}
+            status={appointment.appointment_status}
+            type={appointment.appointment_type}
+          />
+        </View>
+
+        <View style={tw`mb-4`}>
+          <PatientDocuments
+            documents={appointmentDocuments}
+            onUpload={() => pickAndUploadImage()}
+            onView={(doc) => {
+              if (doc.document_url) {
+                setSelectedImageUrl(doc.document_url);
+                setImagePreviewVisible(true);
+              }
+            }}
+            onReplace={(docId) => replaceDocument(docId)}
+            onDelete={(docId) => {
+              Alert.alert("Confirm Delete", "Are you sure you want to delete this document?", [
+                { text: "Cancel", style: "cancel" },
+                { text: "Delete", style: "destructive", onPress: () => deleteDocument(docId) },
+              ]);
+            }}
+          />
+        </View>
+
+        <View style={tw`mb-4`}>
+          <PatientPrescriptionCard
+            prescriptionList={parsePrescription(appointment.prescription)}
+            onAddPrescription={
+              appointment.appointment_status !== "closed"
+                ? () => {
+                  setPrescriptions([{ drug: "", qty: "", timing: "", notes: "" }]);
+                  setModalVisible(true);
+                }
+                : undefined
+            }
+            onViewPrescription={(items) => {
+              setSelectedPrescription(items);
+              setViewPrescriptionModal(true);
+            }}
+          />
         </View>
 
         {selectedTab === "Upcoming" && (
-          <View style={tw`mb-8`}>
-            <Text style={tw`text-lg font-bold text-gray-800 mb-3`}>Actions</Text>
-            {appointment.appointment_status !== "closed" && (
-              <TouchableOpacity
-                onPress={() => {
-                  setPrescriptions([{ drug: "", qty: "", timing: "", notes: "" }]);
-                  setModalVisible(true);
-                }}
-                style={tw`bg-green-600 py-3 px-4 rounded-xl mb-3`}
-              >
-                <Text style={tw`text-white text-center font-bold`}>Close Appointment (Add Prescription)</Text>
-              </TouchableOpacity>
-            )}
+          <View
+            style={[
+              tw`w-full bg-white rounded-[12px] p-[24px] border border-[#DAE1E7] gap-[16px] mb-8`,
+              {
+                shadowColor: "#102A43",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.05,
+                shadowRadius: 20,
+                elevation: 4,
+              },
+            ]}
+          >
+            <Text style={tw`text-[20px] font-semibold text-[#011D35] font-['Inter'] leading-[28px]`}>
+              Actions
+            </Text>
 
+            {/* Row of 2 buttons */}
+            <View style={tw`flex-row gap-[12px]`}>
+              {appointment.appointment_status !== "closed" && (
+                <TouchableOpacity
+                  onPress={() =>
+                    Alert.alert("Confirm", "Are you sure you want to close this appointment?", [
+                      { text: "Cancel", style: "cancel" },
+                      { text: "Close Appointment", style: "destructive", onPress: () => handleCloseAppointment() },
+                    ])
+                  }
+                  style={tw`flex-1 bg-[#16A34A] py-3 px-4 rounded-[10px] items-center justify-center`}
+                  activeOpacity={0.8}
+                >
+                  <Text style={tw`text-white font-semibold text-[14px] font-['Inter'] text-center`}>Close Appointment</Text>
+                </TouchableOpacity>
+              )}
+
+              <TouchableOpacity
+                onPress={() =>
+                  Alert.alert("Confirm", "Delete this appointment?", [
+                    { text: "Cancel", style: "cancel" },
+                    { text: "Delete", style: "destructive", onPress: () => handleDelete(appointment.id) },
+                  ])
+                }
+                style={tw`flex-1 bg-[#DC2626] py-3 px-4 rounded-[10px] items-center justify-center`}
+                activeOpacity={0.8}
+              >
+                <Text style={tw`text-white font-semibold text-[14px] font-['Inter'] text-center`}>Delete Appointment</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* 
             <TouchableOpacity onPress={pickAndUploadImage} style={tw`bg-purple-600 py-3 px-4 rounded-xl mb-3`}>
               <Text style={tw`text-white text-center font-bold`}>Upload Image</Text>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => fetchAppointmentDocuments(true)} style={tw`bg-blue-500 py-3 px-4 rounded-xl mb-3`}>
               <Text style={tw`text-white text-center font-bold`}>View Uploaded Images</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             {previewImageUri && (
-              <View style={tw`mb-3 items-center`}>
+              <View style={tw`items-center bg-[#FAFBFD] p-2 rounded-[8px] border border-[#DAE1E7]`}>
                 <Image source={{ uri: previewImageUri }} style={{ width: 120, height: 80, borderRadius: 8 }} />
-                <Text style={tw`text-sm text-gray-600 mt-1`}>Image selected (preview)</Text>
+                <Text style={tw`text-[12px] text-[#434653] mt-1 font-['Inter']`}>Image selected (preview)</Text>
               </View>
             )}
-
-            <TouchableOpacity
-              onPress={() =>
-                Alert.alert("Confirm", "Delete this appointment?", [
-                  { text: "Cancel", style: "cancel" },
-                  { text: "Delete", style: "destructive", onPress: () => handleDelete(appointment.id) },
-                ])
-              }
-              style={tw`bg-red-500 py-3 px-4 rounded-xl mb-3`}
-            >
-              <Text style={tw`text-white text-center font-bold`}>Delete Appointment</Text>
-            </TouchableOpacity>
           </View>
         )}
 
         {selectedTab === "Completed" && (
-          <View style={tw`mb-8`}>
-            <Text style={tw`text-lg font-bold text-gray-800 mb-3`}>Actions</Text>
-            <TouchableOpacity onPress={() => fetchAppointmentDocuments(true)} style={tw`bg-blue-500 py-3 px-4 rounded-xl mb-3`}>
-              <Text style={tw`text-white text-center font-bold`}>View Uploaded Images</Text>
-            </TouchableOpacity>
+          <View
+            style={[
+              tw`w-full bg-white rounded-[12px] p-[24px] border border-[#DAE1E7] gap-[16px] mb-8`,
+              {
+                shadowColor: "#102A43",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.05,
+                shadowRadius: 20,
+                elevation: 4,
+              },
+            ]}
+          >
+            <Text style={tw`text-[20px] font-semibold text-[#011D35] font-['Inter'] leading-[28px]`}>
+              Actions
+            </Text>
 
-            {appointment.prescription && appointment.prescription !== "" && (
+            {/* Row 1: View Images & View Prescription */}
+            {/* <View style={tw`flex-row gap-[12px]`}>
               <TouchableOpacity
-                onPress={() => {
-                  const pres = parsePrescription(appointment.prescription);
-                  if (!pres.length) {
-                    Alert.alert("No Prescription", "Prescription data is empty or invalid.");
-                    return;
-                  }
-                  setSelectedPrescription(pres);
-                  setViewPrescriptionModal(true);
-                }}
-                style={tw`bg-indigo-600 py-3 px-4 rounded-xl mb-3`}
+                onPress={() => fetchAppointmentDocuments(true)}
+                style={tw`flex-1 bg-[#124CB8] py-3 px-3 rounded-[10px] items-center justify-center`}
+                activeOpacity={0.8}
               >
-                <Text style={tw`text-white text-center font-bold`}>View Prescription</Text>
+                <Text style={tw`text-white font-semibold text-[13px] font-['Inter'] text-center`}>View Images</Text>
               </TouchableOpacity>
-            )}
 
-            {["completed", "closed"].includes(appointment.appointment_status.toLowerCase()) && (
-              <TouchableOpacity
-                onPress={() => {
-                  setReviewText("");
-                  setReviewModalVisible(true);
-                }}
-                style={tw`bg-blue-700 py-3 px-4 rounded-xl mb-3`}
-              >
-                <Text style={tw`text-white text-center font-bold`}>Write Review</Text>
-              </TouchableOpacity>
-            )}
+              {appointment.prescription && appointment.prescription !== "" ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    const pres = parsePrescription(appointment.prescription);
+                    if (!pres.length) {
+                      Alert.alert("No Prescription", "Prescription data is empty or invalid.");
+                      return;
+                    }
+                    setSelectedPrescription(pres);
+                    setViewPrescriptionModal(true);
+                  }}
+                  style={tw`flex-1 bg-[#4F46E5] py-3 px-3 rounded-[10px] items-center justify-center`}
+                  activeOpacity={0.8}
+                >
+                  <Text style={tw`text-white font-semibold text-[13px] font-['Inter'] text-center`}>View Prescription</Text>
+                </TouchableOpacity>
+              ) : (
+                <View style={tw`flex-1`} />
+              )}
+            </View> */}
 
+            {/* Row 2: Write Review & Follow-up */}
             {["completed", "closed"].includes(appointment.appointment_status.toLowerCase()) && (
-              <TouchableOpacity onPress={openFollowUpScreen} style={tw`bg-orange-500 py-3 px-4 rounded-xl mb-3`}>
-                <Text style={tw`text-white text-center font-bold`}>
-                  {appointment.checkupAppointment && appointment.checkupAppointment.length > 0
-                    ? "Follow-up Already Booked"
-                    : "Book Follow-up Appointment"}
-                </Text>
-              </TouchableOpacity>
+              <View style={tw`flex-row gap-[12px]`}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setReviewText("");
+                    setReviewModalVisible(true);
+                  }}
+                  style={tw`flex-1 bg-[#2563EB] py-3 px-3 rounded-[10px] items-center justify-center`}
+                  activeOpacity={0.8}
+                >
+                  <Text style={tw`text-white font-semibold text-[13px] font-['Inter'] text-center`}>Write Review</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={openFollowUpScreen}
+                  style={tw`flex-1 bg-[#EA580C] py-3 px-3 rounded-[10px] items-center justify-center`}
+                  activeOpacity={0.8}
+                >
+                  <Text style={tw`text-white font-semibold text-[13px] font-['Inter'] text-center`}>
+                    {appointment.checkupAppointment && appointment.checkupAppointment.length > 0
+                      ? "Follow-up Booked"
+                      : "Book Follow-up"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             )}
           </View>
         )}
       </ScrollView>
 
-      {/* MODALS */}
       {/* Add Prescription Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
-        <View style={tw`flex-1 justify-center bg-black/50 p-4`}>
-          <View style={tw`bg-white p-5 rounded-2xl max-h-[85%]`}>
-            <Text style={tw`text-xl font-bold mb-3 text-center`}>Add Prescription</Text>
-            <ScrollView style={tw`mb-3`}>
+        <View style={tw`flex-1 justify-center bg-black/60 p-4`}>
+          <View style={tw`bg-white p-6 rounded-[20px] max-h-[85%] border border-[#DAE1E7]`}>
+            {/* Modal Header */}
+            <View style={tw`flex-row justify-between items-center mb-4 pb-3 border-b border-[#F0F3F6]`}>
+              <Text style={tw`text-[20px] font-bold text-[#011D35] font-['Inter']`}>
+                Add Prescription
+              </Text>
+              <TouchableOpacity
+                onPress={() => setModalVisible(false)}
+                style={tw`bg-[#F0F3F6] w-8 h-8 rounded-full justify-center items-center`}
+              >
+                <Text style={tw`text-[#434653] font-bold text-base`}>✕</Text>
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={tw`mb-4`} showsVerticalScrollIndicator={false}>
               {prescriptions.map((pres, index) => (
-                <View key={index} style={tw`mb-4 border p-3 rounded-lg`}>
-                  <TextInput
-                    placeholder="Drug"
-                    value={pres.drug}
-                    onChangeText={(text) => {
-                      const arr = [...prescriptions];
-                      arr[index].drug = text;
-                      setPrescriptions(arr);
-                    }}
-                    style={tw`border-b mb-2 p-1`}
-                  />
-                  <TextInput
-                    placeholder="Quantity"
-                    value={pres.qty}
-                    onChangeText={(text) => {
-                      const arr = [...prescriptions];
-                      arr[index].qty = text;
-                      setPrescriptions(arr);
-                    }}
-                    style={tw`border-b mb-2 p-1`}
-                  />
-                  <TextInput
-                    placeholder="Timing (e.g. morning, evening)"
-                    value={pres.timing}
-                    onChangeText={(text) => {
-                      const arr = [...prescriptions];
-                      arr[index].timing = text;
-                      setPrescriptions(arr);
-                    }}
-                    style={tw`border-b mb-2 p-1`}
-                  />
-                  <TextInput
-                    placeholder="Notes"
-                    value={pres.notes}
-                    onChangeText={(text) => {
-                      const arr = [...prescriptions];
-                      arr[index].notes = text;
-                      setPrescriptions(arr);
-                    }}
-                    style={tw`border-b mb-2 p-1`}
-                  />
-                  {prescriptions.length > 1 && (
-                    <TouchableOpacity
-                      onPress={() => {
-                        const arr = prescriptions.filter((_, i) => i !== index);
-                        setPrescriptions(arr.length ? arr : [{ drug: "", qty: "", timing: "", notes: "" }]);
+                <View
+                  key={index}
+                  style={tw`mb-4 bg-[#FAFBFD] border border-[#C3C6D5] p-4 rounded-[12px] gap-3`}
+                >
+                  <View style={tw`flex-row justify-between items-center mb-1`}>
+                    <Text style={tw`text-[13px] font-semibold text-[#124CB8] font-['Inter'] uppercase tracking-wider`}>
+                      Drug Item #{index + 1}
+                    </Text>
+                    {prescriptions.length > 1 && (
+                      <TouchableOpacity
+                        onPress={() => {
+                          const arr = prescriptions.filter((_, i) => i !== index);
+                          setPrescriptions(arr.length ? arr : [{ drug: "", qty: "", timing: "", notes: "" }]);
+                        }}
+                        style={tw`bg-[#FFEBEE] px-3 py-1 rounded-full`}
+                      >
+                        <Text style={tw`text-[#D32F2F] text-[12px] font-semibold`}>Remove</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+
+                  {/* Drug Name Input */}
+                  <View>
+                    <Text style={tw`text-[12px] font-medium text-[#434653] mb-1 font-['Inter']`}>Drug Name</Text>
+                    <TextInput
+                      placeholder="e.g. Paracetamol 500mg"
+                      placeholderTextColor="#A0AEC0"
+                      value={pres.drug}
+                      onChangeText={(text) => {
+                        const arr = [...prescriptions];
+                        arr[index].drug = text;
+                        setPrescriptions(arr);
                       }}
-                      style={tw`mt-2 bg-red-400 py-2 rounded-full`}
-                    >
-                      <Text style={tw`text-white text-center`}>Remove</Text>
-                    </TouchableOpacity>
-                  )}
+                      style={tw`bg-white border border-[#DAE1E7] rounded-[8px] p-3 text-[14px] text-[#011D35] font-['Inter']`}
+                    />
+                  </View>
+
+                  {/* Quantity & Timing Row */}
+                  <View style={tw`flex-row gap-3`}>
+                    <View style={tw`flex-1`}>
+                      <Text style={tw`text-[12px] font-medium text-[#434653] mb-1 font-['Inter']`}>Quantity</Text>
+                      <TextInput
+                        placeholder="e.g. 10 Tablets"
+                        placeholderTextColor="#A0AEC0"
+                        value={pres.qty}
+                        onChangeText={(text) => {
+                          const arr = [...prescriptions];
+                          arr[index].qty = text;
+                          setPrescriptions(arr);
+                        }}
+                        style={tw`bg-white border border-[#DAE1E7] rounded-[8px] p-3 text-[14px] text-[#011D35] font-['Inter']`}
+                      />
+                    </View>
+                    <View style={tw`flex-1`}>
+                      <Text style={tw`text-[12px] font-medium text-[#434653] mb-1 font-['Inter']`}>Timing</Text>
+                      <TextInput
+                        placeholder="e.g. 1-0-1 (After meals)"
+                        placeholderTextColor="#A0AEC0"
+                        value={pres.timing}
+                        onChangeText={(text) => {
+                          const arr = [...prescriptions];
+                          arr[index].timing = text;
+                          setPrescriptions(arr);
+                        }}
+                        style={tw`bg-white border border-[#DAE1E7] rounded-[8px] p-3 text-[14px] text-[#011D35] font-['Inter']`}
+                      />
+                    </View>
+                  </View>
+
+                  {/* Notes Input */}
+                  <View>
+                    <Text style={tw`text-[12px] font-medium text-[#434653] mb-1 font-['Inter']`}>Notes / Instructions</Text>
+                    <TextInput
+                      placeholder="e.g. Take with warm water"
+                      placeholderTextColor="#A0AEC0"
+                      value={pres.notes}
+                      onChangeText={(text) => {
+                        const arr = [...prescriptions];
+                        arr[index].notes = text;
+                        setPrescriptions(arr);
+                      }}
+                      style={tw`bg-white border border-[#DAE1E7] rounded-[8px] p-3 text-[14px] text-[#011D35] font-['Inter']`}
+                    />
+                  </View>
                 </View>
               ))}
             </ScrollView>
-            <TouchableOpacity onPress={() => setPrescriptions([...prescriptions, { drug: "", qty: "", timing: "", notes: "" }])} style={tw`bg-blue-500 py-2 rounded-full mb-3`}>
-              <Text style={tw`text-white text-center`}>+ Add More</Text>
+
+            {/* Modal Buttons */}
+            <TouchableOpacity
+              onPress={() => setPrescriptions([...prescriptions, { drug: "", qty: "", timing: "", notes: "" }])}
+              style={tw`bg-[#EEF4FF] border border-[#DBE9FF] py-3 rounded-[10px] mb-3 items-center`}
+            >
+              <Text style={tw`text-[#124CB8] font-semibold text-[14px] font-['Inter']`}>+ Add Another Drug</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleUpdateAppointment} style={tw`bg-green-600 py-2 rounded-full mb-2`}>
-              <Text style={tw`text-white text-center font-semibold`}>Submit</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setModalVisible(false)} style={tw`bg-gray-400 py-2 rounded-full`}>
-              <Text style={tw`text-white text-center`}>Cancel</Text>
-            </TouchableOpacity>
+
+            <View style={tw`flex-row gap-3`}>
+              <TouchableOpacity
+                onPress={() => setModalVisible(false)}
+                style={tw`flex-1 bg-[#F0F3F6] py-3 rounded-[10px] items-center`}
+              >
+                <Text style={tw`text-[#434653] font-semibold text-[14px] font-['Inter']`}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleSavePrescription}
+                style={tw`flex-1 bg-[#124CB8] py-3 rounded-[10px] items-center`}
+              >
+                <Text style={tw`text-white font-semibold text-[14px] font-['Inter']`}>Save Prescription</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
 
       {/* View Prescription Modal */}
       <Modal visible={viewPrescriptionModal} animationType="slide" transparent={true}>
-        <View style={tw`flex-1 justify-center bg-black/50 p-4`}>
-          <View style={tw`bg-white p-5 rounded-2xl max-h-[85%]`}>
-            <Text style={tw`text-xl font-bold mb-3 text-center`}>Prescription</Text>
-            <ScrollView style={tw`mb-3`}>
-              <View style={tw`flex-row border-b border-gray-300 pb-2`}>
-                <Text style={tw`w-1/4 font-semibold`}>Drug</Text>
-                <Text style={tw`w-1/4 font-semibold`}>Qty</Text>
-                <Text style={tw`w-1/4 font-semibold`}>Timing</Text>
-                <Text style={tw`w-1/4 font-semibold`}>Notes</Text>
-              </View>
-              {selectedPrescription.map((pres, idx) => (
-                <View key={idx} style={tw`flex-row border-b border-gray-200 py-2`}>
-                  <Text style={tw`w-1/4`}>{pres.drug}</Text>
-                  <Text style={tw`w-1/4`}>{pres.qty}</Text>
-                  <Text style={tw`w-1/4`}>{pres.timing}</Text>
-                  <Text style={tw`w-1/4`}>{pres.notes}</Text>
-                </View>
-              ))}
+        <View style={tw`flex-1 justify-center bg-black/60 p-4`}>
+          <View style={tw`bg-white p-6 rounded-[20px] max-h-[85%] border border-[#DAE1E7]`}>
+            <View style={tw`flex-row justify-between items-center mb-4 pb-3 border-b border-[#F0F3F6]`}>
+              <Text style={tw`text-[20px] font-bold text-[#011D35] font-['Inter']`}>
+                Prescription Details
+              </Text>
+              <TouchableOpacity
+                onPress={() => setViewPrescriptionModal(false)}
+                style={tw`bg-[#F0F3F6] w-8 h-8 rounded-full justify-center items-center`}
+              >
+                <Text style={tw`text-[#434653] font-bold text-base`}>✕</Text>
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={tw`mb-4`} showsVerticalScrollIndicator={false}>
+              {selectedPrescription.length === 0 ? (
+                <Text style={tw`text-center text-[#434653] py-4`}>No prescription details found.</Text>
+              ) : (
+                selectedPrescription.map((pres, idx) => (
+                  <View
+                    key={idx}
+                    style={tw`mb-3 bg-[#FAFBFD] border border-[#C3C6D5] p-4 rounded-[12px] gap-2`}
+                  >
+                    <View style={tw`flex-row justify-between items-center`}>
+                      <Text style={tw`text-[16px] font-bold text-[#011D35] font-['Inter']`}>
+                        {pres.drug || 'Unspecified Drug'}
+                      </Text>
+                      {pres.qty ? (
+                        <View style={tw`bg-[#EEF4FF] px-3 py-1 rounded-full`}>
+                          <Text style={tw`text-[#124CB8] text-[12px] font-semibold`}>{pres.qty}</Text>
+                        </View>
+                      ) : null}
+                    </View>
+                    {pres.timing ? (
+                      <Text style={tw`text-[13px] text-[#434653] font-['Inter']`}>
+                        <Text style={tw`font-semibold text-[#011D35]`}>Timing: </Text>
+                        {pres.timing}
+                      </Text>
+                    ) : null}
+                    {pres.notes ? (
+                      <Text style={tw`text-[12px] text-[#707784] font-['Inter'] italic`}>
+                        Note: {pres.notes}
+                      </Text>
+                    ) : null}
+                  </View>
+                ))
+              )}
             </ScrollView>
-            <TouchableOpacity onPress={() => setViewPrescriptionModal(false)} style={tw`bg-gray-400 py-2 rounded-full`}>
-              <Text style={tw`text-white text-center`}>Close</Text>
+
+            <TouchableOpacity
+              onPress={() => setViewPrescriptionModal(false)}
+              style={tw`bg-[#F0F3F6] py-3 rounded-[10px] items-center`}
+            >
+              <Text style={tw`text-[#434653] font-semibold text-[14px] font-['Inter']`}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -651,23 +987,53 @@ export default function AppointmentDetailsScreen() {
 
       {/* Review Modal */}
       <Modal visible={reviewModalVisible} animationType="slide" transparent={true}>
-        <View style={tw`flex-1 justify-center bg-black/50 p-4`}>
-          <View style={tw`bg-white p-5 rounded-2xl max-h-[70%]`}>
-            <Text style={tw`text-xl font-bold mb-3 text-center`}>Write Reviews</Text>
+        <View style={tw`flex-1 justify-center bg-black/60 p-4`}>
+          <View style={tw`bg-white p-6 rounded-[20px] max-h-[70%] border border-[#DAE1E7]`}>
+            <View style={tw`flex-row justify-between items-center mb-4 pb-3 border-b border-[#F0F3F6]`}>
+              <Text style={tw`text-[20px] font-bold text-[#011D35] font-['Inter']`}>
+                Write Review
+              </Text>
+              <TouchableOpacity
+                onPress={() => setReviewModalVisible(false)}
+                style={tw`bg-[#F0F3F6] w-8 h-8 rounded-full justify-center items-center`}
+              >
+                <Text style={tw`text-[#434653] font-bold text-base`}>✕</Text>
+              </TouchableOpacity>
+            </View>
+
+            <Text style={tw`text-[13px] font-medium text-[#434653] mb-2 font-['Inter']`}>
+              Your feedback / clinical notes:
+            </Text>
             <TextInput
-              placeholder="Write your review here..."
+              placeholder="Write your detailed review here..."
+              placeholderTextColor="#A0AEC0"
               value={reviewText}
               onChangeText={setReviewText}
               multiline
               numberOfLines={5}
-              style={tw`border p-3 mb-4 rounded-lg text-sm`}
+              textAlignVertical="top"
+              style={tw`bg-[#FAFBFD] border border-[#DAE1E7] p-4 mb-5 rounded-[12px] text-[14px] text-[#011D35] font-['Inter'] min-h-[120px]`}
             />
-            <TouchableOpacity onPress={submitDoctorReview} style={tw`bg-green-600 py-2 rounded-full mb-2 items-center justify-center`} disabled={reviewLoading}>
-              {reviewLoading ? <ActivityIndicator color="#fff" /> : <Text style={tw`text-white text-center font-semibold`}>Submit Review</Text>}
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setReviewModalVisible(false)} style={tw`bg-gray-400 py-2 rounded-full`}>
-              <Text style={tw`text-white text-center`}>Cancel</Text>
-            </TouchableOpacity>
+
+            <View style={tw`flex-row gap-3`}>
+              <TouchableOpacity
+                onPress={() => setReviewModalVisible(false)}
+                style={tw`flex-1 bg-[#F0F3F6] py-3 rounded-[10px] items-center`}
+              >
+                <Text style={tw`text-[#434653] font-semibold text-[14px] font-['Inter']`}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={submitDoctorReview}
+                style={tw`flex-1 bg-[#124CB8] py-3 rounded-[10px] items-center justify-center`}
+                disabled={reviewLoading}
+              >
+                {reviewLoading ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={tw`text-white font-semibold text-[14px] font-['Inter']`}>Submit Review</Text>
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>

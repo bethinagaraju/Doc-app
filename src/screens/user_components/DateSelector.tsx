@@ -23,14 +23,18 @@ const RightArrow = () => (
 );
 
 export default function DateSelector({ slotsByDate, selectedDate, setSelectedDate }) {
+    const [isLoading, setIsLoading] = useState(false);
 
     const markedDates = {};
 
     Object.keys(slotsByDate).forEach(date => {
+        const hasSlots = slotsByDate[date] && slotsByDate[date].length > 0;
         markedDates[date] = {
             selected: date === selectedDate,
             selectedColor: "#124CB8",
-            selectedTextColor: "#fff"
+            selectedTextColor: "#fff",
+            marked: hasSlots,
+            dotColor: date === selectedDate ? "#fff" : "#124CB8",
         };
     });
 
@@ -43,9 +47,14 @@ export default function DateSelector({ slotsByDate, selectedDate, setSelectedDat
                 hideExtraDays={false}
                 firstDay={0}
                 enableSwipeMonths
+                displayLoadingIndicator={isLoading}
                 onDayPress={(day) => {
-                    if (slotsByDate[day.dateString]) {
-                        setSelectedDate(day.dateString);
+                    if (slotsByDate[day.dateString] && day.dateString !== selectedDate) {
+                        setIsLoading(true);
+                        setTimeout(() => {
+                            setSelectedDate(day.dateString);
+                            setIsLoading(false);
+                        }, 500);
                     }
                 }}
                 markedDates={markedDates}

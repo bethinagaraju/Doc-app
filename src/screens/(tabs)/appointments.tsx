@@ -12,7 +12,7 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { ChevronRight } from 'lucide-react-native';
 import { useAccessToken } from "../contexts/AccessTokenContext";
 import ProfileTopBar from "../../components/ProfileTopBar";
-import AppointmentCard from "../../components/AppointmentCard";
+import AppointmentCard, { AppointmentCardSkeleton } from "../../components/AppointmentCard";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 type PrescriptionItem = {
@@ -94,13 +94,11 @@ export default function AppointmentsScreen() {
     return true;
   });
 
-  if (loading) return <ActivityIndicator size="large" style={tw`mt-10`} />;
-
   return (
     <SafeAreaView style={tw`flex-1 bg-white`}>
       <ProfileTopBar />
 
-      <ScrollView contentContainerStyle={tw`pb-10`} stickyHeaderIndices={[1]}>
+      <ScrollView contentContainerStyle={tw`pb-10`} stickyHeaderIndices={[1]} showsVerticalScrollIndicator={false}>
         <View style={tw`px-4 mt-6 gap-2 mb-2`}>
           <Text style={tw`text-[#191C1E] font-bold text-[24px] leading-[32px]`}>
             My Appointments
@@ -137,7 +135,13 @@ export default function AppointmentsScreen() {
 
         {/* Appointment List */}
         <View style={tw`p-4`}>
-          {filteredAppointments.length === 0 ? (
+          {loading ? (
+            <>
+              <AppointmentCardSkeleton />
+              <AppointmentCardSkeleton />
+              <AppointmentCardSkeleton />
+            </>
+          ) : filteredAppointments.length === 0 ? (
             <Text style={tw`text-center mt-10 text-gray-500`}>No {selectedTab.toLowerCase()} appointments found</Text>
           ) : (
             filteredAppointments.map((item) => (
