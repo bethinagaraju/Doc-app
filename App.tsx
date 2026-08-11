@@ -143,6 +143,7 @@ function RootNavigator() {
         <Stack.Screen name="AppointmentSuccess" component={AppointmentSuccessScreen} />
         <Stack.Screen name="Appointments" component={AppointmentsScreen} />
         <Stack.Screen name="AppointmentDetails" component={AppointmentDetailsScreen} />
+        <Stack.Screen name="FollowUpAppointment" component={FollowUpAppointmentScreen} />
         <Stack.Screen name="NotFound" component={NotFoundScreen} />
         <Stack.Screen name="AuthLayout" component={AuthLayout} />
         <Stack.Screen name="DoctorLogin" component={DoctorLoginScreen} />

@@ -122,7 +122,9 @@ const DoctorSlotsScreen = () => {
           },
           body: JSON.stringify(payload),
         }
+
       );
+
 
       console.log('📥 Response Status:', response.status);
 
@@ -140,6 +142,8 @@ const DoctorSlotsScreen = () => {
           amount: doctor?.consultation_fee,
           doctorId,
         });
+        console.log('✅ Appointment Created successfully. Navigating to Payment.');
+
       } else {
         console.warn('❌ Failed response data:', data);
         Alert.alert('❌ Failed', data?.message || 'Could not schedule appointment.');

@@ -31,6 +31,7 @@ import OpenSourceLicensesScreen from '../screens/OpenSourceLicensesScreen';
 import LiveLocationScreen from '../screens/LiveLocationScreen';
 import AIDoctorChatScreen from '../screens/AIDoctorChatScreen';
 import AppointmentsScreen from '../../screens/(tabs)/appointments';
+import FollowUpAppointmentScreen from '../../screens/FollowUpAppointmentScreen';
 import { View, Text } from 'react-native';
 
 // Placeholder screen component for screens that don't exist yet
@@ -86,6 +87,7 @@ const DoctorNavigator = () => {
       <Stack.Screen name="LiveLocation" component={LiveLocationScreen} />
       <Stack.Screen name="AIDoctorChat" component={AIDoctorChatScreen} />
       <Stack.Screen name="AppointmentsScreen" component={AppointmentsScreen} />
+      <Stack.Screen name="FollowUpAppointment" component={FollowUpAppointmentScreen} />
     </Stack.Navigator>
   );
 };

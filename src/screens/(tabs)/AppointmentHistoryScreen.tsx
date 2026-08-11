@@ -119,14 +119,18 @@ export default function AppointmentHistoryScreen() {
         ) : (
           filteredAppointments.map((item) => (
             <AppointmentCard key={item.id} appointment={item as any}>
+
               <TouchableOpacity
                 onPress={() => handleDelete(item.id)}
                 style={tw`mt-1 bg-red-500 py-2 px-4 rounded-full`}
               >
+
                 <Text style={tw`text-white text-center font-semibold`}>
                   Delete Appointment
                 </Text>
+
               </TouchableOpacity>
+              
             </AppointmentCard>
           ))
         )}

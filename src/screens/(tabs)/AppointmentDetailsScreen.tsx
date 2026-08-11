@@ -718,9 +718,10 @@ export default function AppointmentDetailsScreen() {
                   <Text style={tw`text-white font-semibold text-[13px] font-['Inter'] text-center`}>
                     {appointment.checkupAppointment && appointment.checkupAppointment.length > 0
                       ? "Follow-up Booked"
-                      : "Book Follow-up"}
+                      : "Book Follow-ups"}
                   </Text>
                 </TouchableOpacity>
+
               </View>
             )}
           </View>

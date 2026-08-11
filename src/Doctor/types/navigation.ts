@@ -30,4 +30,7 @@ export type DoctorStackParamList = {
   PrivacySecurityHospital: undefined;
   AIDoctorChat: undefined;
   AppointmentsScreen: undefined;
+  FollowUpAppointment: {
+    parentAppointment: any;
+  };
 };

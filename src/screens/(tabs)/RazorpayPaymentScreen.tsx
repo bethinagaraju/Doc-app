@@ -307,7 +307,7 @@ const RazorpayPaymentScreen = () => {
   //     const payload = {
   //       amount,
   //       appointmentId,
-  //       doctorId: Number(doctor?.id),
+  //       doctorId: Number(doctorId),
   //     };
 
   //     const response = await fetch(
@@ -341,7 +341,7 @@ const RazorpayPaymentScreen = () => {
       const payload = {
         amount: Number(amount),
         appointmentId: appointmentId,
-        doctorId: Number(doctor?.id),
+        doctorId: Number(doctorId),
       };
 
       console.log('📤 Payload:', payload);
