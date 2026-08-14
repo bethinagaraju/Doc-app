@@ -14,6 +14,8 @@ import { useAccessToken } from "../contexts/AccessTokenContext";
 import ProfileTopBar from "../../components/ProfileTopBar";
 import AppointmentCard, { AppointmentCardSkeleton } from "../../components/AppointmentCard";
 import { SafeAreaView } from "react-native-safe-area-context";
+import PatientAppointmentCard from "../../components/PatientAppointmentCard";
+import { useUser } from "../contexts/UserContext";
 
 type PrescriptionItem = {
   drug: string;
@@ -52,6 +54,7 @@ type RootStackParamList = {
 export default function AppointmentsScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const { accessToken } = useAccessToken();
+  const { user } = useUser();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTab, setSelectedTab] = useState<string>("Upcoming");
@@ -133,6 +136,8 @@ export default function AppointmentsScreen() {
           </ScrollView>
         </View>
 
+
+
         {/* Appointment List */}
         <View style={tw`p-4`}>
           {loading ? (
@@ -144,17 +149,28 @@ export default function AppointmentsScreen() {
           ) : filteredAppointments.length === 0 ? (
             <Text style={tw`text-center mt-10 text-gray-500`}>No {selectedTab.toLowerCase()} appointments found</Text>
           ) : (
-            filteredAppointments.map((item) => (
-              <AppointmentCard key={item.id} appointment={item as any}>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("AppointmentDetails", { appointment: item, selectedTab })}
-                  style={tw`flex-row items-center gap-1`}
-                >
-                  <Text style={tw`text-[#124CB8] text-[16px]`}>Details</Text>
-                  <ChevronRight size={16} color="#124CB8" />
-                </TouchableOpacity>
-              </AppointmentCard>
-            ))
+            filteredAppointments.map((item) => {
+              if (user?.role === "general_user") {
+                return (
+                  <PatientAppointmentCard
+                    key={item.id}
+                    appointment={item}
+                    onPress={() => navigation.navigate("AppointmentDetails", { appointment: item, selectedTab })}
+                  />
+                );
+              }
+              return (
+                <AppointmentCard key={item.id} appointment={item as any}>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("AppointmentDetails", { appointment: item, selectedTab })}
+                    style={tw`flex-row items-center gap-1`}
+                  >
+                    <Text style={tw`text-[#124CB8] text-[16px]`}>Details</Text>
+                    <ChevronRight size={16} color="#124CB8" />
+                  </TouchableOpacity>
+                </AppointmentCard>
+              );
+            })
           )}
         </View>
       </ScrollView>

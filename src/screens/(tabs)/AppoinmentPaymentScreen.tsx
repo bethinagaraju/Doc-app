@@ -2288,6 +2288,9 @@ const PaymentScreen = () => {
           consultationType,
           amount,
           doctorId,
+          orderId: data?.orderId,
+          razorpayAmount: data?.amount,
+          razorpayKey: data?.key,
         });
       } else {
         console.warn('❌ Failed response data:', data);

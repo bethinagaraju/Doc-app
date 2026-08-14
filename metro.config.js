@@ -9,7 +9,6 @@ const config = {
       '@': path.resolve(__dirname, 'src'),
     },
   },
-  watchFolders: [path.resolve(__dirname, 'src')],
 };
 
 module.exports = mergeConfig(defaultConfig, config);

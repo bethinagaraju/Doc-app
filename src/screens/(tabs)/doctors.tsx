@@ -3,25 +3,20 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  Image,
   TouchableOpacity,
   FlatList,
-  ActivityIndicator,
   PermissionsAndroid,
   Platform,
-  StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Geolocation from 'react-native-geolocation-service';
-import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
 import tw from 'twrnc';
-import { ArrowLeft, Clock, Star, ThumbsUp, MapPin } from 'lucide-react-native';
-import PageHeader from '../../components/PageHeader';
 import DoctorCard, { DoctorCardSkeleton } from '../../components/DoctorCard';
 import UsersearchFilter from '../../components/UsersearchFilter';
 import { useAccessToken } from '../contexts/AccessTokenContext';
 import { useUser } from '../contexts/UserContext';
+import FeaturedBentoSection from '../../components/FeaturedBentoSection';
 
 const departments = ['Cardiologist', 'Dermatologist', 'Dentist', 'Neurologist'];
 
@@ -151,6 +146,7 @@ const FindDoctorsScreen = () => {
     if (accessToken) {
       fetchByLiveLocation();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accessToken]);
 
   /* ================= FILTER CHANGE ================= */
@@ -163,6 +159,7 @@ const FindDoctorsScreen = () => {
     } else {
       fetchByLiveLocation();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCity, selectedDepartment]);
 
   /* ================= UI ================= */
@@ -180,52 +177,56 @@ const FindDoctorsScreen = () => {
         }
       /> */}
 
-      <UsersearchFilter
-        selectedCity={selectedCity}
-        setSelectedCity={setSelectedCity}
-        selectedDepartment={selectedDepartment}
-        setSelectedDepartment={setSelectedDepartment}
-        cityPincodes={cityPincodes}
-        departments={departments}
-        selectedMode={consultationMode}
-        setSelectedMode={setConsultationMode}
-      />
-
-      <View style={tw`flex-row justify-between items-center mt-4 mb-2 px-1`}>
-        <Text style={tw`text-[18px] font-bold text-[#191C1E]`}>
-          Top Specialists Near You
-        </Text>
-        <TouchableOpacity>
-          <Text style={tw`text-[14px] font-semibold text-[#124CB8]`}>
-            View Map
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {loading ? (
-        <View style={tw`py-4`}>
-          <DoctorCardSkeleton />
-          <DoctorCardSkeleton />
-          <DoctorCardSkeleton />
-          <DoctorCardSkeleton />
-        </View>
-      ) : (
-
-        <FlatList
-          data={doctors}
-          keyExtractor={(item) => item.id.toString()}
-          contentContainerStyle={tw`py-4`}
-          renderItem={({ item }) => (
-            <DoctorCard
-              item={item}
-              onPress={() => handleCardPress(item)}
+      <FlatList
+        data={loading ? [] : doctors}
+        keyExtractor={(item) => item.id.toString()}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={tw`pb-10`}
+        ListHeaderComponent={
+          <View style={tw`w-full`}>
+            <UsersearchFilter
+              selectedCity={selectedCity}
+              setSelectedCity={setSelectedCity}
+              selectedDepartment={selectedDepartment}
+              setSelectedDepartment={setSelectedDepartment}
+              cityPincodes={cityPincodes}
+              departments={departments}
+              selectedMode={consultationMode}
+              setSelectedMode={setConsultationMode}
             />
-          )}
-        />
-      )}
 
+            <View style={tw`my-2 items-center w-full`}>
+              <FeaturedBentoSection />
+            </View>
 
+            <View style={tw`flex-row justify-between items-center mt-4 mb-2 px-1`}>
+              <Text style={tw`text-[18px] font-bold text-[#191C1E]`}>
+                Top Specialists Near You
+              </Text>
+              <TouchableOpacity>
+                <Text style={tw`text-[14px] font-semibold text-[#124CB8]`}>
+                  View Map
+                </Text>
+              </TouchableOpacity>
+            </View>
 
+            {loading && (
+              <View style={tw`py-4`}>
+                <DoctorCardSkeleton />
+                <DoctorCardSkeleton />
+                <DoctorCardSkeleton />
+                <DoctorCardSkeleton />
+              </View>
+            )}
+          </View>
+        }
+        renderItem={({ item }) => (
+          <DoctorCard
+            item={item}
+            onPress={() => handleCardPress(item)}
+          />
+        )}
+      />
     </SafeAreaView>
   );
 };

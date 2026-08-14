@@ -34,7 +34,7 @@
 //         <VideoCall />
 //       </View>
 
-      
+
 
 //       {/* <View style={tw`flex-1 bg-green-50 p-4`}>
 //         <Text style={tw`text-xl font-bold text-green-900 mb-2`}>Payment Methods</Text>
@@ -51,7 +51,7 @@
 //           <Text style={tw`text-green-800 text-base`}>Go to Wallet</Text>
 //         </TouchableOpacity> */}
 
-       
+
 //       {/* </View> */}
 //     </PageLayout>
 //   );
@@ -70,7 +70,7 @@ import tw from 'twrnc';
 import PageLayout from '../../components/PageLayout';
 
 // ✅ IMPORT FIX: Ensure this path is correct
-import VideoCall from './VideoCall'; 
+import VideoCall from './VideoCall';
 
 type RootStackParamList = {
   Wallet: undefined;
@@ -82,40 +82,40 @@ const PaymentMethods: React.FC = () => {
 
   return (
     <PageLayout sectionTitle="Consultation" title="Video Room">
-      
+
       <ScrollView>
         <View style={tw`mb-6`}>
-           <Text style={tw`text-lg font-bold text-center mb-2 text-gray-700`}>
-             Dr. Smith - Appointment #42
-           </Text>
-           
-           {/* ✅ FIX: Embedding the call requires styling so it doesn't collapse */}
-           <View style={tw`bg-black rounded-xl overflow-hidden shadow-xl border border-gray-300`}>
-             {/* We pass props because we aren't using navigation.navigate here */}
+          <Text style={tw`text-lg font-bold text-center mb-2 text-gray-700`}>
+            Dr. Smith - Appointment #42
+          </Text>
 
-             
+          {/* ✅ FIX: Embedding the call requires styling so it doesn't collapse */}
+          <View style={tw`bg-black rounded-xl overflow-hidden shadow-xl border border-gray-300`}>
+            {/* We pass props because we aren't using navigation.navigate here */}
 
-             <VideoCall 
-                embeddedRole="patient" 
-                embeddedApptId="72" 
-             />
+
+
+            <VideoCall
+              embeddedRole="patient"
+              embeddedApptId="30"
+            />
 
             <view>
               <text></text>
             </view>
-             
-           </View>
+
+          </View>
         </View>
 
         <View style={tw`p-4`}>
-           <Text style={tw`text-center text-gray-500`}>
-             Secure connection established.
-           </Text>
+          <Text style={tw`text-center text-gray-500`}>
+            Secure connection established.
+          </Text>
         </View>
-        
+
       </ScrollView>
 
-                              {/* <VideoCall
+      {/* <VideoCall
                             embeddedRole="patient" 
                             embeddedApptId="72" 
                          /> */}

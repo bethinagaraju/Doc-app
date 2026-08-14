@@ -286,6 +286,9 @@ type RootStackParamList = {
     consultationType: 'video' | 'inclinic';
     amount: number;
     doctorId: number;
+    orderId?: string;
+    razorpayAmount?: number;
+    razorpayKey?: string;
   };
 };
 
@@ -294,7 +297,7 @@ const RazorpayPaymentScreen = () => {
   const route =
     useRoute<RouteProp<RootStackParamList, 'RazorpayPaymentScreen'>>();
 
-  const { appointmentId, doctor, slot, date, amount, doctorId } = route.params;
+  const { appointmentId, doctor, slot, date, amount, doctorId, orderId, razorpayAmount, razorpayKey } = route.params;
   const { user } = useUser();
 
   const { accessToken } = useAccessToken();
@@ -381,13 +384,25 @@ const RazorpayPaymentScreen = () => {
     setIsProcessing(true);
 
     try {
-      const order = await createOrder();
-      if (!order) throw new Error('Order not created');
+      let orderKey = razorpayKey;
+      let orderIdVal = orderId;
+      let orderAmount = razorpayAmount;
+
+      if (!orderIdVal || !orderKey || !orderAmount) {
+        console.log('⚠️ Missing order details in route params, fallback to createOrder API.');
+        const order = await createOrder();
+        if (!order) throw new Error('Order not created');
+        orderKey = order.key;
+        orderIdVal = order.orderId;
+        orderAmount = order.amount;
+      } else {
+        console.log('ℹ️ Using order details passed from appointment creation:', { orderIdVal, orderAmount, orderKey });
+      }
 
       const options = {
-        key: order.key,
-        order_id: order.orderId,
-        amount: order.amount,
+        key: orderKey,
+        order_id: orderIdVal,
+        amount: orderAmount,
         currency: 'INR',
         name: 'DocApp',
         description: 'Doctor Consultation Fee',

@@ -73,6 +73,7 @@ import ViewDoctorsScreen from './src/screens/ViewDoctorsScreen';
 import HospitalAppointmentsScreen from './src/screens/HospitalAppointmentsScreen';
 import FollowUpAppointmentScreen from './src/screens/FollowUpAppointmentScreen';
 import AppointmentDetailsScreen from './src/screens/(tabs)/AppointmentDetailsScreen';
+import PatientVideoCallScreen from './src/screens/PatientVideoCall';
 
 const Stack = createStackNavigator();
 
@@ -131,6 +132,7 @@ function RootNavigator() {
         <Stack.Screen name="Onboarding" component={OnboardingScreen} />
         <Stack.Screen name="Searcheverything" component={SearchEverything} />
         <Stack.Screen name="VideoCall" component={VideoCallScreen} />
+        <Stack.Screen name="PatientVideoCall" component={PatientVideoCallScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="Notification" component={NotificationScreen} />
         <Stack.Screen name="AllSpecialtiesScreen" component={AllSpecialtiesScreen} />

@@ -12,7 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import tw from 'twrnc';
 import Svg, { Path } from 'react-native-svg';
-import PageHeader from '../components/PageHeader';
+
 import { useAccessToken } from './contexts/AccessTokenContext';
 import DateSelector from './user_components/DateSelector';
 import ProfileTopBar from '../components/ProfileTopBar';
@@ -141,6 +141,9 @@ const DoctorSlotsScreen = () => {
           consultationType: consultationMode,
           amount: doctor?.consultation_fee,
           doctorId,
+          orderId: data?.orderId,
+          razorpayAmount: data?.amount,
+          razorpayKey: data?.key,
         });
         console.log('✅ Appointment Created successfully. Navigating to Payment.');
 
