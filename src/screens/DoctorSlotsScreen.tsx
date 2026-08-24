@@ -17,6 +17,33 @@ import { useAccessToken } from './contexts/AccessTokenContext';
 import DateSelector from './user_components/DateSelector';
 import ProfileTopBar from '../components/ProfileTopBar';
 
+const getSlotPeriod = (slotStr: string): 'morning' | 'afternoon' | 'evening' => {
+  const startTime = slotStr.split('-')[0]?.trim();
+  if (!startTime) return 'morning';
+  const hour = parseInt(startTime.split(':')[0], 10);
+  if (isNaN(hour)) return 'morning';
+
+  if (hour < 12) {
+    return 'morning';
+  } else if (hour >= 12 && hour < 16) {
+    return 'afternoon';
+  } else {
+    return 'evening';
+  }
+};
+
+const formatSlotStart12Hr = (slotStr: string) => {
+  const start = slotStr.split('-')[0]?.trim();
+  if (!start) return slotStr;
+  const timeParts = start.split(':');
+  let hour = parseInt(timeParts[0], 10);
+  const minute = timeParts[1] || '00';
+  if (isNaN(hour)) return slotStr;
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  hour = hour % 12 || 12;
+  return `${hour}:${minute} ${ampm}`;
+};
+
 const DoctorSlotsScreen = () => {
   const route = useRoute();
   const navigation = useNavigation<any>();
@@ -47,7 +74,10 @@ const DoctorSlotsScreen = () => {
         if (data.slots && Array.isArray(data.slots)) {
           data.slots.forEach((slotObj: any) => {
             try {
-              const innerSlots = JSON.parse(slotObj.slots);
+              let innerSlots = slotObj.slots;
+              while (typeof innerSlots === 'string') {
+                innerSlots = JSON.parse(innerSlots);
+              }
               if (Array.isArray(innerSlots)) {
                 parsedSlots = parsedSlots.concat(innerSlots);
               }
@@ -208,26 +238,61 @@ const DoctorSlotsScreen = () => {
               </View>
 
               {/* Time Slots */}
-              <FlatList
-                data={slotsByDate[selectedDate]?.slots || []}
-                keyExtractor={(item, index) => `${item}_${index}`}
-                numColumns={3}
-                scrollEnabled={false}
-                columnWrapperStyle={tw`justify-between mb-2`}
-                renderItem={({ item }) => {
-                  const isSelected = selectedSlot === item;
+              {slotsByDate[selectedDate]?.slots && slotsByDate[selectedDate].slots.length > 0 ? (() => {
+                const slots = slotsByDate[selectedDate].slots;
+                const morningSlots = slots.filter(s => getSlotPeriod(s) === 'morning');
+                const afternoonSlots = slots.filter(s => getSlotPeriod(s) === 'afternoon');
+                const eveningSlots = slots.filter(s => getSlotPeriod(s) === 'evening');
+
+                const renderSlotGroup = (title: string, periodSlots: string[], icon: string) => {
+                  if (periodSlots.length === 0) return null;
                   return (
-                    <TouchableOpacity
-                      onPress={() => setSelectedSlot(item)}
-                      style={tw`flex flex-col justify-center items-center flex-1 mx-1 h-[46px] border rounded-2xl bg-white ${isSelected ? 'border-[#124CB8]' : 'border-[#E6E9EC]'}`}
-                    >
-                      <Text style={tw`text-[14px] leading-[20px] text-center ${isSelected ? 'text-[#124CB8] font-semibold' : 'text-[#41484D] font-normal'}`}>
-                        {item}
+                    <View style={tw`mb-6`}>
+                      <Text style={tw`text-[16px] font-bold text-[#191C1E] font-['Public_Sans'] mb-3`}>
+                        {icon}  {title}
                       </Text>
-                    </TouchableOpacity>
+                      <View style={tw`flex-row flex-wrap -mx-1`}>
+                        {periodSlots.map((item, index) => {
+                          const isSelected = selectedSlot === item;
+                          return (
+                            <TouchableOpacity
+                              key={`${item}_${index}`}
+                              onPress={() => setSelectedSlot(item)}
+                              activeOpacity={0.8}
+                              style={[
+                                tw`justify-center items-center h-[46px] border rounded-[12px] m-1`,
+                                {
+                                  width: '30.5%',
+                                  borderColor: isSelected ? '#124CB8' : '#E6E9EC',
+                                  backgroundColor: isSelected ? '#F0F7FF' : '#fff',
+                                }
+                              ]}
+                            >
+                              <Text style={tw`text-[13px] font-['Public_Sans'] ${isSelected ? 'text-[#124CB8] font-bold' : 'text-[#41484D] font-medium'}`}>
+                                {formatSlotStart12Hr(item)}
+                              </Text>
+                            </TouchableOpacity>
+                          );
+                        })}
+                      </View>
+                    </View>
                   );
-                }}
-              />
+                };
+
+                return (
+                  <View style={tw`flex-col`}>
+                    {renderSlotGroup("Morning Slots", morningSlots, "☀️")}
+                    {renderSlotGroup("Afternoon Slots", afternoonSlots, "🌤️")}
+                    {renderSlotGroup("Evening Slots", eveningSlots, "🌙")}
+                  </View>
+                );
+              })() : (
+                <View style={tw`py-10 bg-gray-50 border border-gray-100 rounded-[16px] items-center justify-center`}>
+                  <Text style={tw`text-[#72777F] text-[15px] font-semibold font-['Public_Sans']`}>
+                    No slots available for this date.
+                  </Text>
+                </View>
+              )}
 
               {selectedSlot && (
                 <TouchableOpacity

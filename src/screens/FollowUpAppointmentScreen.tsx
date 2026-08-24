@@ -47,6 +47,18 @@ type RootStackParamList = {
     parentAppointment: Appointment;
   };
   Appointments: undefined;
+  RazorpayPaymentScreen: {
+    appointmentId: number;
+    doctor: any;
+    slot: string;
+    date: string;
+    consultationType: 'video' | 'inclinic';
+    amount: number;
+    doctorId: number;
+    orderId?: string;
+    razorpayAmount?: number;
+    razorpayKey?: string;
+  };
 };
 
 type FollowUpAppointmentScreenRouteProp = RouteProp<RootStackParamList, "FollowUpAppointment">;
@@ -160,6 +172,15 @@ const FollowUpAppointmentScreen: React.FC = () => {
 
   // Helper function to check if follow-up is free (between 5-15 days after completion)
   const getFollowUpPricing = (completedDate: string, selectedDateStr: string) => {
+    const status = parentAppointment.appointment_status?.toLowerCase();
+    if (status !== "completed" && status !== "closed") {
+      return {
+        eligible: false,
+        free: false,
+        message: "Follow-up is only valid for successfully completed appointments",
+      };
+    }
+
     const completed = new Date(completedDate);
     const selected = new Date(selectedDateStr);
     const diffTime = selected.getTime() - completed.getTime();
@@ -203,7 +224,31 @@ const FollowUpAppointmentScreen: React.FC = () => {
       return;
     }
 
+    console.log("=== FOLLOW-UP APPOINTMENT BOOKING DETAILS ===");
+    console.log("Parent Appointment ID:", parentAppointment.id);
+    console.log("Parent Appointment Date:", parentAppointment.appointment_date);
+    console.log("Parent Appointment Details:", JSON.stringify(parentAppointment, null, 2));
+    console.log("Doctor User ID:", doctorUserId);
+    console.log("Selected Date:", selectedDate);
+    console.log("Selected Slot:", selectedSlot);
+    console.log("Start Time:", startTime);
+    console.log("End Time:", endTime);
+    console.log("Follow-Up Type:", followUpType);
+    console.log("Pricing Eligibility Status:", JSON.stringify(pricing, null, 2));
+    console.log("=============================================");
+
     setFollowUpLoading(true);
+
+    const requestBody = {
+      date: selectedDate,
+      start: startTime?.trim(),
+      end: endTime?.trim(),
+      type: followUpType === "online_video" ? "online_video" : "offline",
+      appointment_id: String(parentAppointment.id),
+      payment_mode: "card",
+    };
+
+    console.log("SENDING REQUEST BODY (schedule-checkup-appointment):", JSON.stringify(requestBody, null, 2));
 
     try {
       const response = await fetch(
@@ -215,15 +260,17 @@ const FollowUpAppointmentScreen: React.FC = () => {
             'Authorization': `Bearer ${accessToken}`,
           },
           credentials: "include",
-          body: JSON.stringify({
-            date: selectedDate,
-            start: startTime,
-            end: endTime,
-            type: followUpType,
-            appointment_id: String(parentAppointment.id),
-          }),
+          body: JSON.stringify(requestBody),
         }
       );
+
+      const responseClone = response.clone();
+      try {
+        const responseText = await responseClone.text();
+        console.log("RECEIVED RESPONSE BODY (schedule-checkup-appointment):", responseText);
+      } catch (errClone) {
+        console.log("Failed to clone/read response body:", errClone);
+      }
 
       const data = await response.json();
 
@@ -234,18 +281,54 @@ const FollowUpAppointmentScreen: React.FC = () => {
           data.message?.toLowerCase().includes("scheduled") ||
           data.message?.toLowerCase().includes("created"))
       ) {
-        Alert.alert(
-          "Success",
-          pricing.free
-            ? "Follow-up appointment scheduled successfully! (FREE - within 5-15 days)"
-            : "Follow-up appointment scheduled successfully!",
-          [
-            {
-              text: "OK",
-              onPress: () => navigation.goBack(),
-            },
-          ]
-        );
+        const isPaymentRequired = data.free === false || data.checkup?.is_payment_required === true || !!data.orderId;
+
+        if (isPaymentRequired) {
+          Alert.alert(
+            "Payment Required",
+            "This follow-up requires payment. Redirecting to checkout...",
+            [
+              {
+                text: "Pay Now",
+                onPress: () => {
+                  navigation.navigate('RazorpayPaymentScreen', {
+                    appointmentId: data?.appointment_id || data?.checkup?.id,
+                    doctor: {
+                      id: doctorUserId,
+                      specialization: parentAppointment.doctor?.doctorProfile?.specialization || "Doctor",
+                      consultation_fee: data.amount ? data.amount / 100 : 0,
+                      profile_picture: parentAppointment.doctor?.doctorProfile?.profile_picture,
+                      user: {
+                        username: parentAppointment.doctor?.username || 'Doctor',
+                      }
+                    },
+                    slot: selectedSlot,
+                    date: selectedDate,
+                    consultationType: followUpType === "online_video" ? "video" : "inclinic",
+                    amount: data.amount ? data.amount / 100 : 0,
+                    doctorId: Number(doctorUserId),
+                    orderId: data.orderId,
+                    razorpayAmount: data.amount,
+                    razorpayKey: data.key,
+                  });
+                }
+              }
+            ]
+          );
+        } else {
+          Alert.alert(
+            "Success",
+            pricing.free
+              ? "Follow-up appointment scheduled successfully! (FREE - within 5-15 days)"
+              : "Follow-up appointment scheduled successfully!",
+            [
+              {
+                text: "OK",
+                onPress: () => navigation.goBack(),
+              },
+            ]
+          );
+        }
       } else {
         throw new Error(data.message || "Failed to schedule follow-up appointment");
       }

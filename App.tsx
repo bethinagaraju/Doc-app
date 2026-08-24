@@ -87,7 +87,7 @@ function RootNavigator() {
   const navigationRef = useRef<NavigationContainerRef<any>>(null);
   const [currentRoute, setCurrentRoute] = useState<string | undefined>();
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
-  const { isLoggedIn, checkingLogin } = useUser();
+  const { isLoggedIn, checkingLogin, user } = useUser();
 
   useEffect(() => {
     const show = Keyboard.addListener('keyboardDidShow', () => setKeyboardVisible(true));
@@ -116,12 +116,21 @@ function RootNavigator() {
     return nav ? nav.routes.some(findDoctorNavigator) : false;
   };
 
+  const getInitialRoute = () => {
+    if (!isLoggedIn || !user) return 'Login';
+    const role = user.role?.toLowerCase();
+    if (role === 'doctor') return 'DoctorNavigator';
+    if (role === 'admin') return 'AdminHome';
+    if (role === 'hospital_organisation') return 'HospitalAdmin';
+    return 'TabsLayout';
+  };
+
   if (checkingLogin) return null;
 
   return (
     <NavigationContainer ref={navigationRef} onReady={handleStateChange} onStateChange={handleStateChange}>
       <Stack.Navigator
-        initialRouteName={isLoggedIn ? 'TabsLayout' : 'Login'}
+        initialRouteName={getInitialRoute()}
         screenOptions={{ headerShown: false }}
       >
         <Stack.Screen name="Login" component={LoginScreen} />

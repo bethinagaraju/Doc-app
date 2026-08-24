@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Geolocation from 'react-native-geolocation-service';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import tw from 'twrnc';
 import DoctorCard, { DoctorCardSkeleton } from '../../components/DoctorCard';
 import UsersearchFilter from '../../components/UsersearchFilter';
@@ -24,11 +24,13 @@ const cityPincodes: any = {
   Warangal: '506006',
   Hyderabad: '500001',
   Bangalore: '560001',
+  Chennai: '600119',
   Anantharam: '506365',
 };
 
 const FindDoctorsScreen = () => {
   const navigation = useNavigation<any>();
+  const route = useRoute<any>();
   const { accessToken } = useAccessToken();
 
   const [doctors, setDoctors] = useState<any[]>([]);
@@ -38,6 +40,17 @@ const FindDoctorsScreen = () => {
   const [selectedCity, setSelectedCity] = useState('');
 
   const { consultationMode, setConsultationMode } = useUser();
+
+  // Set initial filters from route params (passed from ConsultOptionsScreen)
+  useEffect(() => {
+    if (route.params?.specialty) {
+      setSelectedDepartment(route.params.specialty);
+    }
+    if (route.params?.mode) {
+      const mappedMode = route.params.mode === 'video' ? 'online' : 'offline';
+      setConsultationMode(mappedMode);
+    }
+  }, [route.params?.specialty, route.params?.mode]);
 
   /* ================= NAVIGATION HANDLER ================= */
 

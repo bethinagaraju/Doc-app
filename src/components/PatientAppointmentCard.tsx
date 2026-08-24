@@ -111,6 +111,36 @@ const PatientAppointmentCard: React.FC<PatientAppointmentCardProps> = ({ appoint
                 </View>
             </View>
 
+            {appointment?.checkupAppointment && appointment.checkupAppointment.length > 0 && (() => {
+                const checkup = appointment.checkupAppointment[0];
+                const cDateObj = checkup.checkup_date ? new Date(checkup.checkup_date) : null;
+                const formattedCheckupDate = cDateObj && !isNaN(cDateObj.getTime())
+                    ? cDateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                    : 'N/A';
+                
+                const checkupTimeFormatted = `${formatTime(checkup.checkup_start_time)} - ${formatTime(checkup.checkup_end_time)}`;
+
+                return (
+                    <View style={tw`w-full bg-[#FFF7ED] border border-[#FED7AA] rounded-[8px] p-3 flex-col gap-1 mt-2`}>
+                        <View style={tw`flex-row items-center gap-1.5`}>
+                            <View style={tw`w-2 h-2 rounded-full bg-[#EA580C]`} />
+                            <Text style={tw`text-[#EA580C] font-bold text-[14px] font-['Public_Sans']`}>
+                                Follow-up Booked
+                            </Text>
+                        </View>
+                        <Text style={tw`text-[#42474E] text-[13px] font-['Public_Sans']`}>
+                            Date: <Text style={tw`font-semibold text-[#191C1E]`}>{formattedCheckupDate}</Text>
+                        </Text>
+                        <Text style={tw`text-[#42474E] text-[13px] font-['Public_Sans']`}>
+                            Time: <Text style={tw`font-semibold text-[#191C1E]`}>{checkupTimeFormatted}</Text>
+                        </Text>
+                        <Text style={tw`text-[#42474E] text-[13px] font-['Public_Sans']`}>
+                            Status: <Text style={tw`font-semibold capitalize text-[#191C1E]`}>{checkup.checkup_status}</Text>
+                        </Text>
+                    </View>
+                );
+            })()}
+
             {/* Action Button */}
             <TouchableOpacity
                 style={tw`flex flex-row justify-center items-center py-3 gap-2 w-full bg-[#E8E9EF] rounded-[8px] mt-2`}

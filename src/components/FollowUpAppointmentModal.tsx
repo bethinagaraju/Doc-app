@@ -121,7 +121,28 @@ const FollowUpAppointmentModal: React.FC<FollowUpAppointmentModalProps> = ({
       return;
     }
 
+    console.log("=== FOLLOW-UP APPOINTMENT BOOKING DETAILS (MODAL) ===");
+    console.log("Parent Appointment ID:", parentAppointment.id);
+    console.log("Parent Appointment Date:", parentAppointment.appointment_date);
+    console.log("Parent Appointment Details:", JSON.stringify(parentAppointment, null, 2));
+    console.log("Follow-Up Date:", followUpDate);
+    console.log("Start Time:", followUpStartTime);
+    console.log("End Time:", followUpEndTime);
+    console.log("Follow-Up Type:", followUpType);
+    console.log("Pricing Eligibility Status:", JSON.stringify(pricing, null, 2));
+    console.log("====================================================");
+
     setFollowUpLoading(true);
+
+    const requestBody = {
+      date: followUpDate,
+      start: followUpStartTime,
+      end: followUpEndTime,
+      type: followUpType,
+      appointment_id: String(parentAppointment.id),
+    };
+
+    console.log("SENDING REQUEST BODY (schedule-checkup-appointment) [MODAL]:", JSON.stringify(requestBody, null, 2));
 
     try {
       const response = await fetch(
@@ -130,15 +151,17 @@ const FollowUpAppointmentModal: React.FC<FollowUpAppointmentModalProps> = ({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
-          body: JSON.stringify({
-            date: followUpDate,
-            start: followUpStartTime,
-            end: followUpEndTime,
-            type: followUpType,
-            appointment_id: String(parentAppointment.id),
-          }),
+          body: JSON.stringify(requestBody),
         }
       );
+
+      const responseClone = response.clone();
+      try {
+        const responseText = await responseClone.text();
+        console.log("RECEIVED RESPONSE BODY (schedule-checkup-appointment) [MODAL]:", responseText);
+      } catch (errClone) {
+        console.log("Failed to clone/read response body:", errClone);
+      }
 
       const data = await response.json();
 

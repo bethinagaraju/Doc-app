@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { useNavigation, useRoute, RouteProp, NavigationProp } from '@react-navigation/native';
-import { Home, Video, Stethoscope } from 'lucide-react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Home, Video, ChevronRight } from 'lucide-react-native';
 import tw from 'twrnc';
-import PageLayout from '../components/PageLayout';
+import ProfileTopBar from '../components/ProfileTopBar';
 
 export type RootStackParamList = {
   ConsultOptionsScreen: { specialty?: string };
@@ -11,7 +12,6 @@ export type RootStackParamList = {
 };
 
 const FALLBACK_SPECIALTY = 'General Consultation';
-const CARD_HEIGHT = 180;
 
 type ConsultOptionsScreenRouteProp = RouteProp<RootStackParamList, 'ConsultOptionsScreen'>;
 type ConsultOptionsScreenNavProp = NavigationProp<RootStackParamList, 'ConsultOptionsScreen'>;
@@ -27,71 +27,68 @@ const ConsultOptionsScreen = () => {
   };
 
   return (
-    <PageLayout title="Consultation Options" headerBackgroundColor="#219F4D">
-      <View style={tw`flex-1 px-4 py-8 justify-center`}>
-        <Text style={tw`text-2xl font-bold text-green-900 mb-7 text-center`}>
-          {specialty}
-        </Text>
+    <SafeAreaView style={tw`flex-1 bg-gray-50`}>
+      <ProfileTopBar title="Consultation Options" />
+      {/* Off-white background for contrast against white cards */}
+      <View style={tw`flex-1 bg-gray-50 px-4 pt-6`}>
 
-        {/* In-Clinic */}
+        {/* Header Section */}
+        <View style={tw`mb-6 px-1`}>
+          <Text style={tw`text-xl font-bold text-gray-900 mb-1`}>
+            {specialty}
+          </Text>
+          <Text style={tw`text-sm text-gray-500`}>
+            How would you like to consult the doctor?
+          </Text>
+        </View>
+
+        {/* In-Clinic Card */}
         <TouchableOpacity
-          style={[
-            tw`bg-green-100 border border-green-300 rounded-[28px] flex-row items-center px-8 mb-7`,
-            {
-              height: CARD_HEIGHT,
-              shadowColor: '#22C55E',
-              shadowOpacity: 0.15,
-              shadowRadius: 8,
-              shadowOffset: { width: 0, height: 4 },
-              elevation: 5,
-            },
-          ]}
+          style={tw`bg-white border border-gray-100 rounded-2xl p-5 mb-4 flex-row items-center shadow-sm`}
           onPress={() => handleOptionPress('Clinic')}
-          activeOpacity={0.9}
+          activeOpacity={0.7}
         >
-          <View style={tw`bg-green-200 rounded-full w-16 h-16 items-center justify-center mr-7`}>
-            <Home size={30} color="#15803D" strokeWidth={2} />
+          {/* Practo-style soft icon container */}
+          <View style={tw`bg-blue-50 rounded-full w-14 h-14 items-center justify-center mr-4`}>
+            <Home size={24} color="#4F46E5" />
           </View>
-          <View style={tw`flex-1`}>
-            <Text style={tw`text-[22px] font-bold text-green-900 mb-1`}>
-              Book In-clinic Appointment
+
+          <View style={tw`flex-1 pr-2`}>
+            <Text style={tw`text-base font-bold text-gray-900 mb-1`}>
+              In-Clinic Consultation
             </Text>
-            <Text style={tw`text-base text-green-700`}>
-              Book a {specialty.toLowerCase()} in person in Hyderabad
+            <Text style={tw`text-sm text-gray-500`}>
+              Visit the doctor in person at the clinic or hospital
             </Text>
           </View>
+
+          <ChevronRight size={20} color="#9CA3AF" />
         </TouchableOpacity>
 
-        {/* Video Consultation */}
+        {/* Video Consultation Card */}
         <TouchableOpacity
-          style={[
-            tw`bg-green-100 border border-green-300 rounded-[28px] flex-row items-center px-8`,
-            {
-              height: CARD_HEIGHT,
-              shadowColor: '#22C55E',
-              shadowOpacity: 0.15,
-              shadowRadius: 8,
-              shadowOffset: { width: 0, height: 4 },
-              elevation: 5,
-            },
-          ]}
+          style={tw`bg-white border border-gray-100 rounded-2xl p-5 mb-4 flex-row items-center shadow-sm`}
           onPress={() => handleOptionPress('Video')}
-          activeOpacity={0.9}
+          activeOpacity={0.7}
         >
-          <View style={tw`bg-green-200 rounded-full w-16 h-16 items-center justify-center mr-7`}>
-            <Video size={30} color="#15803D" strokeWidth={2} />
+          <View style={tw`bg-purple-50 rounded-full w-14 h-14 items-center justify-center mr-4`}>
+            <Video size={24} color="#9333EA" />
           </View>
-          <View style={tw`flex-1`}>
-            <Text style={tw`text-[22px] font-bold text-green-900 mb-1`}>
-              Book Video Consultation
+
+          <View style={tw`flex-1 pr-2`}>
+            <Text style={tw`text-base font-bold text-gray-900 mb-1`}>
+              Video Consultation
             </Text>
-            <Text style={tw`text-base text-green-700`}>
-              Consult with a {specialty.toLowerCase()} online now!
+            <Text style={tw`text-sm text-gray-500`}>
+              Consult with a doctor online via a secure video call
             </Text>
           </View>
+
+          <ChevronRight size={20} color="#9CA3AF" />
         </TouchableOpacity>
+
       </View>
-    </PageLayout>
+    </SafeAreaView>
   );
 };
 

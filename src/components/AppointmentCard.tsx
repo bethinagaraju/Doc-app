@@ -27,6 +27,7 @@ export type AppointmentCardData = {
       profile_picture?: string;
     };
   };
+  checkupAppointment?: any[];
 };
 
 type AppointmentCardProps = {
@@ -94,6 +95,49 @@ export default function AppointmentCard({ appointment, children }: AppointmentCa
           {formattedDate}
         </Text>
       </View>
+
+      {appointment.checkupAppointment && appointment.checkupAppointment.length > 0 && (() => {
+        const checkup = appointment.checkupAppointment[0];
+        const cDateObj = checkup.checkup_date ? new Date(checkup.checkup_date) : null;
+        const formattedCheckupDate = cDateObj && !isNaN(cDateObj.getTime())
+            ? cDateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+            : 'N/A';
+        
+        const formatTimeLocal = (timeStr?: string) => {
+          if (!timeStr) return '';
+          const parts = timeStr.split(':');
+          if (parts.length >= 2) {
+            let hours = parseInt(parts[0], 10);
+            const minutes = parts[1];
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12;
+            return `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+          }
+          return timeStr;
+        };
+
+        const checkupTimeFormatted = `${formatTimeLocal(checkup.checkup_start_time)} - ${formatTimeLocal(checkup.checkup_end_time)}`;
+
+        return (
+          <View style={tw`bg-orange-50 border border-orange-200 rounded-lg p-3 mb-3 flex-col gap-1`}>
+            <View style={tw`flex-row items-center gap-1.5`}>
+              <View style={tw`w-2 h-2 rounded-full bg-orange-500`} />
+              <Text style={tw`text-orange-800 font-bold text-[14px] font-['Inter']`}>
+                Follow-up Appointment Booked
+              </Text>
+            </View>
+            <Text style={tw`text-[#434653] text-[13px] font-['Inter']`}>
+              Date: <Text style={tw`font-semibold text-[#011D35]`}>{formattedCheckupDate}</Text>
+            </Text>
+            <Text style={tw`text-[#434653] text-[13px] font-['Inter']`}>
+              Time: <Text style={tw`font-semibold text-[#011D35]`}>{checkupTimeFormatted}</Text>
+            </Text>
+            <Text style={tw`text-[#434653] text-[13px] font-['Inter']`}>
+              Status: <Text style={tw`font-semibold capitalize text-[#011D35]`}>{checkup.checkup_status}</Text>
+            </Text>
+          </View>
+        );
+      })()}
 
       {/* Footer / Status Row */}
       <View style={tw`flex-row justify-between items-center pt-3 border-t border-[#DAE1E7]`}>

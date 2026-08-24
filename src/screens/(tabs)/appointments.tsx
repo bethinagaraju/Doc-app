@@ -39,6 +39,8 @@ type Appointment = {
   createdAt: string;
   updatedAt: string;
   checkupAppointment: any[];
+  isFollowUp?: boolean;
+  parentAppointmentId?: number;
 };
 
 const tabs = ["Upcoming", "Cancelled", "Completed"];
@@ -72,7 +74,37 @@ export default function AppointmentsScreen() {
         }
       );
       const data = await response.json();
-      setAppointments(data.appointments || []);
+      const rawAppointments = data.appointments || [];
+      const formatted: Appointment[] = [];
+      rawAppointments.forEach((appt: any) => {
+        formatted.push(appt);
+        if (appt.checkupAppointment && Array.isArray(appt.checkupAppointment)) {
+          appt.checkupAppointment.forEach((checkup: any) => {
+            formatted.push({
+              id: checkup.id,
+              isFollowUp: true,
+              parentAppointmentId: appt.id,
+              user_id: checkup.user_id,
+              doctor_id: checkup.doctor_id,
+              appointment_date: checkup.checkup_date,
+              appointment_start_time: checkup.checkup_start_time,
+              appointment_end_time: checkup.checkup_end_time,
+              appointment_status: checkup.checkup_status,
+              appointment_type: "Follow-up",
+              payment_mode: appt.payment_mode,
+              prescription: appt.prescription,
+              doctor: appt.doctor,
+              patient: appt.patient,
+              patientName: appt.patientName,
+              checkupAppointment: [],
+              created_at: checkup.created_at,
+              createdAt: checkup.createdAt,
+              updatedAt: checkup.updatedAt,
+            } as any);
+          });
+        }
+      });
+      setAppointments(formatted);
     } catch (err: any) {
       console.error("Fetch error:", err);
       Alert.alert("Error", "Failed to fetch appointments");
@@ -150,17 +182,18 @@ export default function AppointmentsScreen() {
             <Text style={tw`text-center mt-10 text-gray-500`}>No {selectedTab.toLowerCase()} appointments found</Text>
           ) : (
             filteredAppointments.map((item) => {
+              const itemKey = `${item.id}_${item.isFollowUp ? 'followup' : 'parent'}`;
               if (user?.role === "general_user") {
                 return (
                   <PatientAppointmentCard
-                    key={item.id}
+                    key={itemKey}
                     appointment={item}
                     onPress={() => navigation.navigate("AppointmentDetails", { appointment: item, selectedTab })}
                   />
                 );
               }
               return (
-                <AppointmentCard key={item.id} appointment={item as any}>
+                <AppointmentCard key={itemKey} appointment={item as any}>
                   <TouchableOpacity
                     onPress={() => navigation.navigate("AppointmentDetails", { appointment: item, selectedTab })}
                     style={tw`flex-row items-center gap-1`}

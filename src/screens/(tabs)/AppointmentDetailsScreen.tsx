@@ -442,6 +442,15 @@ export default function AppointmentDetailsScreen() {
           <Text style={tw`text-xl font-bold text-gray-800`}>Appointment Details</Text>
         </View> */}
 
+        {appointment.isFollowUp && (
+          <View style={tw`bg-blue-50 border border-blue-200 rounded-[12px] p-4 mb-4 flex-row items-center gap-2`}>
+            <View style={tw`w-2.5 h-2.5 rounded-full bg-blue-500`} />
+            <Text style={tw`text-blue-800 text-[14px] font-semibold font-['Inter'] flex-1`}>
+              This is a Follow-up Consultation for Parent Appointment #{appointment.parentAppointmentId}
+            </Text>
+          </View>
+        )}
+
         <View style={tw`mb-4`}>
           <PrimaryActionBanner
             statusText={`${"UPCOMING"} • ${new Date(appointment.appointment_date).toLocaleDateString("en-GB")} ${appointment.appointment_start_time}`}
@@ -543,6 +552,81 @@ export default function AppointmentDetailsScreen() {
             type={appointment.appointment_type}
           />
         </View>
+
+        {appointment.checkupAppointment && appointment.checkupAppointment.length > 0 && (() => {
+          const checkup = appointment.checkupAppointment[0];
+          const checkupDateFormatted = checkup.checkup_date ? new Date(checkup.checkup_date).toDateString() : 'N/A';
+          
+          const formatTimeLocal = (timeStr?: string) => {
+            if (!timeStr) return '';
+            const parts = timeStr.split(':');
+            if (parts.length >= 2) {
+              let hours = parseInt(parts[0], 10);
+              const minutes = parts[1];
+              const ampm = hours >= 12 ? 'PM' : 'AM';
+              hours = hours % 12 || 12;
+              return `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+            }
+            return timeStr;
+          };
+
+          const checkupTimeFormatted = `${formatTimeLocal(checkup.checkup_start_time)} - ${formatTimeLocal(checkup.checkup_end_time)}`;
+          
+          return (
+            <View style={tw`mb-4`}>
+              <View
+                style={[
+                  tw`w-full bg-[#FFF7ED] rounded-[12px] p-[24px] border border-[#FED7AA] gap-[12px]`,
+                  {
+                    shadowColor: '#EA580C',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.05,
+                    shadowRadius: 20,
+                    elevation: 4,
+                  },
+                ]}
+              >
+                <Text style={tw`text-[18px] font-semibold text-[#EA580C] font-['Inter'] leading-[24px] mb-[4px]`}>
+                  Follow-up Appointment Details
+                </Text>
+
+                {/* Follow-up ID */}
+                <View style={tw`flex-row justify-between py-[8px] border-b border-[#FFEDD5]`}>
+                  <Text style={tw`text-[14px] text-[#9A3412] font-['Inter']`}>Follow-up ID</Text>
+                  <Text style={tw`text-[14px] text-[#7C2D12] font-semibold font-['Inter']`}>#{checkup.id}</Text>
+                </View>
+
+                {/* Follow-up Date */}
+                <View style={tw`flex-row justify-between py-[8px] border-b border-[#FFEDD5]`}>
+                  <Text style={tw`text-[14px] text-[#9A3412] font-['Inter']`}>Follow-up Date</Text>
+                  <Text style={tw`text-[14px] text-[#7C2D12] font-semibold font-['Inter']`}>{checkupDateFormatted}</Text>
+                </View>
+
+                {/* Follow-up Time */}
+                <View style={tw`flex-row justify-between py-[8px] border-b border-[#FFEDD5]`}>
+                  <Text style={tw`text-[14px] text-[#9A3412] font-['Inter']`}>Follow-up Time</Text>
+                  <Text style={tw`text-[14px] text-[#7C2D12] font-semibold font-['Inter']`}>
+                    {checkupTimeFormatted}
+                  </Text>
+                </View>
+
+                {/* Follow-up Status */}
+                <View style={tw`flex-row justify-between py-[8px] border-b border-[#FFEDD5]`}>
+                  <Text style={tw`text-[14px] text-[#9A3412] font-['Inter']`}>Status</Text>
+                  <Text style={tw`text-[14px] text-[#7C2D12] font-semibold capitalize font-['Inter']`}>{checkup.checkup_status}</Text>
+                </View>
+
+                {/* Payment Status */}
+                <View style={tw`flex-row justify-between py-[8px]`}>
+                  <Text style={tw`text-[14px] text-[#9A3412] font-['Inter']`}>Payment Required</Text>
+                  <Text style={tw`text-[14px] text-[#7C2D12] font-semibold font-['Inter']`}>
+                    {checkup.is_payment_required ? "Yes" : "No (Free)"}
+                  </Text>
+                </View>
+              </View>
+            </View>
+          );
+        })()}
 
         <View style={tw`mb-4`}>
           <PatientDocuments

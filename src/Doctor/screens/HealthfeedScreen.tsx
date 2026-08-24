@@ -68,6 +68,8 @@ type Appointment = {
   createdAt: string;
   updatedAt: string;
   checkupAppointment: any[];
+  isFollowUp?: boolean;
+  parentAppointmentId?: number;
 };
 
 const tabs = ['Upcoming', 'Cancelled', 'Completed'];
@@ -86,7 +88,35 @@ export default function AppointmentsScreen() {
         }
       );
       const data = await response.json();
-      setAppointments(data.appointments || []);
+      const rawAppointments = data.appointments || [];
+      const formatted: Appointment[] = [];
+      rawAppointments.forEach((appt: any) => {
+        formatted.push(appt);
+        if (appt.checkupAppointment && Array.isArray(appt.checkupAppointment)) {
+          appt.checkupAppointment.forEach((checkup: any) => {
+            formatted.push({
+              id: checkup.id,
+              isFollowUp: true,
+              parentAppointmentId: appt.id,
+              user_id: checkup.user_id,
+              doctor_id: checkup.doctor_id,
+              appointment_date: checkup.checkup_date,
+              appointment_start_time: checkup.checkup_start_time,
+              appointment_end_time: checkup.checkup_end_time,
+              appointment_status: checkup.checkup_status,
+              appointment_type: "Follow-up",
+              checkup_time: checkup.checkup_start_time,
+              payment_mode: appt.payment_mode,
+              prescription: appt.prescription,
+              checkupAppointment: [],
+              created_at: checkup.created_at,
+              createdAt: checkup.createdAt,
+              updatedAt: checkup.updatedAt,
+            } as any);
+          });
+        }
+      });
+      setAppointments(formatted);
     } catch (err) {
       console.error('Fetch error:', err);
       Alert.alert('Error', 'Failed to fetch appointments');
@@ -168,7 +198,7 @@ export default function AppointmentsScreen() {
         ) : (
           filteredAppointments.map((item) => (
             <View
-              key={item.id}
+              key={`${item.id}_${item.isFollowUp ? 'followup' : 'parent'}`}
               style={tw`bg-white p-4 mb-4 rounded-xl shadow-sm border border-gray-200`}
             >
               <Text style={tw`text-lg font-bold text-green-700`}>

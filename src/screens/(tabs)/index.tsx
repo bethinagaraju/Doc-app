@@ -68,6 +68,7 @@ import { useAccessToken } from '../contexts/AccessTokenContext';
 import UpcomingAppointmentCard from '../user_components/UpcomingAppointmentCard';
 import QuickActionsGrid from '../user_components/QuickActionsGrid';
 import DoctorCardsContainer from '../user_components/DoctorCardsContainer';
+import SpecialtiesSection from '../user_components/SpecialtiesSection';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -160,17 +161,6 @@ const HomeScreen = () => {
     // require('../Images/Banner3.jpg'),
   ];
 
-  const specialties = [
-    { name: 'General Physician', image: require('../Images/PopUpICons/general_physician.png') },
-    { name: 'Skin & Hair', image: require('../Images/PopUpICons/spots.png') },
-    { name: "Women's Health", image: require('../Images/PopUpICons/prenatal-care.png') },
-    { name: 'Dental Care', image: require('../Images/PopUpICons/tooth.png') },
-    { name: 'Cardiologist', image: require('../Images/PopUpICons/cardiology.png') },
-    // { name: 'Child Specialist', image: require('../Images/PopUpICons/skincare.png') },
-    { name: 'ENT', image: require('../Images/PopUpICons/medical.png') },
-    { name: 'Mental Health', image: require('../Images/PopUpICons/brain.png') },
-    { name: 'Orthopedic', image: require('../Images/PopUpICons/arthritis.png') },
-  ];
   const cityList = [
     'Bangalore',
     'Hyderabad',
@@ -242,61 +232,7 @@ const HomeScreen = () => {
     setActiveBannerIndex(Math.round(x / bannerWidth));
   };
 
-  const iconMap: Record<string, React.ElementType> = {
-    'doctor': Stethoscope,
-    'calendar': Calendar,
-    'user': User,
-    'pie-chart': PieChart,
-    'message-circle': MessageCircle,
-    // add more mappings as needed
-  };
 
-  const FeatureCard = ({
-    iconName,
-    iconSet = 'FontAwesome5',
-    label,
-    badge,
-    onPress,
-    image,
-  }: {
-    iconName?: string;
-    iconSet?: string;
-    label: string;
-    badge?: string;
-    onPress?: () => void;
-    image?: any;
-  }) => {
-    return (
-      <TouchableOpacity
-        style={tw`w-[30%] mb-4 items-center justify-center`}
-        onPress={onPress}
-      >
-        <View
-          style={tw`relative bg-green-50 w-[100px] h-[100px] rounded-[30px] items-center justify-center overflow-hidden shadow-sm`}
-        >
-          {image ? (
-            <Image
-              source={image}
-              style={tw`w-[80%] h-[80%]`}
-              resizeMode="contain"
-            />
-          ) : (
-            iconName && iconMap[iconName] ? (
-              React.createElement(iconMap[iconName], { size: 24, color: '#FFFFFF' })
-            ) : null
-          )}
-          {badge && (
-            <View style={tw`absolute top-0 right-0 bg-emerald-500 rounded-full px-2 py-1`}>
-              <Text style={tw`text-white text-xs text-center`}>{badge}</Text>
-            </View>
-          )}
-        </View>
-        <Text style={tw`text-xs mt-2 text-center text-gray-600 font-medium`}>
-          {label}
-        </Text>
-      </TouchableOpacity>
-    );
-  };
 
   return (
     <SafeAreaView style={[tw`flex-1`, { backgroundColor: '#F8F9FF' }]}>
@@ -652,7 +588,7 @@ const HomeScreen = () => {
 
 
         {/* Banner Section */}
-        {/* <View style={tw`mt-6`}>
+        <View style={tw`mt-6`}>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -660,12 +596,12 @@ const HomeScreen = () => {
             scrollEventThrottle={16}
             snapToInterval={bannerWidth}
             decelerationRate="fast"
-            contentContainerStyle={tw`px-4`}
+            contentContainerStyle={tw`px-0`}
           >
             {banners.map((source, index) => (
               <View
                 key={index}
-                style={tw`w-[${screenWidth - 32}px] h-40 rounded-3xl overflow-hidden mr-4 shadow-sm`}
+                style={tw`w-[${screenWidth - 50}px] h-40 rounded-3xl overflow-hidden mr-4 shadow-sm`}
               >
                 <Image
                   source={typeof source === 'string' ? { uri: source } : source}
@@ -684,45 +620,18 @@ const HomeScreen = () => {
               />
             ))}
           </View>
-        </View> */}
+        </View>
 
 
-        <DoctorCardsContainer />
+
 
 
 
 
         {/* Specialties */}
-        {/* <View style={tw`mt-6 px-6`}>
-          <Text style={tw`text-lg font-semibold text-gray-900 flex-1 text-left`}>
-            Find a Doctor for your Health Problems
-          </Text>
-          <View style={tw`mt-2`}>
-            <View style={tw`flex-row flex-wrap justify-between`}>
-              {specialties.slice(0, 9).map((item, index) => (
-                <FeatureCard
-                  key={index}
-                  label={item.name}
-                  image={item.image}
-                  onPress={() =>
-                    navigation.navigate('ConsultOptionsScreen', { specialty: item.name })
-                  }
-                />
-              ))}
-              <TouchableOpacity
-                style={tw`w-[30%] mb-4 items-center`}
-                onPress={() => navigation.navigate('AllSpecialtiesScreen')}
-              >
-                <View style={tw`bg-green-100 w-[100px] h-[100px] rounded-[30px] items-center justify-center`}>
-                  <ChevronRight size={18} color="#059669" />
-                </View>
-                <Text style={tw`text-xs mt-2 text-center text-green-700 font-bold`}>
-                  View More
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View> */}
+        <SpecialtiesSection />
+
+        <DoctorCardsContainer />
 
         {/* Explore Hospitals */}
         {/* <View style={tw`mt-6 px-6`}>

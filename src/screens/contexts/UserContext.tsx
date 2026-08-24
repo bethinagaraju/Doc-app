@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import CookieManager from '@react-native-cookies/cookies';
 import { Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAccessToken } from './AccessTokenContext';
 
 interface User {
@@ -46,14 +47,19 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [consultationMode, setConsultationMode] = useState<'online' | 'offline'>('offline');
 
-  const { accessToken } = useAccessToken();
+  const { accessToken, setAccessToken, clearAccessToken } = useAccessToken();
 
-  const fetchUserData = async () => {
+  const fetchUserData = async (tokenToUse?: string | null) => {
+    const activeToken = tokenToUse !== undefined ? tokenToUse : accessToken;
+    if (!activeToken) {
+      return;
+    }
+
     try {
       const response = await fetch('https://api.docapp.co.in/api/auth/get-user-data', {
         method: 'GET',
         headers: {
-          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+          Authorization: `Bearer ${activeToken}`,
           'Content-Type': 'application/json',
         },
         credentials: 'include', // send cookie
@@ -68,17 +74,48 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.error('Error fetching user:', error);
       setUser(null);
       setIsLoggedIn(false);
+      // Clean up invalid/expired token
+      try {
+        await AsyncStorage.removeItem('token');
+        clearAccessToken();
+      } catch (err) {
+        console.error('Error clearing token on fetch failure:', err);
+      }
     } finally {
       setCheckingLogin(false);
     }
   };
 
+  // 1. Initial check for token on startup
   useEffect(() => {
-    fetchUserData();
+    const checkAuth = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        if (token) {
+          setAccessToken(token);
+          // fetchUserData will be triggered by the accessToken change
+        } else {
+          setCheckingLogin(false);
+        }
+      } catch (error) {
+        console.error('Error checking auth state:', error);
+        setCheckingLogin(false);
+      }
+    };
+    checkAuth();
+  }, []);
+
+  // 2. Fetch user data when accessToken becomes available
+  useEffect(() => {
+    if (accessToken) {
+      fetchUserData(accessToken);
+    }
   }, [accessToken]);
 
   const logout = async () => {
     try {
+      await AsyncStorage.removeItem('token');
+      clearAccessToken();
       await CookieManager.clearAll(true); // clears all cookies
       setUser(null);
       setIsLoggedIn(false);

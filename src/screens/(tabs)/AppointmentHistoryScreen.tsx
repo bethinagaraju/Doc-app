@@ -19,6 +19,15 @@ type Appointment = {
   appointment_end_time: string;
   appointment_status: string;
   appointment_type: string;
+  user_id?: number;
+  payment_mode?: string;
+  prescription?: any;
+  doctor?: any;
+  patient?: any;
+  patientName?: string;
+  checkupAppointment?: any[];
+  isFollowUp?: boolean;
+  parentAppointmentId?: number;
 };
 
 const tabs = ['Upcoming', 'Cancelled', 'Completed'];
@@ -37,7 +46,34 @@ export default function AppointmentHistoryScreen() {
         }
       );
       const data = await response.json();
-      setAppointments(data.appointments || []);
+      const rawAppointments = data.appointments || [];
+      const formatted: Appointment[] = [];
+      rawAppointments.forEach((appt: any) => {
+        formatted.push(appt);
+        if (appt.checkupAppointment && Array.isArray(appt.checkupAppointment)) {
+          appt.checkupAppointment.forEach((checkup: any) => {
+            formatted.push({
+              id: checkup.id,
+              isFollowUp: true,
+              parentAppointmentId: appt.id,
+              user_id: checkup.user_id,
+              doctor_id: checkup.doctor_id,
+              appointment_date: checkup.checkup_date,
+              appointment_start_time: checkup.checkup_start_time,
+              appointment_end_time: checkup.checkup_end_time,
+              appointment_status: checkup.checkup_status,
+              appointment_type: "Follow-up",
+              payment_mode: appt.payment_mode,
+              prescription: appt.prescription,
+              doctor: appt.doctor,
+              patient: appt.patient,
+              patientName: appt.patientName,
+              checkupAppointment: [],
+            } as any);
+          });
+        }
+      });
+      setAppointments(formatted);
     } catch (err) {
       console.error('Fetch error:', err);
       Alert.alert('Error', 'Failed to fetch appointments');
@@ -118,7 +154,7 @@ export default function AppointmentHistoryScreen() {
           </Text>
         ) : (
           filteredAppointments.map((item) => (
-            <AppointmentCard key={item.id} appointment={item as any}>
+            <AppointmentCard key={`${item.id}_${item.isFollowUp ? 'followup' : 'parent'}`} appointment={item as any}>
 
               <TouchableOpacity
                 onPress={() => handleDelete(item.id)}
