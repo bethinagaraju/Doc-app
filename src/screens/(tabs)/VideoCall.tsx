@@ -3912,7 +3912,10 @@ import {
   Button,
   StyleSheet,
   ActivityIndicator,
+  TouchableOpacity,
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import { Mic, Video, PhoneOff, MoreVertical, MessageSquare, FileText } from 'lucide-react-native';
 import {
   RTCPeerConnection,
   RTCIceCandidate,
@@ -3978,17 +3981,17 @@ export default function VideoCall({
   const [callId, setCallId] = useState('');
   const [status, setStatus] =
     useState<'idle' | 'incoming' | 'calling' | 'connected'>('idle');
+  const [logs, setLogs] = useState<string[]>([]);
+
+  const addLog = (msg: string) => {
+    console.log(msg);
+    setLogs(prev => [...prev, msg].slice(-15)); // keep last 15 logs
+  };
 
   /* ---------------- DEBUG ---------------- */
 
   useEffect(() => {
-    console.log('[VideoCall INIT]', {
-      userRole,
-      currentUserId,
-      doctorId,
-      patientId,
-      appointmentId,
-    });
+    addLog(`[VideoCall INIT] Role: ${userRole}, Appt: ${appointmentId}`);
   }, []);
 
   /* ---------------- 🔔 REGISTER FCM TOKEN (TEMP) ---------------- */
@@ -3999,7 +4002,7 @@ export default function VideoCall({
         await messaging().requestPermission();
 
         const token = await messaging().getToken();
-        console.log('[FCM] Token:', token);
+        addLog(`[FCM] Token: ${token.substring(0, 10)}...`);
 
         await fetch(`${API_BASE_URL}/notifications/save-token`, {
           method: 'POST',
@@ -4013,9 +4016,9 @@ export default function VideoCall({
           }),
         });
 
-        console.log('[FCM] Token registered with backend');
-      } catch (err) {
-        console.error('[FCM] Token registration failed', err);
+        addLog('[FCM] Token registered with backend');
+      } catch (err: any) {
+        addLog(`[FCM] Error: ${err.message || 'registration failed'}`);
       }
     };
 
@@ -4031,6 +4034,7 @@ export default function VideoCall({
 
     pc.current.ontrack = event => {
       if (event.streams[0]) {
+        addLog('[Peer] Remote track received');
         setRemoteStream(event.streams[0]);
         setStatus('connected');
       }
@@ -4038,6 +4042,7 @@ export default function VideoCall({
 
     pc.current.onicecandidate = e => {
       if (!e.candidate || !callId) return;
+      addLog('[Peer] Sending ICE candidate');
 
       fetch(
         userRole === 'doctor'
@@ -4080,9 +4085,10 @@ export default function VideoCall({
     if (userRole !== 'patient') return;
 
     const unsubscribe = messaging().onMessage(msg => {
-      console.log('[PATIENT FCM]', msg.data);
+      addLog(`[PATIENT FCM] Action: ${msg.data?.action}`);
 
       if (msg.data?.action === 'INCOMING_CALL') {
+        addLog(`[PATIENT FCM] Call ID: ${msg.data.call_id}`);
         setCallId(msg.data.call_id);
         setStatus('incoming');
       }
@@ -4094,11 +4100,13 @@ export default function VideoCall({
   /* ---------------- DOCTOR START ---------------- */
 
   const startCall = async () => {
+    addLog('[Doctor] Starting call...');
     createPeer();
     await startMedia();
     setStatus('calling');
 
     const offer = await pc.current!.createOffer();
+    addLog('[Doctor] Offer created');
     await pc.current!.setLocalDescription(offer);
 
     const res = await fetch(`${API_BASE_URL}/call/initialise-call`, {
@@ -4116,6 +4124,7 @@ export default function VideoCall({
     });
 
     const data = await res.json();
+    addLog(`[Doctor] Call init success. ID: ${data.call_id}`);
     setCallId(data.call_id);
 
     const callDoc = doc(db, 'call_history', data.call_id);
@@ -4143,6 +4152,7 @@ export default function VideoCall({
   /* ---------------- PATIENT ACCEPT ---------------- */
 
   const acceptCall = async () => {
+    addLog('[Patient] Accepting call...');
     createPeer();
     setStatus('calling');
 
@@ -4157,10 +4167,12 @@ export default function VideoCall({
       await pc.current!.setRemoteDescription(
         new RTCSessionDescription(data.offer)
       );
+      addLog('[Patient] Set remote description');
 
       await startMedia();
 
       const answer = await pc.current!.createAnswer();
+      addLog('[Patient] Answer created');
       await pc.current!.setLocalDescription(answer);
 
       await fetch(`${API_BASE_URL}/call/recieve-call`, {
@@ -4182,11 +4194,8 @@ export default function VideoCall({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>
-        {userRole.toUpperCase()} | {status}
-      </Text>
-
       <View style={styles.videoWrapper}>
+        {/* Remote Video (Background) */}
         {remoteStream && (
           <RTCView
             streamURL={remoteStream.toURL()}
@@ -4194,41 +4203,97 @@ export default function VideoCall({
             objectFit="cover"
           />
         )}
+        {!remoteStream && (
+          <View style={styles.placeholderBackground}>
+            {status === 'calling' ? (
+              <ActivityIndicator color="#fff" size="large" />
+            ) : (
+              <Text style={{ color: '#aaa' }}>{status === 'idle' ? 'Ready' : 'Waiting...'}</Text>
+            )}
+          </View>
+        )}
 
-        {/* {localStream && (
-          <RTCView
-            streamURL={localStream.toURL()}
-            style={styles.localVideo}
-            objectFit="cover"
-            mirror
-          />
-        )} */}
+        {/* Atmospheric Gradient */}
+        <LinearGradient
+          colors={['rgba(0,0,0,0.6)', 'transparent', 'rgba(0,0,0,0.2)']}
+          style={StyleSheet.absoluteFill}
+        />
 
+        {/* Top Status Bar */}
+        <View style={styles.topBar}>
+          <View style={styles.statusPill}>
+            <View style={styles.redDot} />
+            <Text style={styles.statusText}>Consultation • 12:48</Text>
+          </View>
+          <TouchableOpacity style={styles.docsButton}>
+            <FileText size={16} color="#FFF" />
+            <Text style={styles.docsText}>Documents</Text>
+          </TouchableOpacity>
+        </View>
 
+        {/* Logs Overlay */}
+        <View style={styles.logsContainer}>
+          {logs.map((l, i) => (
+            <Text key={i} style={styles.logText}>{l}</Text>
+          ))}
+        </View>
+
+        {/* PIP Local Video */}
         {localStream && (
-          <RTCView
-            streamURL={localStream.toURL()}
-            style={styles.localVideo}
-            objectFit="cover"
-            mirror={userRole === 'patient'}
-            zOrder={1}
-            zOrderMediaOverlay={true}
-          />
+          <View style={styles.pipContainer}>
+            <RTCView
+              streamURL={localStream.toURL()}
+              style={styles.localVideo}
+              objectFit="cover"
+              mirror={userRole === 'patient'}
+              zOrder={1}
+              zOrderMediaOverlay={true}
+            />
+            <View style={styles.pipOverlay}>
+              <Text style={styles.pipText}>You</Text>
+            </View>
+          </View>
         )}
 
+        {/* Floating Bottom UI */}
+        <View style={styles.bottomControlsContainer}>
+          <View style={styles.doctorCard}>
+            <Text style={styles.doctorName}>Dr. Julian Sterling</Text>
+            <Text style={styles.doctorTitle}>SENIOR CARDIOLOGIST</Text>
+          </View>
 
-        {status === 'calling' && !remoteStream && (
-          <ActivityIndicator color="#fff" size="large" />
-        )}
+          <View style={styles.mainControlBar}>
+            <TouchableOpacity style={styles.iconButton}>
+              <Mic size={20} color="#FFF" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton}>
+              <Video size={20} color="#FFF" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.iconButton, styles.endCallButton]}
+              onPress={status === 'connected' || status === 'calling' ? undefined : undefined}
+            >
+              <PhoneOff size={24} color="#FFF" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton}>
+              <MoreVertical size={20} color="#FFF" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton}>
+              <MessageSquare size={20} color="#FFF" />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Action Buttons (For testing/dev flow) */}
+        <View style={styles.devActions}>
+          {userRole === 'doctor' && status === 'idle' && (
+            <Button title="Start Call" onPress={startCall} />
+          )}
+          {userRole === 'patient' && status === 'incoming' && (
+            <Button title="Accept Call" onPress={acceptCall} />
+          )}
+        </View>
       </View>
-
-      {userRole === 'doctor' && status === 'idle' && (
-        <Button title="Start Call" onPress={startCall} />
-      )}
-
-      {userRole === 'patient' && status === 'incoming' && (
-        <Button title="Accept Call" onPress={acceptCall} />
-      )}
     </View>
   );
 }
@@ -4237,29 +4302,198 @@ export default function VideoCall({
 
 const styles = StyleSheet.create({
   container: {
-    height: 500,
-    backgroundColor: '#000',
-  },
-  header: {
-    color: '#fff',
-    textAlign: 'center',
-    padding: 10,
-  },
-  videoWrapper: {
     flex: 1,
     backgroundColor: '#000',
   },
+  videoWrapper: {
+    flex: 1,
+    position: 'relative',
+    backgroundColor: '#000',
+  },
   remoteVideo: {
+    position: 'absolute',
     width: '100%',
     height: '100%',
   },
-  localVideo: {
+  placeholderBackground: {
     position: 'absolute',
-    right: 12,
-    top: 12,
-    width: 120,
-    height: 160,
-    zIndex: 10,
-    elevation: 10,
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#111',
   },
+  topBar: {
+    position: 'absolute',
+    top: 48, // Adjusted for typical safe area
+    left: 16,
+    right: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    height: 70,
+    zIndex: 10,
+  },
+  statusPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(25, 28, 32, 0.7)',
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderWidth: 1,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 9999,
+    gap: 12,
+  },
+  redDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#BA1A1A',
+    marginRight: 6,
+  },
+  statusText: {
+    color: '#FFF',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  docsButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(25, 28, 32, 0.7)',
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderWidth: 1,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 9999,
+    gap: 8,
+  },
+  docsText: {
+    color: '#FFF',
+    fontSize: 14,
+    fontWeight: '500',
+    marginLeft: 6,
+  },
+  pipContainer: {
+    position: 'absolute',
+    right: 16,
+    top: 130, // pushed down to not overlap with top bar
+    width: 112,
+    height: 149.33,
+    backgroundColor: 'rgba(255, 255, 255, 0.002)',
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderWidth: 1,
+    borderRadius: 16,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 30,
+    zIndex: 10,
+  },
+  localVideo: {
+    width: '100%',
+    height: '100%',
+  },
+  pipOverlay: {
+    position: 'absolute',
+    left: 7,
+    bottom: 7,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    paddingVertical: 2,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+  },
+  pipText: {
+    color: '#FFF',
+    fontSize: 10,
+    fontWeight: '500',
+  },
+  bottomControlsContainer: {
+    position: 'absolute',
+    bottom: 32,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    gap: 16,
+    zIndex: 10,
+  },
+  doctorCard: {
+    backgroundColor: 'rgba(25, 28, 32, 0.7)',
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderWidth: 1,
+    borderRadius: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+    minWidth: 188,
+    marginBottom: 16,
+  },
+  doctorName: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  doctorTitle: {
+    color: 'rgba(255, 255, 255, 0.6)',
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
+  },
+  mainControlBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: 'rgba(25, 28, 32, 0.7)',
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderWidth: 1,
+    borderRadius: 32,
+    padding: 12,
+    width: 336,
+    height: 82,
+  },
+  iconButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  endCallButton: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#BA1A1A',
+    shadowColor: '#BA1A1A',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.4,
+    shadowRadius: 15,
+  },
+  devActions: {
+    position: 'absolute',
+    top: '40%',
+    width: '100%',
+    alignItems: 'center',
+    zIndex: 20,
+  },
+  logsContainer: {
+    position: 'absolute',
+    top: 130,
+    left: 16,
+    width: '60%',
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    padding: 8,
+    borderRadius: 8,
+    zIndex: 20,
+  },
+  logText: {
+    color: '#0f0',
+    fontSize: 10,
+    fontFamily: 'monospace',
+    marginBottom: 2,
+  }
 });
