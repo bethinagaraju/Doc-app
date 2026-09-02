@@ -7,6 +7,8 @@ import {
   ActivityIndicator,
   FlatList,
   Alert,
+  Modal,
+  Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -44,10 +46,57 @@ const formatSlotStart12Hr = (slotStr: string) => {
   return `${hour}:${minute} ${ampm}`;
 };
 
+const SlotSkeleton = () => {
+  const pulseAnim = React.useRef(new Animated.Value(0.5)).current;
+
+  React.useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 0.5,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, [pulseAnim]);
+
+  return (
+    <Animated.View style={[tw`w-full`, { opacity: pulseAnim }]}>
+      {/* Date Selector Skeleton */}
+      <View style={tw`flex-row mb-6 mt-2`}>
+        {[1, 2, 3, 4, 5].map((i) => (
+          <View key={i} style={tw`w-16 h-16 bg-gray-200 rounded-xl mr-3`} />
+        ))}
+      </View>
+
+      {/* Time Slots Skeleton */}
+      {[1, 2].map((section) => (
+        <View key={section} style={tw`mb-6`}>
+          <View style={tw`w-32 h-5 bg-gray-200 rounded-md mb-4`} />
+          <View style={tw`flex-row flex-wrap -mx-1`}>
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <View key={i} style={[tw`h-[46px] bg-gray-200 rounded-[12px] m-1`, { width: '30.5%' }]} />
+            ))}
+          </View>
+        </View>
+      ))}
+    </Animated.View>
+  );
+};
+
 const DoctorSlotsScreen = () => {
   const route = useRoute();
   const navigation = useNavigation<any>();
-  const { doctor, doctorId, consultationMode } = route.params as any;
+  const { doctor, doctorId, consultationMode: initialConsultationMode } = route.params as any;
+
+  const [consultationMode, setConsultationMode] = useState<string>(initialConsultationMode || '');
+  const [showModeModal, setShowModeModal] = useState<boolean>(!initialConsultationMode);
 
   const [slotsByDate, setSlotsByDate] = useState<{ [date: string]: { mode: string; slots: string[] } }>({});
   const [selectedDate, setSelectedDate] = useState<string>('');
@@ -58,7 +107,10 @@ const DoctorSlotsScreen = () => {
   const { accessToken } = useAccessToken();
 
   useEffect(() => {
+    if (!consultationMode) return;
+
     const fetchSlots = async () => {
+      setLoadingSlots(true);
       try {
         console.log("Fetching slots for doctor user_id:", doctorId);
         const response = await fetch(`https://api.docapp.co.in/api/auth/show-slots/${doctorId}`, {
@@ -89,12 +141,12 @@ const DoctorSlotsScreen = () => {
 
         const filteredSlots = parsedSlots.filter((slot) => {
           const mode = slot.mode?.toLowerCase();
-          if (consultationMode === 'online') {
+          const isOnlineMode = ['video', 'online', 'online_video'].includes(consultationMode?.toLowerCase() || '');
+          if (isOnlineMode) {
             return mode === 'online' || mode === 'hybrid';
-          } else if (consultationMode === 'offline') {
+          } else {
             return mode === 'offline' || mode === 'hybrid';
           }
-          return false;
         });
 
         const grouped: { [key: string]: { mode: string; slots: string[] } } = {};
@@ -201,12 +253,28 @@ const DoctorSlotsScreen = () => {
 
       <ScrollView contentContainerStyle={tw`pb-32`} showsVerticalScrollIndicator={false}>
         <View style={tw`p-4 mb-6`}>
-          <Text style={tw`text-lg font-bold text-green-700 mb-3`}>
-            Available Slots ({consultationMode?.toUpperCase()})
-          </Text>
+          <View style={tw`flex-row justify-center mb-5 bg-gray-100 rounded-full p-1 shadow-sm`}>
+            <TouchableOpacity
+              onPress={() => setConsultationMode('online')}
+              style={tw`flex-1 py-3 rounded-full items-center ${['video', 'online', 'online_video'].includes(consultationMode?.toLowerCase()) ? 'bg-[#124CB8] shadow-sm' : 'bg-transparent'}`}
+            >
+              <Text style={tw`font-bold text-sm ${['video', 'online', 'online_video'].includes(consultationMode?.toLowerCase()) ? 'text-white' : 'text-gray-500'}`}>
+                Online / Video
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => setConsultationMode('offline')}
+              style={tw`flex-1 py-3 rounded-full items-center ${consultationMode?.toLowerCase() === 'offline' ? 'bg-[#124CB8] shadow-sm' : 'bg-transparent'}`}
+            >
+              <Text style={tw`font-bold text-sm ${consultationMode?.toLowerCase() === 'offline' ? 'text-white' : 'text-gray-500'}`}>
+                Offline / In-Clinic
+              </Text>
+            </TouchableOpacity>
+          </View>
 
           {loadingSlots ? (
-            <ActivityIndicator size="large" color="#16a34a" />
+            <SlotSkeleton />
           ) : Object.keys(slotsByDate).length > 0 ? (
             <>
               {/* Date Selector */}
@@ -316,12 +384,46 @@ const DoctorSlotsScreen = () => {
               )}
             </>
           ) : (
-            <Text style={tw`text-green-400 text-base`}>
+            <Text style={tw`text-[#124CB8] text-base`}>
               No {consultationMode} or hybrid slots available.
             </Text>
           )}
         </View>
       </ScrollView>
+
+      {/* Consultation Mode Selection Modal */}
+      <Modal visible={showModeModal} transparent={true} animationType="slide">
+        <View style={tw`flex-1 justify-center items-center bg-black/50 px-4`}>
+          <View style={tw`bg-white w-full rounded-2xl p-6`}>
+            <Text style={tw`text-xl font-bold text-gray-800 text-center mb-2`}>
+              Select Consultation Type
+            </Text>
+            <Text style={tw`text-sm text-gray-500 text-center mb-6`}>
+              Please choose how you would like to consult the doctor.
+            </Text>
+
+            <TouchableOpacity
+              style={tw`bg-blue-50 border border-[#124CB8] py-4 px-6 rounded-xl mb-4 flex-row items-center justify-center`}
+              onPress={() => {
+                setConsultationMode('online');
+                setShowModeModal(false);
+              }}
+            >
+              <Text style={tw`text-[#124CB8] font-bold text-lg`}>Online / Video</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={tw`bg-blue-50 border border-[#124CB8] py-4 px-6 rounded-xl flex-row items-center justify-center`}
+              onPress={() => {
+                setConsultationMode('offline');
+                setShowModeModal(false);
+              }}
+            >
+              <Text style={tw`text-[#124CB8] font-bold text-lg`}>Offline / In-Clinic</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };

@@ -430,6 +430,14 @@ export default function AppointmentDetailsScreen() {
     navigation.navigate("FollowUpAppointment", { parentAppointment: appointment });
   };
 
+  const handleStartConsultation = () => {
+    navigation.navigate('VideoCall', { roomId: String(appointment.id) });
+  };
+
+  const handleReschedule = () => {
+    Alert.alert("Reschedule", "Reschedule feature is not available yet.");
+  };
+
   return (
     <SafeAreaView style={tw`flex-1 bg-white`}>
       <ProfileTopBar />

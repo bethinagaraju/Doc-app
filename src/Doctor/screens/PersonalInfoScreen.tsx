@@ -8,10 +8,53 @@ import DoctorHeader from '../components/DoctorHeader';
 import tw from 'twrnc';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useAccessToken } from '../../screens/contexts/AccessTokenContext';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import DocProfileTopBar from '../components/DocProfileTopBar';
 import ProfilePhotoSection from '../components/ProfilePhotoSection';
 import DocStatCard from '../components/DocStatCard';
 import AccountSecuritySettings from '../components/AccountSecuritySettings';
+import { Picker } from '@react-native-picker/picker';
+
+const SPECIALIZATION_OPTIONS = [
+  "General Physician",
+  "Internal Medicine",
+  "Pediatrics",
+  "Gynecology",
+  "Obstetrics",
+  "Dermatology",
+  "Orthopedics",
+  "Cardiology",
+  "Neurology",
+  "Psychiatry",
+  "Psychology",
+  "Diabetology",
+  "Endocrinology",
+  "Gastroenterology",
+  "Nephrology",
+  "Urology",
+  "Pulmonology",
+  "ENT",
+  "Ophthalmology",
+  "Dentistry",
+  "Oncology",
+  "Rheumatology",
+  "General Surgery",
+  "Plastic Surgery",
+  "Physiotherapy",
+  "Diet & Nutrition",
+  "Sexology",
+  "Ayurveda",
+  "Homeopathy",
+  "Unani",
+  "Siddha"
+];
+
+const GENDER_OPTIONS = [
+  "Male",
+  "Female",
+  "Other",
+  "Prefer not to say"
+];
 
 type DoctorNavigationProp = NativeStackNavigationProp<DoctorStackParamList>;
 
@@ -39,6 +82,7 @@ const PersonalInfoScreen = () => {
   const { accessToken } = useAccessToken();
   const [personalInfo, setPersonalInfo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   // 🔀 Tab State: 'personal' | 'bank' | 'address'
   const [activeTab, setActiveTab] = useState<'personal' | 'bank' | 'address'>('personal');
@@ -49,7 +93,7 @@ const PersonalInfoScreen = () => {
     gender: '',
     specialization: '',
     license_number: '',
-    experience_years: '',
+    practice_start_date: '',
   });
 
   // 🏦 Bank Form State
@@ -94,7 +138,7 @@ const PersonalInfoScreen = () => {
           email: user.email,
           phone: user.phone_number,
           specialization: profile?.specialization || '',
-          experience: profile?.experience_years || '',
+          practiceStartDate: profile?.practice_start_date || '',
           consultationFee: profile?.consultation_fee || '',
           dateOfBirth: profile?.date_of_birth ? profile.date_of_birth.split('T')[0] : '',
           gender: profile?.gender || '',
@@ -109,7 +153,7 @@ const PersonalInfoScreen = () => {
           gender: profile?.gender || '',
           specialization: profile?.specialization || '',
           license_number: profile?.license_number || '',
-          experience_years: profile?.experience_years?.toString() || '',
+          practice_start_date: profile?.practice_start_date || '',
         });
       } else {
         Alert.alert('Error', data.message || 'Failed to load profile');
@@ -157,6 +201,13 @@ const PersonalInfoScreen = () => {
       fetchAddresses();
     }
   }, [activeTab]);
+
+  const handleConfirmDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    setForm({ ...form, practice_start_date: `${year}-${month}` });
+    setDatePickerVisibility(false);
+  };
 
   // ================================================================================================
   // 🚀 Profile Photo Upload Handler
@@ -206,7 +257,7 @@ const PersonalInfoScreen = () => {
     try {
       const payload = {
         ...form,
-        experience_years: form.experience_years ? parseInt(form.experience_years) : 0,
+        practice_start_date: form.practice_start_date,
       };
 
       const response = await fetch(API_UPDATE_PROFILE, {
@@ -367,6 +418,27 @@ const PersonalInfoScreen = () => {
     );
   };
 
+  const calculateExperience = (startDateStr: string) => {
+    if (!startDateStr) return 'N/A';
+
+    const startDate = new Date(startDateStr);
+    if (isNaN(startDate.getTime())) return 'N/A';
+
+    const now = new Date();
+    let months = (now.getFullYear() - startDate.getFullYear()) * 12;
+    months -= startDate.getMonth();
+    months += now.getMonth();
+
+    if (months <= 0) return '0 months';
+
+    if (months < 12) {
+      return `${months} month${months !== 1 ? 's' : ''}`;
+    } else {
+      const years = Math.floor(months / 12);
+      return `${years} year${years !== 1 ? 's' : ''}`;
+    }
+  };
+
   if (loading || !personalInfo) {
     return (
       <View style={tw`flex-1 bg-green-700 justify-center items-center`}>
@@ -436,7 +508,8 @@ const PersonalInfoScreen = () => {
                 <Text style={tw`text-lg font-bold text-green-700 mb-4`}>Current Details</Text>
                 <Text style={tw`mb-1 text-gray-700`}>Email: {personalInfo.email}</Text>
                 <Text style={tw`mb-1 text-gray-700`}>Phone: {personalInfo.phone}</Text>
-                <Text style={tw`mb-1 text-gray-700`}>Experience: {personalInfo.experience} years</Text>
+                <Text style={tw`mb-1 text-gray-700`}>Practice Start: {personalInfo.practiceStartDate}</Text>
+                <Text style={tw`mb-1 text-gray-700`}>Experience: {calculateExperience(personalInfo.practiceStartDate)}</Text>
               </View>
 
               {/* Stats Card */}
@@ -460,20 +533,32 @@ const PersonalInfoScreen = () => {
                 />
 
                 <Text style={tw`text-xs text-gray-500 mb-1 ml-1`}>Gender</Text>
-                <TextInput
-                  placeholder="Male / Female"
-                  value={form.gender}
-                  onChangeText={(t) => setForm({ ...form, gender: t })}
-                  style={tw`border border-gray-300 rounded p-3 mb-3 bg-gray-50`}
-                />
+                <View style={tw`border border-gray-300 rounded mb-3 bg-gray-50 overflow-hidden justify-center h-12`}>
+                  <Picker
+                    selectedValue={form.gender}
+                    onValueChange={(itemValue) => setForm({ ...form, gender: itemValue })}
+                    style={tw`w-full`}
+                  >
+                    <Picker.Item label="Select Gender" value="" color="#9CA3AF" />
+                    {GENDER_OPTIONS.map((gender, index) => (
+                      <Picker.Item key={index} label={gender} value={gender} color="#1F2937" />
+                    ))}
+                  </Picker>
+                </View>
 
                 <Text style={tw`text-xs text-gray-500 mb-1 ml-1`}>Specialization</Text>
-                <TextInput
-                  placeholder="e.g. Cardiologist"
-                  value={form.specialization}
-                  onChangeText={(t) => setForm({ ...form, specialization: t })}
-                  style={tw`border border-gray-300 rounded p-3 mb-3 bg-gray-50`}
-                />
+                <View style={tw`border border-gray-300 rounded mb-3 bg-gray-50 overflow-hidden justify-center h-12`}>
+                  <Picker
+                    selectedValue={form.specialization}
+                    onValueChange={(itemValue) => setForm({ ...form, specialization: itemValue })}
+                    style={tw`w-full`}
+                  >
+                    <Picker.Item label="Select Specialization" value="" color="#9CA3AF" />
+                    {SPECIALIZATION_OPTIONS.map((spec, index) => (
+                      <Picker.Item key={index} label={spec} value={spec} color="#1F2937" />
+                    ))}
+                  </Picker>
+                </View>
 
                 <Text style={tw`text-xs text-gray-500 mb-1 ml-1`}>License Number</Text>
                 <TextInput
@@ -483,13 +568,21 @@ const PersonalInfoScreen = () => {
                   style={tw`border border-gray-300 rounded p-3 mb-3 bg-gray-50`}
                 />
 
-                <Text style={tw`text-xs text-gray-500 mb-1 ml-1`}>Experience (Years)</Text>
-                <TextInput
-                  placeholder="0"
-                  value={form.experience_years}
-                  keyboardType="numeric"
-                  onChangeText={(t) => setForm({ ...form, experience_years: t })}
+                <Text style={tw`text-xs text-gray-500 mb-1 ml-1`}>Practice Start Date</Text>
+                <TouchableOpacity
+                  onPress={() => setDatePickerVisibility(true)}
                   style={tw`border border-gray-300 rounded p-3 mb-5 bg-gray-50`}
+                >
+                  <Text style={form.practice_start_date ? tw`text-gray-800` : tw`text-gray-400`}>
+                    {form.practice_start_date || "YYYY-MM"}
+                  </Text>
+                </TouchableOpacity>
+
+                <DateTimePickerModal
+                  isVisible={isDatePickerVisible}
+                  mode="date"
+                  onConfirm={handleConfirmDate}
+                  onCancel={() => setDatePickerVisibility(false)}
                 />
 
                 <TouchableOpacity style={tw`bg-emerald-500 rounded-full px-6 py-3 items-center`} onPress={handleUpdateProfile}>

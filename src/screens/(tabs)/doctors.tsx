@@ -7,6 +7,7 @@ import {
   FlatList,
   PermissionsAndroid,
   Platform,
+  Switch,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Geolocation from 'react-native-geolocation-service';
@@ -26,6 +27,7 @@ const cityPincodes: any = {
   Bangalore: '560001',
   Chennai: '600119',
   Anantharam: '506365',
+  Thimmarainipahad: 506332
 };
 
 const FindDoctorsScreen = () => {
@@ -38,6 +40,7 @@ const FindDoctorsScreen = () => {
 
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
+  const [useLiveLocation, setUseLiveLocation] = useState(true);
 
   const { consultationMode, setConsultationMode } = useUser();
 
@@ -114,13 +117,10 @@ const FindDoctorsScreen = () => {
     );
   };
 
-  /* ================= FETCH BY CITY ================= */
+  /* ================= FETCH GENERAL / BY CITY ================= */
 
-  const fetchByCity = async (city: string) => {
+  const fetchGeneral = async () => {
     if (!accessToken) return;
-
-    const pincode = cityPincodes[city];
-    if (!pincode) return;
 
     setLoading(true);
 
@@ -133,7 +133,10 @@ const FindDoctorsScreen = () => {
         params.append('specialization', selectedDepartment);
       }
 
-      params.append('pincode', pincode);
+      if (selectedCity) {
+        const pincode = cityPincodes[selectedCity];
+        if (pincode) params.append('pincode', pincode);
+      }
 
       url += params.toString();
 
@@ -144,36 +147,27 @@ const FindDoctorsScreen = () => {
       });
 
       const json = await res.json();
-      console.log('Fetched Doctors by City:', json?.doctors);
+      console.log('Fetched Doctors:', json?.doctors);
       setDoctors(json?.doctors || []);
     } catch (error) {
-      console.log('City Fetch Error:', error);
+      console.log('Fetch Error:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  /* ================= INITIAL LOAD ================= */
-
-  useEffect(() => {
-    if (accessToken) {
-      fetchByLiveLocation();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accessToken]);
-
-  /* ================= FILTER CHANGE ================= */
+  /* ================= LOAD DOCTORS ================= */
 
   useEffect(() => {
     if (!accessToken) return;
 
-    if (selectedCity) {
-      fetchByCity(selectedCity);
-    } else {
+    if (useLiveLocation) {
       fetchByLiveLocation();
+    } else {
+      fetchGeneral();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCity, selectedDepartment]);
+  }, [accessToken, selectedCity, selectedDepartment, useLiveLocation]);
 
   /* ================= UI ================= */
 
@@ -213,14 +207,20 @@ const FindDoctorsScreen = () => {
             </View>
 
             <View style={tw`flex-row justify-between items-center mt-4 mb-2 px-1`}>
-              <Text style={tw`text-[18px] font-bold text-[#191C1E]`}>
-                Top Specialists Near You
+              <Text style={tw`flex-1 text-[18px] font-bold text-[#191C1E] mr-2`} numberOfLines={2}>
+                {useLiveLocation ? 'Top Specialists Near You' : 'All Specialists'}
               </Text>
-              <TouchableOpacity>
-                <Text style={tw`text-[14px] font-semibold text-[#124CB8]`}>
-                  View Map
+              <View style={tw`flex-row items-center`}>
+                <Text style={tw`text-[14px] font-semibold text-[#124CB8] mr-2`}>
+                  Live Location
                 </Text>
-              </TouchableOpacity>
+                <Switch
+                  value={useLiveLocation}
+                  onValueChange={setUseLiveLocation}
+                  trackColor={{ false: "#767577", true: "#16a34a" }}
+                  thumbColor={useLiveLocation ? "#ffffff" : "#f4f3f4"}
+                />
+              </View>
             </View>
 
             {loading && (

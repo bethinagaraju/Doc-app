@@ -179,60 +179,6 @@ const UsersearchFilter: React.FC<UsersearchFilterProps> = ({
         </TouchableOpacity>
       </View>
 
-      {/* Active Filter Chips */}
-      {hasActiveFilters() && (
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={tw`flex-row gap-2`}
-        >
-          {selectedMode ? (
-            <View style={tw`flex-row items-center bg-[#EFF4FF] border border-[#B3CCFF] py-1 px-3 rounded-full gap-2`}>
-              <Text style={tw`text-[13px] font-semibold text-[#124CB8] capitalize`}>
-                {selectedMode}
-              </Text>
-              <TouchableOpacity
-                onPress={() => setSelectedMode?.('')}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                style={tw`p-0.5 rounded-full bg-[#D1E0FF]`}
-              >
-                <X size={12} color="#124CB8" />
-              </TouchableOpacity>
-            </View>
-          ) : null}
-
-          {selectedDepartment ? (
-            <View style={tw`flex-row items-center bg-[#EFF4FF] border border-[#B3CCFF] py-1 px-3 rounded-full gap-2`}>
-              <Text style={tw`text-[13px] font-semibold text-[#124CB8]`}>
-                {selectedDepartment}
-              </Text>
-              <TouchableOpacity
-                onPress={() => setSelectedDepartment('')}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                style={tw`p-0.5 rounded-full bg-[#D1E0FF]`}
-              >
-                <X size={12} color="#124CB8" />
-              </TouchableOpacity>
-            </View>
-          ) : null}
-
-          {selectedCity ? (
-            <View style={tw`flex-row items-center bg-[#EFF4FF] border border-[#B3CCFF] py-1 px-3 rounded-full gap-2`}>
-              <Text style={tw`text-[13px] font-semibold text-[#124CB8]`}>
-                {selectedCity}
-              </Text>
-              <TouchableOpacity
-                onPress={() => setSelectedCity('')}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                style={tw`p-0.5 rounded-full bg-[#D1E0FF]`}
-              >
-                <X size={12} color="#124CB8" />
-              </TouchableOpacity>
-            </View>
-          ) : null}
-        </ScrollView>
-      )}
-
       {/* Filter Modal */}
       <Modal
         visible={modalVisible}
@@ -263,6 +209,7 @@ const UsersearchFilter: React.FC<UsersearchFilterProps> = ({
                 {categories.map((cat) => {
                   const isActive = activeCategory === cat.id;
                   return (
+
                     <TouchableOpacity
                       key={cat.id}
                       onPress={() => setActiveCategory(cat.id)}
@@ -278,6 +225,7 @@ const UsersearchFilter: React.FC<UsersearchFilterProps> = ({
                         {cat.title}
                       </Text>
                     </TouchableOpacity>
+
                   );
                 })}
               </ScrollView>

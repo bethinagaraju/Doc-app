@@ -23,7 +23,6 @@ import { useAccessToken } from '../../screens/contexts/AccessTokenContext';
 import ProfileTopBar from '../../components/ProfileTopBar';
 import SlotDurationCard from '../components/SlotDurationCard';
 import ConsultationFeesCard from '../components/ConsultationFeesCard';
-import DoctorExperienceCard from '../components/DoctorExperienceCard';
 
 interface ScheduleItem {
   day: string;
@@ -62,7 +61,6 @@ const AppointmentManagementScreen = () => {
   });
   const [slotDuration, setSlotDuration] = useState<15 | 30 | 45 | 60>(30);
   const [fee, setFee] = useState("120");
-  const [experience, setExperience] = useState("5");
 
   const fetchDoctorData = async () => {
     try {
@@ -82,7 +80,6 @@ const AppointmentManagementScreen = () => {
         const doctor = data.userData.doctorProfile;
 
         setFee(String(doctor.consultation_fee ?? ''));
-        setExperience(String(doctor.experience_years ?? ''));
         const slot = Number(doctor.appointment_time) || 30;
         setSlotDuration(slot as 15 | 30 | 45 | 60);
 
@@ -212,10 +209,6 @@ const AppointmentManagementScreen = () => {
       Alert.alert('Missing/Invalid', 'Please enter a valid consultation fee.');
       return false;
     }
-    if (!experience || isNaN(Number(experience))) {
-      Alert.alert('Missing/Invalid', 'Please enter valid experience (years).');
-      return false;
-    }
     if (!slotDuration || isNaN(Number(slotDuration))) {
       Alert.alert('Missing/Invalid', 'Please enter a valid appointment slot (minutes).');
       return false;
@@ -262,7 +255,6 @@ const AppointmentManagementScreen = () => {
     const payload = {
       availability_schedule: formattedSchedule,
       consultation_fee: Number(fee),
-      experience_years: Number(experience),
       appointment_slot: Number(overrides?.slotDuration || slotDuration),
     };
 
@@ -331,12 +323,6 @@ const AppointmentManagementScreen = () => {
             <ConsultationFeesCard
               fee={fee}
               onChangeFee={setFee}
-              onUpdate={handleSubmitAll}
-            />
-
-            <DoctorExperienceCard
-              experience={experience}
-              onChangeExperience={setExperience}
               onUpdate={handleSubmitAll}
             />
           </View>

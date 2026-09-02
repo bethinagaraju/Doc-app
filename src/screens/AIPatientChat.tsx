@@ -484,23 +484,20 @@ const AIPatientChat = () => {
           {conversation.map((msg, index) => (
             <View
               key={index}
-              style={tw`mb-3 ${
-                msg.role === 'user' ? 'items-end' : 'items-start'
-              }`}
+              style={tw`mb-3 ${msg.role === 'user' ? 'items-end' : 'items-start'
+                }`}
             >
               <View
-                style={tw`px-4 py-3 rounded-2xl max-w-[80%] ${
-                  msg.role === 'user'
+                style={tw`px-4 py-3 rounded-2xl max-w-[80%] ${msg.role === 'user'
                     ? 'bg-green-600 rounded-br-none'
                     : 'bg-gray-200 rounded-bl-none'
-                }`}
+                  }`}
               >
                 <Text
-                  style={tw`${
-                    msg.role === 'user'
+                  style={tw`${msg.role === 'user'
                       ? 'text-white'
                       : 'text-gray-900'
-                  }`}
+                    }`}
                 >
                   {msg.content}
                 </Text>

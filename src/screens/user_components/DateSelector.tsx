@@ -104,7 +104,7 @@ export default function DateSelector({ slotsByDate, selectedDate, setSelectedDat
                                 {label}
                             </Text>
                             <Text
-                                style={tw`text-[11px] font-semibold mt-1 font-['Public_Sans'] ${hasSlots ? "text-green-600" : "text-gray-400"
+                                style={tw`text-[11px] font-semibold mt-1 font-['Public_Sans'] ${hasSlots ? "text-[#124CB8]" : "text-gray-400"
                                     }`}
                             >
                                 {hasSlots ? `${slotsCount} slots available` : "No slots available"}
