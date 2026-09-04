@@ -8,11 +8,35 @@ interface PatientAppointmentCardProps {
     onPress?: () => void;
 }
 
+const getPatientCardProfilePicture = (appointment: any) => {
+    const doctor = appointment?.doctor;
+    const rawPic =
+        doctor?.doctorProfile?.profile_picture ||
+        doctor?.profile_picture ||
+        doctor?.user?.doctorProfile?.profile_picture ||
+        appointment?.doctorProfile?.profile_picture ||
+        appointment?.profile_picture;
+
+    if (!rawPic || typeof rawPic !== 'string' || rawPic.trim() === '') {
+        return 'https://res.cloudinary.com/dwshjkk42/image/upload/v1751270760/doctor_8997187_mgopyu.png';
+    }
+
+    const cleanUrl = rawPic.split('?')[0];
+    const dateStr =
+        doctor?.doctorProfile?.updatedAt ||
+        doctor?.updatedAt ||
+        appointment?.updatedAt ||
+        appointment?.doctorProfile?.updatedAt;
+
+    const ts = dateStr ? new Date(dateStr).getTime() : '';
+    return ts ? `${cleanUrl}?t=${ts}` : `${cleanUrl}?t=${new Date().getTime()}`;
+};
+
 const PatientAppointmentCard: React.FC<PatientAppointmentCardProps> = ({ appointment, onPress }) => {
     const doctor = appointment?.doctor;
     const doctorName = doctor?.username || "Dr. Sarah Jenkins";
     const specialization = doctor?.doctorProfile?.specialization || "Cardiologist";
-    const profilePic = doctor?.doctorProfile?.profile_picture || 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=200';
+    const profilePic = getPatientCardProfilePicture(appointment);
 
     // Format Date
     const dateObj = appointment?.appointment_date ? new Date(appointment.appointment_date) : null;
@@ -61,6 +85,7 @@ const PatientAppointmentCard: React.FC<PatientAppointmentCardProps> = ({ appoint
                 {/* Doctor Info & Avatar */}
                 <View style={tw`flex flex-row items-start gap-4`}>
                     <Image
+                        key={profilePic}
                         source={{ uri: profilePic }}
                         style={tw`w-14 h-14 rounded-[12px] bg-[#CAE6FF]`}
                         resizeMode="cover"

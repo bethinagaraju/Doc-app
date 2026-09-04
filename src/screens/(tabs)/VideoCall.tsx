@@ -3915,7 +3915,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { Mic, Video, PhoneOff, MoreVertical, MessageSquare, FileText } from 'lucide-react-native';
+import { Mic, MicOff, SwitchCamera, PhoneOff, FileText } from 'lucide-react-native';
 import {
   RTCPeerConnection,
   RTCIceCandidate,
@@ -3925,8 +3925,9 @@ import {
   MediaStream,
 } from 'react-native-webrtc';
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getFirestore, doc, collection, onSnapshot } from 'firebase/firestore';
+import { getFirestore, doc, collection, onSnapshot, updateDoc } from 'firebase/firestore';
 import messaging from '@react-native-firebase/messaging';
+import { useNavigation } from '@react-navigation/native';
 import { useAccessToken } from '../contexts/AccessTokenContext';
 
 /* ---------------- CONFIG ---------------- */
@@ -3962,10 +3963,13 @@ export default function VideoCall({
   route,
   embeddedRole,
   embeddedApptId,
+  embeddedCallId,
 }: any) {
   /** ROLE & APPOINTMENT */
   const userRole = embeddedRole ?? route?.params?.userRole;
   const appointmentId = embeddedApptId ?? route?.params?.appointmentId;
+
+  const navigation = useNavigation<any>();
 
   /** FIXED TEST IDS */
   const doctorId = DOCTOR_ID;
@@ -3978,10 +3982,62 @@ export default function VideoCall({
 
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
-  const [callId, setCallId] = useState('');
+  const [callId, setCallId] = useState(embeddedCallId ?? '');
   const [status, setStatus] =
-    useState<'idle' | 'incoming' | 'calling' | 'connected'>('idle');
+    useState<'idle' | 'incoming' | 'calling' | 'connected'>(embeddedCallId ? 'incoming' : 'idle');
   const [logs, setLogs] = useState<string[]>([]);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isMuted, setIsMuted] = useState(false);
+
+  const toggleMute = () => {
+    if (localStream) {
+      localStream.getAudioTracks().forEach(track => {
+        track.enabled = !track.enabled;
+      });
+      setIsMuted(prev => !prev);
+    }
+  };
+
+  const switchCamera = () => {
+    if (localStream) {
+      localStream.getVideoTracks().forEach(track => {
+        // @ts-ignore
+        if (typeof track._switchCamera === 'function') {
+          track._switchCamera();
+        }
+      });
+    }
+  };
+
+  const endCall = async () => {
+    addLog('[User] Ended call');
+
+    if (callId) {
+      try {
+        const callDoc = doc(db, 'call_history', callId);
+        await updateDoc(callDoc, { callStatus: 'ended' });
+      } catch (e) {
+        console.log('Failed to update call status', e);
+      }
+    }
+
+    pc.current?.close();
+    pc.current = null;
+    localStream?.getTracks().forEach(t => t.stop());
+    setLocalStream(null);
+    setRemoteStream(null);
+    setStatus('idle');
+    setCallId('');
+    showToast('Call ended.');
+    navigation.replace('CallCompleted');
+  };
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 5000);
+  };
 
   const addLog = (msg: string) => {
     console.log(msg);
@@ -4079,23 +4135,9 @@ export default function VideoCall({
     );
   };
 
-  /* ---------------- PATIENT FCM LISTENER ---------------- */
+  /* ---------------- PATIENT FCM LISTENER (MOVED TO GLOBAL OVERLAY) ---------------- */
 
-  useEffect(() => {
-    if (userRole !== 'patient') return;
 
-    const unsubscribe = messaging().onMessage(msg => {
-      addLog(`[PATIENT FCM] Action: ${msg.data?.action}`);
-
-      if (msg.data?.action === 'INCOMING_CALL') {
-        addLog(`[PATIENT FCM] Call ID: ${msg.data.call_id}`);
-        setCallId(msg.data.call_id);
-        setStatus('incoming');
-      }
-    });
-
-    return unsubscribe;
-  }, [userRole]);
 
   /* ---------------- DOCTOR START ---------------- */
 
@@ -4131,6 +4173,22 @@ export default function VideoCall({
 
     onSnapshot(callDoc, snap => {
       const d = snap.data();
+
+      if (d?.callStatus === 'declined') {
+        showToast('Call was DECLINED by patient.');
+        addLog('[Doctor] Call was DECLINED by patient.');
+        setStatus('idle');
+        navigation.replace('CallCompleted');
+      } else if (d?.callStatus === 'accepted') {
+        showToast('Call was ACCEPTED by patient.');
+        addLog('[Doctor] Call was ACCEPTED by patient.');
+      } else if (d?.callStatus === 'ended') {
+        showToast('Call ended by patient.');
+        addLog('[Doctor] Call ended by patient.');
+        setStatus('idle');
+        navigation.replace('CallCompleted');
+      }
+
       if (d?.answer && !pc.current?.currentRemoteDescription) {
         pc.current?.setRemoteDescription(
           new RTCSessionDescription(d.answer)
@@ -4160,6 +4218,14 @@ export default function VideoCall({
 
     const unsub = onSnapshot(callDoc, async snap => {
       const data = snap.data();
+
+      if (data?.callStatus === 'ended') {
+        showToast('Call ended by doctor.');
+        addLog('[Patient] Call ended by doctor.');
+        setStatus('idle');
+        navigation.replace('CallCompleted');
+      }
+
       if (!data?.offer) return;
 
       unsub();
@@ -4238,6 +4304,13 @@ export default function VideoCall({
           ))}
         </View>
 
+        {/* Temporary Toast Overlay */}
+        {toastMessage && (
+          <View style={styles.toastContainer}>
+            <Text style={styles.toastText}>{toastMessage}</Text>
+          </View>
+        )}
+
         {/* PIP Local Video */}
         {localStream && (
           <View style={styles.pipContainer}>
@@ -4257,31 +4330,30 @@ export default function VideoCall({
 
         {/* Floating Bottom UI */}
         <View style={styles.bottomControlsContainer}>
-          <View style={styles.doctorCard}>
+          {/* <View style={styles.doctorCard}>
             <Text style={styles.doctorName}>Dr. Julian Sterling</Text>
             <Text style={styles.doctorTitle}>SENIOR CARDIOLOGIST</Text>
-          </View>
+          </View> */}
 
           <View style={styles.mainControlBar}>
-            <TouchableOpacity style={styles.iconButton}>
-              <Mic size={20} color="#FFF" />
+
+            <TouchableOpacity style={styles.iconButton} onPress={toggleMute}>
+              {isMuted ? <MicOff size={20} color="#BA1A1A" /> : <Mic size={20} color="#FFF" />}
             </TouchableOpacity>
-            <TouchableOpacity style={styles.iconButton}>
-              <Video size={20} color="#FFF" />
+
+            <TouchableOpacity style={styles.iconButton} onPress={switchCamera}>
+              <SwitchCamera size={20} color="#FFF" />
             </TouchableOpacity>
+
             <TouchableOpacity
               style={[styles.iconButton, styles.endCallButton]}
-              onPress={status === 'connected' || status === 'calling' ? undefined : undefined}
+              onPress={endCall}
             >
               <PhoneOff size={24} color="#FFF" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.iconButton}>
-              <MoreVertical size={20} color="#FFF" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.iconButton}>
-              <MessageSquare size={20} color="#FFF" />
-            </TouchableOpacity>
+
           </View>
+
         </View>
 
         {/* Action Buttons (For testing/dev flow) */}
@@ -4495,5 +4567,24 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontFamily: 'monospace',
     marginBottom: 2,
+  },
+  toastContainer: {
+    position: 'absolute',
+    top: 100, // Just below the top bar
+    alignSelf: 'center',
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 24,
+    zIndex: 100,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+  },
+  toastText: {
+    color: '#000',
+    fontSize: 14,
+    fontWeight: '600',
   }
 });

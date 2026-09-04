@@ -5,22 +5,6 @@ import tw from 'twrnc';
 import { useAccessToken } from '../contexts/AccessTokenContext';
 import { useNavigation } from '@react-navigation/native';
 
-const getMockAppointment = () => {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    return {
-        id: 0,
-        appointment_date: tomorrow.toISOString(),
-        appointment_start_time: '10:00:00',
-        doctor: {
-            username: 'Dr. Elena Rodriguez',
-            doctorProfile: {
-                specialization: 'Pediatrician',
-            },
-        },
-    };
-};
-
 const UpcomingAppointmentCard = () => {
     const navigation = useNavigation<any>();
     const [appointment, setAppointment] = useState<any>(null);
@@ -30,7 +14,7 @@ const UpcomingAppointmentCard = () => {
     useEffect(() => {
         const fetchNextAppointment = async () => {
             if (!accessToken) {
-                setAppointment(getMockAppointment());
+                setAppointment(null);
                 setLoading(false);
                 return;
             }
@@ -45,14 +29,14 @@ const UpcomingAppointmentCard = () => {
                     if (data && data.appointment) {
                         setAppointment(data.appointment);
                     } else {
-                        setAppointment(getMockAppointment());
+                        setAppointment(null);
                     }
                 } else {
-                    setAppointment(getMockAppointment());
+                    setAppointment(null);
                 }
             } catch (error) {
                 console.error('Error fetching next appointment:', error);
-                setAppointment(getMockAppointment());
+                setAppointment(null);
             } finally {
                 setLoading(false);
             }

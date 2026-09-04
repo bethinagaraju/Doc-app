@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Pill, Plus, Eye, FileText } from 'lucide-react-native';
 import tw from 'twrnc';
+import { useUser } from '../../screens/contexts/UserContext';
 
 export type PrescriptionItem = {
     drug: string;
@@ -21,6 +22,7 @@ const PatientPrescriptionCard: React.FC<PatientPrescriptionCardProps> = ({
     onAddPrescription,
     onViewPrescription,
 }) => {
+    const { user } = useUser();
     return (
         /* Section - Prescription Card Container */
         <View
@@ -55,7 +57,7 @@ const PatientPrescriptionCard: React.FC<PatientPrescriptionCardProps> = ({
                     </View>
 
                     {/* Plus Icon Button to Add Prescription */}
-                    {onAddPrescription && (
+                    {onAddPrescription && user?.role === 'doctor' && (
                         <TouchableOpacity
                             onPress={onAddPrescription}
                             activeOpacity={0.7}

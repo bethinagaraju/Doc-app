@@ -6,7 +6,7 @@ import tw from 'twrnc';
 
 const PatientVideoCall = () => {
   const route = useRoute<any>();
-  const { appointmentId } = route.params || {};
+  const { appointmentId, callId } = route.params || {};
 
   return (
     <SafeAreaView style={tw`flex-1 bg-black`}>
@@ -14,6 +14,7 @@ const PatientVideoCall = () => {
         <VideoCall
           embeddedRole="patient"
           embeddedApptId={appointmentId ? String(appointmentId) : '30'}
+          embeddedCallId={callId}
         />
       </View>
     </SafeAreaView>

@@ -23,6 +23,7 @@ import { useAccessToken } from '../../screens/contexts/AccessTokenContext';
 import ProfileTopBar from '../../components/ProfileTopBar';
 import SlotDurationCard from '../components/SlotDurationCard';
 import ConsultationFeesCard from '../components/ConsultationFeesCard';
+import WeeklyScheduleSection from '../components/WeeklyScheduleSection';
 
 interface ScheduleItem {
   day: string;
@@ -327,95 +328,15 @@ const AppointmentManagementScreen = () => {
             />
           </View>
 
-          <>
-            <Text style={tw`text-lg text-green-800 font-bold mb-4 mt-4`}>Set Your Weekly Schedule</Text>
-
-            {schedule.map((item, index) => (
-              <View key={item.day} style={tw`bg-white p-4 mb-4 rounded-2xl shadow`}>
-                <Text style={tw`text-green-700 font-bold mb-2 capitalize`}>{item.day}</Text>
-
-                <TouchableOpacity
-                  style={tw`border border-green-300 p-2 rounded mb-2`}
-                  onPress={() => openTimePicker(index, 'loginTime')}
-                >
-                  <Text>{item.loginTime ? `Login Time: ${item.loginTime}` : 'Set Login Time'}</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={tw`border border-green-300 p-2 rounded mb-2`}
-                  onPress={() => openTimePicker(index, 'logoutTime')}
-                >
-                  <Text>{item.logoutTime ? `Logout Time: ${item.logoutTime}` : 'Set Logout Time'}</Text>
-                </TouchableOpacity>
-
-                <Text style={tw`text-sm text-green-600 mb-1`}>Breaks:</Text>
-                {item.breaks.map((brk, brkIndex) => (
-                  <View key={brkIndex} style={tw`mb-2`}>
-                    <View style={tw`flex-row justify-between items-center mb-1`}>
-
-                      <TouchableOpacity
-                        style={tw`border border-green-300 p-2 rounded flex-1 mr-1`}
-                        onPress={() => openTimePicker(index, 'breaks', brkIndex, 'start')}
-                      >
-                        <Text>{brk.start ? `Start: ${brk.start}` : 'Set Start'}</Text>
-                      </TouchableOpacity>
-
-                      <TouchableOpacity
-                        style={tw`border border-green-300 p-2 rounded flex-1 ml-1`}
-                        onPress={() => openTimePicker(index, 'breaks', brkIndex, 'end')}
-                      >
-                        <Text>{brk.end ? `End: ${brk.end}` : 'Set End'}</Text>
-                      </TouchableOpacity>
-
-                      {item.breaks.length > 1 && (
-                        <TouchableOpacity
-                          onPress={() => removeBreak(index, brkIndex)}
-                          style={tw`bg-red-500 px-3 py-1 rounded ml-2`}
-                        >
-                          <Text style={tw`text-white`}>−</Text>
-                        </TouchableOpacity>
-                      )}
-                    </View>
-                  </View>
-                ))}
-
-                <TouchableOpacity
-                  onPress={() => addBreak(index)}
-                  style={tw`bg-green-100 border border-green-400 px-3 py-1 rounded mb-2`}
-                >
-                  <Text style={tw`text-green-700 text-center`}>+ Add Break</Text>
-                </TouchableOpacity>
-
-                <View style={tw`border border-green-300 rounded mb-2 bg-green-50`}>
-                  <Picker
-                    selectedValue={item.mode}
-                    onValueChange={(val) => handleChange(index, 'mode', val)}
-                  >
-                    <Picker.Item label="Select Mode" value="" />
-                    <Picker.Item label="Online" value="online" />
-                    <Picker.Item label="Offline" value="offline" />
-                    <Picker.Item label="Hybrid" value="hybrid" />
-                  </Picker>
-                </View>
-              </View>
-            ))}
-
-            <TouchableOpacity onPress={handleSubmitAll} style={tw`bg-green-600 py-3 rounded-lg mt-4 mb-8`}>
-              <Text style={tw`text-white text-center font-semibold text-lg`}>Save Full Weekly Schedule</Text>
-            </TouchableOpacity>
-          </>
+          <WeeklyScheduleSection
+            schedule={schedule}
+            removeBreak={removeBreak}
+            addBreak={addBreak}
+            handleChange={handleChange}
+            onSubmit={handleSubmitAll}
+          />
         </ScrollView>
       </KeyboardAvoidingView>
-
-      {timePicker.visible && (
-        <DateTimePicker
-          value={new Date()}
-          mode="time"
-          is24Hour={true}
-          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-          onChange={onTimeChange}
-        />
-      )}
     </SafeAreaView>
   );
 };

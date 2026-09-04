@@ -98,27 +98,74 @@ interface DoctorCardProps {
   onPress: () => void;
 }
 
+const calculateExperience = (startDateStr: string | null) => {
+  if (!startDateStr) return 0;
+  const startDate = new Date(startDateStr);
+  const currentDate = new Date();
+  let years = currentDate.getFullYear() - startDate.getFullYear();
+  const m = currentDate.getMonth() - startDate.getMonth();
+  if (m < 0 || (m === 0 && currentDate.getDate() < startDate.getDate())) {
+    years--;
+  }
+  return Math.max(0, years);
+};
+
+const getDoctorProfilePicture = (item: any) => {
+  if (!item) return 'https://res.cloudinary.com/dwshjkk42/image/upload/v1751270760/doctor_8997187_mgopyu.png';
+
+  const rawPic =
+    item.profile_picture ||
+    item.doctorProfile?.profile_picture ||
+    item.user?.doctorProfile?.profile_picture ||
+    item.doctor?.doctorProfile?.profile_picture ||
+    item.doctor?.profile_picture ||
+    item.user?.profile_picture ||
+    item.user?.generalUser?.profile_picture;
+
+  if (!rawPic || typeof rawPic !== 'string' || rawPic.trim() === '') {
+    return 'https://res.cloudinary.com/dwshjkk42/image/upload/v1751270760/doctor_8997187_mgopyu.png';
+  }
+
+  const cleanUrl = rawPic.split('?')[0];
+  const dateStr =
+    item.updatedAt ||
+    item.doctorProfile?.updatedAt ||
+    item.user?.updatedAt ||
+    item.user?.doctorProfile?.updatedAt ||
+    item.doctor?.updatedAt;
+
+  const ts = dateStr ? new Date(dateStr).getTime() : '';
+  return ts ? `${cleanUrl}?t=${ts}` : `${cleanUrl}?t=${new Date().getTime()}`;
+};
+
 const DoctorCard: React.FC<DoctorCardProps> = ({ item, onPress }) => {
   const address = item.user?.address?.[0];
   const fullLocation = address
     ? `${address.street ? `${address.street.trim()}, ` : ''}${address.city}`
     : 'Location N/A';
 
+  const experience = item.practice_start_date
+    ? calculateExperience(item.practice_start_date)
+    : (item.experience_years || "NA");
+
+  const profilePicUri = getDoctorProfilePicture(item);
+
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={tw`bg-white py-4 px-2 border border-[rgba(114,119,127,0.05)] shadow-sm rounded-[16px] flex-row h-[138px]`}
+      style={tw`bg-white p-3 border border-[rgba(114,119,127,0.05)] shadow-sm rounded-[16px] flex-row items-center min-h-[120px]`}
     >
-      {/* Profile Image - 96x96 */}
-      <View style={tw`w-[96px] h-[96px] rounded-[12px] overflow-hidden`}>
+      {/* Profile Image */}
+      <View style={tw`w-24 h-24 rounded-[12px] overflow-hidden bg-gray-100`}>
         <Image
-          source={{ uri: item.profile_picture }}
+          key={profilePicUri}
+          source={{ uri: profilePicUri }}
           style={tw`w-full h-full`}
         />
       </View>
 
-      {/* Main Content Container - 212px */}
-      <View style={tw`flex-1 ml-4 justify-center`}>
+      {/* Main Content Container */}
+      <View style={tw`flex-1 ml-3 justify-center py-1`}>
 
         {/* Top Section: Name/Specialization and Rating */}
         <View style={tw`flex-row justify-between items-start mb-3`}>
@@ -127,7 +174,7 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ item, onPress }) => {
               {item.user?.username}
             </Text>
             <Text style={tw`text-[12px] font-medium text-[#124CB8]`}>
-              {item.specialization} • {item.experience_years} yrs exp
+              {item.specialization} • {experience} yrs exp
             </Text>
           </View>
 
@@ -145,13 +192,13 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ item, onPress }) => {
             </Text>
           </View>
 
-          <View style={tw`flex-row justify-between items-center`}>
-            <View style={tw`bg-[#ECEEF4] px-1 py-1 rounded-[8px] flex-row items-center gap-1`}>
+          <View style={tw`flex-row justify-between items-center mt-2`}>
+            <View style={tw`bg-[#ECEEF4] px-2 py-1.5 rounded-[8px] flex-row items-center`}>
               <Text style={tw`text-[12px] font-bold text-[#191C1E]`}>₹{item.consultation_fee}</Text>
             </View>
             <TouchableOpacity
               onPress={onPress}
-              style={tw`bg-[#124CB8] px-2 mr-4 py-2 rounded-full w-[90px] items-center justify-center`}
+              style={tw`bg-[#124CB8] px-4 py-2 rounded-full items-center justify-center`}
             >
               <Text style={tw`text-white font-bold text-[12px]`}>Book Now</Text>
             </TouchableOpacity>
@@ -184,13 +231,13 @@ export const DoctorCardSkeleton: React.FC = () => {
 
   return (
     <View
-      style={tw`bg-white py-4 px-2 border border-[rgba(114,119,127,0.05)] shadow-sm rounded-[16px] flex-row h-[138px] mb-4`}
+      style={tw`bg-white p-3 border border-[rgba(114,119,127,0.05)] shadow-sm rounded-[16px] flex-row items-center min-h-[120px] mb-4`}
     >
-      {/* Profile Image - 96x96 */}
-      <Animated.View style={[tw`w-[96px] h-[96px] rounded-[12px] bg-gray-200`, { opacity }]} />
+      {/* Profile Image */}
+      <Animated.View style={[tw`w-24 h-24 rounded-[12px] bg-gray-200`, { opacity }]} />
 
       {/* Main Content Container */}
-      <View style={tw`flex-1 ml-4 justify-center`}>
+      <View style={tw`flex-1 ml-3 justify-center py-1`}>
         {/* Top Section: Name/Specialization */}
         <View style={tw`flex-row justify-between items-start mb-3`}>
           <View style={tw`flex-1 gap-2`}>
@@ -199,15 +246,15 @@ export const DoctorCardSkeleton: React.FC = () => {
           </View>
         </View>
 
-        {/* Bottom Section: Location and Book Now Button */}
-        <View style={tw`gap-2`}>
+        {/* Bottom Section */}
+        <View style={tw`gap-2 mt-2`}>
           <View style={tw`flex-row items-center`}>
-            <Animated.View style={[tw`w-40 h-4 bg-gray-200 rounded`, { opacity }]} />
+            <Animated.View style={[tw`w-3/4 h-4 bg-gray-200 rounded`, { opacity }]} />
           </View>
 
           <View style={tw`flex-row justify-between items-center mt-1`}>
             <Animated.View style={[tw`w-12 h-6 bg-gray-200 rounded-[8px]`, { opacity }]} />
-            <Animated.View style={[tw`w-[90px] h-[32px] bg-gray-200 rounded-full mr-4`, { opacity }]} />
+            <Animated.View style={[tw`w-[80px] h-[32px] bg-gray-200 rounded-full`, { opacity }]} />
           </View>
         </View>
       </View>

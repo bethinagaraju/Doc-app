@@ -1,24 +1,49 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { ArrowLeft } from 'lucide-react-native';
 import { useUserProfile } from '../contexts/userProfileContext';
+import { useUser } from '../screens/contexts/UserContext';
 
 const ProfileTopBar = ({
     title = "DocApp",
     avatarUrl,
     onAvatarPress
-}) => {
+}: any) => {
     const { userData } = useUserProfile();
+    const userContext = useUser();
+    const navigation = useNavigation();
 
-    const rawProfilePic = avatarUrl || (userData as any)?.doctorProfile?.profile_picture || (userData as any)?.generalUser?.profile_picture;
-    const lastUpdated = (userData as any)?.doctorProfile?.updatedAt || (userData as any)?.generalUser?.updatedAt || '1';
+    const activeUser = userData || userContext?.user;
 
-    // Cache bust timestamp to prevent old images showing
-    const finalAvatarUrl = rawProfilePic ? `${rawProfilePic}?t=${new Date(lastUpdated).getTime() || lastUpdated}` : "https://mockmind-api.uifaces.co/content/human/92.jpg";
+    const rawProfilePic =
+        avatarUrl ||
+        (activeUser as any)?.doctorProfile?.profile_picture ||
+        (activeUser as any)?.generalUser?.profile_picture ||
+        userContext?.user?.doctorProfile?.profile_picture ||
+        userContext?.user?.generalUser?.profile_picture;
+
+    const cleanUrl = rawProfilePic ? rawProfilePic.split('?')[0] : '';
+    const lastUpdated =
+        (activeUser as any)?.doctorProfile?.updatedAt ||
+        (activeUser as any)?.generalUser?.updatedAt ||
+        userContext?.user?.doctorProfile?.updatedAt ||
+        userContext?.user?.generalUser?.updatedAt;
+
+    const ts = lastUpdated ? new Date(lastUpdated).getTime() : '';
+    const finalAvatarUrl = cleanUrl
+        ? (ts ? `${cleanUrl}?t=${ts}` : `${cleanUrl}?t=${new Date().getTime()}`)
+        : "https://mockmind-api.uifaces.co/content/human/92.jpg";
 
     return (
         <View style={styles.topAppBar}>
             {/* Title Container */}
             <View style={styles.titleContainer}>
+                {navigation.canGoBack() && (
+                    <TouchableOpacity onPress={() => navigation.goBack()} activeOpacity={0.7} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                        <ArrowLeft size={24} color="#124CB8" />
+                    </TouchableOpacity>
+                )}
                 <Text style={styles.titleText}>{title}</Text>
             </View>
 
@@ -29,6 +54,7 @@ const ProfileTopBar = ({
                 activeOpacity={0.7}
             >
                 <Image
+                    key={finalAvatarUrl}
                     source={{ uri: finalAvatarUrl }}
                     style={styles.avatarImage}
                     resizeMode="cover"

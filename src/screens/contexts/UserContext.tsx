@@ -23,8 +23,18 @@ interface User {
 
   doctorProfile?: {
     id: number;
-    kyc_status: string;
+    kyc_status?: string;
     rzp_account_id?: string | null;
+    profile_picture?: string;
+    specialization?: string;
+    date_of_birth?: string;
+    gender?: string;
+    license_number?: string;
+    practice_start_date?: string;
+    consultation_fee?: string;
+    experience_years?: number;
+    createdAt?: string;
+    updatedAt?: string;
   };
 }
 
@@ -34,8 +44,9 @@ interface UserContextType {
   user: User | null;
   consultationMode: 'online' | 'offline';
   setIsLoggedIn: (val: boolean) => void;
-  setUser: (user: User | null) => void; // This line was added to fix the error
+  setUser: (user: User | null) => void;
   setConsultationMode: (mode: 'online' | 'offline') => void;
+  fetchUserData: (tokenToUse?: string | null) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -68,7 +79,17 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (!response.ok) throw new Error('Failed to fetch user data');
 
       const result = await response.json();
-      setUser(result?.userData || null);
+      const fetchedUser = result?.userData;
+      if (fetchedUser) {
+        const ts = new Date().getTime();
+        if (fetchedUser.generalUser?.profile_picture) {
+          fetchedUser.generalUser.profile_picture += (fetchedUser.generalUser.profile_picture.includes('?') ? '&' : '?') + 't=' + ts;
+        }
+        if (fetchedUser.doctorProfile?.profile_picture) {
+          fetchedUser.doctorProfile.profile_picture += (fetchedUser.doctorProfile.profile_picture.includes('?') ? '&' : '?') + 't=' + ts;
+        }
+      }
+      setUser(fetchedUser || null);
       setIsLoggedIn(true);
     } catch (error) {
       console.error('Error fetching user:', error);
@@ -126,7 +147,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <UserContext.Provider value={{ isLoggedIn, checkingLogin, user, consultationMode, setIsLoggedIn, setUser, setConsultationMode, logout }}>
+    <UserContext.Provider value={{ isLoggedIn, checkingLogin, user, consultationMode, setIsLoggedIn, setUser, setConsultationMode, fetchUserData, logout }}>
       {children}
     </UserContext.Provider>
   );

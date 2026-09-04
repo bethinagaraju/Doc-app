@@ -54,7 +54,7 @@ export default function SpecialtiesSection() {
   const navigation = useNavigation<any>();
 
   return (
-    <View style={tw`mt-6 px-4`}>
+    <View style={tw`mt-6 px-0`}>
 
       {/* Header section with "See All" inline */}
       <View style={tw`flex-row justify-between items-center mb-5 px-1`}>

@@ -58,10 +58,10 @@ export default function AppointmentSuccessScreen() {
   // Safe destructuring with fallback object to prevent crash when params is undefined
   const {
     doctor,
-    slot = 'Not scheduled',
-    date = 'Not scheduled',
-    consultationType = 'inclinic',
-    appointmentId = 'N/A'
+    slot = '',
+    date = '',
+    consultationType = '',
+    appointmentId = ''
   } = route.params || {};
 
   const handleGoToHome = () => {
@@ -88,7 +88,7 @@ export default function AppointmentSuccessScreen() {
       doctor.user.address[0].state,
       doctor.user.address[0].pincode
     ].filter(item => item && item.trim() !== '').join(', ')
-    : (doctor?.address || '122 Medical Plaza, New York, NY');
+    : (doctor?.address || '');
 
   return (
     <View style={tw`flex-1 bg-[#F4F6F9]`}>
@@ -113,7 +113,7 @@ export default function AppointmentSuccessScreen() {
         </View>
 
         {/* Appointment Summary Card */}
-        <View style={tw`w-full max-w-[342px] bg-white border border-[#DEE3EB] rounded-[24px] p-6 mb-6 shadow-sm`}>
+        {/* <View style={tw`w-full max-w-[342px] bg-white border border-[#DEE3EB] rounded-[24px] p-6 mb-6 shadow-sm`}>
           <View style={tw`flex-row justify-between items-center w-full mb-6`}>
             <Text style={styles.cardTitle}>
               Appointment Detail
@@ -123,35 +123,35 @@ export default function AppointmentSuccessScreen() {
                 {consultationType === 'video' ? 'VIDEO' : 'IN-CLINIC'}
               </Text>
             </View>
-          </View>
+          </View> */}
 
-          {/* Doctor Row */}
-          <View style={tw`flex-row items-center w-full mb-6`}>
+        {/* Doctor Row */}
+        {/* <View style={tw`flex-row items-center w-full mb-6`}>
             <Image
               source={{ uri: doctor?.profile_picture || 'https://via.placeholder.com/150' }}
               style={tw`w-20 h-20 rounded-[12px] mr-4 shadow-sm`}
             />
             <View style={tw`flex-1`}>
               <Text style={styles.doctorName}>
-                Dr. {doctor?.user?.username || 'Doctor'}
+                {doctor?.user?.username ? `Dr. ${doctor.user.username}` : ''}
               </Text>
               <Text style={styles.doctorSpecialization}>
-                {doctor?.specialization || 'Specialization'}
+                {doctor?.specialization || ''}
               </Text>
               <View style={tw`flex-row items-center`}>
                 <Award size={14} color="#65587B" style={tw`mr-1`} />
                 <Text style={styles.experienceText}>
-                  {doctor?.experience_years ? `${doctor.experience_years} Years Exp` : 'Verified Doctor'}
+                  {doctor?.experience_years ? `${doctor.experience_years} Years Exp` : ''}
                 </Text>
               </View>
             </View>
-          </View>
+          </View> */}
 
-          {/* Divider */}
-          <View style={tw`border-t border-[#DEE3EB] w-full pt-6`} />
+        {/* Divider */}
+        {/* <View style={tw`border-t border-[#DEE3EB] w-full pt-6`} /> */}
 
-          {/* Date & Time Row */}
-          <View style={tw`flex-row items-center w-full mb-5`}>
+        {/* Date & Time Row */}
+        {/* <View style={tw`flex-row items-center w-full mb-5`}>
             <View style={tw`w-10 h-10 bg-[#E1E8ED] rounded-[8px] items-center justify-center mr-4`}>
               <Calendar size={18} color="#124CB8" />
             </View>
@@ -163,28 +163,32 @@ export default function AppointmentSuccessScreen() {
                 {date} • {slot}
               </Text>
             </View>
-          </View>
+          </View> */}
 
-          {/* Location Row */}
-          <View style={tw`flex-row items-start w-full mb-5`}>
+        {/* Location Row */}
+        {/* <View style={tw`flex-row items-start w-full mb-5`}>
             <View style={tw`w-10 h-10 bg-[#E1E8ED] rounded-[8px] items-center justify-center mr-4 mt-0.5`}>
               <MapPin size={18} color="#124CB8" />
             </View>
             <View style={tw`flex-1`}>
+
               <Text style={styles.rowLabel}>
                 Location
               </Text>
+
               <Text style={[styles.rowValue, tw`mb-1`]}>
-                {doctor?.clinic || 'DocApp Partner Clinic'}
+                {doctor?.clinic || ''}
               </Text>
+
               <Text style={styles.rowValueSub}>
                 {addressText}
               </Text>
-            </View>
-          </View>
 
-          {/* Consultation Link Row */}
-          <View style={tw`flex-row items-center w-full`}>
+            </View>
+          </View> */}
+
+        {/* Consultation Link Row */}
+        {/* <View style={tw`flex-row items-center w-full`}>
             <View style={tw`w-10 h-10 bg-[#E1E8ED] rounded-[8px] items-center justify-center mr-4`}>
               <Video size={18} color="#124CB8" />
             </View>
@@ -197,10 +201,11 @@ export default function AppointmentSuccessScreen() {
               </Text>
             </View>
           </View>
-        </View>
+
+        </View> */}
 
         {/* Payment Summary Card */}
-        <View style={tw`w-full max-w-[342px] bg-[#001E30] rounded-[24px] p-6 mb-6 relative overflow-hidden shadow-md`}>
+        {/* <View style={tw`w-full max-w-[342px] bg-[#001E30] rounded-[24px] p-6 mb-6 relative overflow-hidden shadow-md`}>
           <View style={styles.glowOverlay} />
 
           <View style={tw`flex-row justify-between items-center w-full mb-4 z-10`}>
@@ -213,7 +218,7 @@ export default function AppointmentSuccessScreen() {
           <View style={tw`flex-row justify-between items-end w-full mb-4 z-10`}>
             <View>
               <Text style={styles.paymentAmount}>
-                ₹{doctor?.consultation_fee || '500'}
+                {doctor?.consultation_fee ? `₹${doctor.consultation_fee}` : ''}
               </Text>
               <Text style={styles.paymentStatus}>
                 Paid successfully
@@ -221,7 +226,7 @@ export default function AppointmentSuccessScreen() {
             </View>
             <View style={tw`bg-white/20 rounded-[6px] py-1 px-2.5`}>
               <Text style={styles.txnBadgeText}>
-                TXN: #{appointmentId || '82910'}
+                {appointmentId ? `TXN: #${appointmentId}` : ''}
               </Text>
             </View>
           </View>
@@ -239,7 +244,8 @@ export default function AppointmentSuccessScreen() {
             </View>
             <ArrowRight size={14} color="#FFFFFF" style={tw`opacity-80`} />
           </TouchableOpacity>
-        </View>
+
+        </View> */}
 
         {/* Preparation & Next Steps Card */}
         <View style={tw`w-full max-w-[342px] bg-[#D3E5F5] rounded-[24px] p-6 mb-8`}>

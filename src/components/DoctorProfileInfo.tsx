@@ -68,7 +68,36 @@ interface DoctorProfileInfoProps {
   doctor: any;
 }
 
+const calculateExperience = (startDateStr?: string) => {
+  if (!startDateStr) return null;
+  const startYear = parseInt(startDateStr.substring(0, 4), 10);
+  if (isNaN(startYear)) return null;
+  const currentYear = new Date().getFullYear();
+  const diff = currentYear - startYear;
+  return diff > 0 ? diff.toString() : '0';
+};
+
 const DoctorProfileInfo: React.FC<DoctorProfileInfoProps> = ({ doctor }) => {
+  const rawPic =
+    doctor?.profile_picture ||
+    doctor?.doctorProfile?.profile_picture ||
+    doctor?.user?.doctorProfile?.profile_picture ||
+    doctor?.doctor?.doctorProfile?.profile_picture ||
+    doctor?.doctor?.profile_picture ||
+    doctor?.user?.profile_picture ||
+    doctor?.user?.generalUser?.profile_picture;
+
+  const cleanUrl = rawPic ? rawPic.split('?')[0] : 'https://res.cloudinary.com/dwshjkk42/image/upload/v1751270760/doctor_8997187_mgopyu.png';
+  const dateStr =
+    doctor?.updatedAt ||
+    doctor?.doctorProfile?.updatedAt ||
+    doctor?.user?.updatedAt ||
+    doctor?.user?.doctorProfile?.updatedAt ||
+    doctor?.doctor?.updatedAt;
+
+  const ts = dateStr ? new Date(dateStr).getTime() : '';
+  const profilePicUri = rawPic ? (ts ? `${cleanUrl}?t=${ts}` : `${cleanUrl}?t=${new Date().getTime()}`) : cleanUrl;
+
   return (
     /* Doctor Hero Section */
     <View style={tw`bg-white border border-[#DEE3EB]/30 rounded-xl p-6  flex-col items-center gap-6 shadow-sm self-stretch`}>
@@ -76,7 +105,8 @@ const DoctorProfileInfo: React.FC<DoctorProfileInfoProps> = ({ doctor }) => {
       {/* Profile Image Container with Badge */}
       <View style={tw`w-32 h-32 relative justify-center items-start`}>
         <Image
-          source={{ uri: doctor.profile_picture || 'https://via.placeholder.com/150' }}
+          key={profilePicUri}
+          source={{ uri: profilePicUri }}
           style={tw`w-32 h-32 rounded-2xl shadow-md`}
         />
         {/* Verification Badge */}
@@ -118,17 +148,17 @@ const DoctorProfileInfo: React.FC<DoctorProfileInfoProps> = ({ doctor }) => {
               EXPERIENCE
             </Text>
             <Text style={tw`text-[18px] font-bold text-[#191C1E] text-center font-['Public Sans']`}>
-              {doctor.experience_years || '0'} Years
+              {calculateExperience(doctor.practice_start_date) || doctor.experience_years || '0'} Years
             </Text>
           </View>
 
           {/* Divider 1 */}
-          <View style={tw`w-[1px] h-11 justify-center items-center`}>
+          {/* <View style={tw`w-[1px] h-11 justify-center items-center`}>
             <View style={tw`w-[1px] h-8 bg-[#DEE3EB]`} />
-          </View>
+          </View> */}
 
           {/* Reviews Stat */}
-          <View style={tw`flex-col items-center`}>
+          {/* <View style={tw`flex-col items-center`}>
             <Text style={tw`text-[12px] font-bold text-[#42474E] text-center uppercase tracking-[0.6px] font-['Public Sans'] mb-0.5`}>
               REVIEWS
             </Text>
@@ -138,7 +168,7 @@ const DoctorProfileInfo: React.FC<DoctorProfileInfoProps> = ({ doctor }) => {
               </Text>
               <Star size={14.25} color="#EAB308" fill="#EAB308" />
             </View>
-          </View>
+          </View> */}
 
           {/* Divider 2 */}
           <View style={tw`w-[1px] h-11 justify-center items-center`}>

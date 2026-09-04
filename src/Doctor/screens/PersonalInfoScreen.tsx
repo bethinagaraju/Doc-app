@@ -8,6 +8,7 @@ import DoctorHeader from '../components/DoctorHeader';
 import tw from 'twrnc';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useAccessToken } from '../../screens/contexts/AccessTokenContext';
+import { useUser } from '../../screens/contexts/UserContext';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import DocProfileTopBar from '../components/DocProfileTopBar';
 import ProfilePhotoSection from '../components/ProfilePhotoSection';
@@ -80,6 +81,7 @@ interface Address {
 const PersonalInfoScreen = () => {
   const navigation = useNavigation<DoctorNavigationProp>();
   const { accessToken } = useAccessToken();
+  const { fetchUserData } = useUser();
   const [personalInfo, setPersonalInfo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -144,8 +146,9 @@ const PersonalInfoScreen = () => {
           gender: profile?.gender || '',
           licenseNumber: profile?.license_number || '',
           profilePicture:
-            profile?.profile_picture ||
-            'https://res.cloudinary.com/dwshjkk42/image/upload/v1751270760/doctor_8997187_mgopyu.png',
+            profile?.profile_picture
+              ? profile.profile_picture + (profile.profile_picture.includes('?') ? '&' : '?') + 't=' + new Date().getTime()
+              : 'https://res.cloudinary.com/dwshjkk42/image/upload/v1751270760/doctor_8997187_mgopyu.png',
         });
 
         setForm({
@@ -221,9 +224,9 @@ const PersonalInfoScreen = () => {
       const formData = new FormData();
       formData.append('image', {
         uri: photo.uri,
-        type: photo.type,
+        type: photo.type || 'image/jpeg',
         name: photo.fileName || 'profile.jpg',
-      });
+      } as any);
 
       setLoading(true);
       const res = await fetch(API_UPLOAD_PHOTO, {
@@ -242,6 +245,7 @@ const PersonalInfoScreen = () => {
       }
       Alert.alert('Success', 'Profile picture updated!');
       fetchData();
+      fetchUserData(accessToken);
     } catch (error) {
       console.log(error);
       Alert.alert('Error', 'Failed to upload photo');
@@ -275,6 +279,7 @@ const PersonalInfoScreen = () => {
       if (response.ok) {
         Alert.alert('Success', data.message || 'Profile updated successfully');
         fetchData();
+        fetchUserData(accessToken);
       } else {
         Alert.alert('Error', data.message || 'Failed to update profile');
       }
@@ -406,6 +411,7 @@ const PersonalInfoScreen = () => {
               }
               Alert.alert("Success", "Profile picture removed successfully!");
               fetchData();
+              fetchUserData(accessToken);
             } catch (error) {
               console.log(error);
               Alert.alert("Error", "Network issue, try again.");
@@ -452,7 +458,7 @@ const PersonalInfoScreen = () => {
     <SafeAreaView style={tw`flex-1 bg-[#F8F9FF]`}>
 
       <View>
-        <DocProfileTopBar />
+        <DocProfileTopBar userProfilePicture={personalInfo?.profilePicture} />
       </View>
 
 

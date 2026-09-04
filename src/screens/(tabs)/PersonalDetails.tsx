@@ -566,7 +566,9 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { sendEmailOtp, verifyEmailOtp } from '../../api/verify';
 import { completeGeneralUserProfile } from '../../api/profile';
 import { useAccessToken } from '../contexts/AccessTokenContext';
+import { useUser } from '../contexts/UserContext';
 import ProfileTopBar from '../../components/ProfileTopBar';
+import { Camera, Trash2 } from 'lucide-react-native';
 
 const API_GET_USER = 'https://api.docapp.co.in/api/auth/get-user-data';
 const API_ADD_ADDRESS = 'https://api.docapp.co.in/api/address/addAddress';
@@ -581,6 +583,7 @@ const PersonalDetailsScreen = () => {
 
   const [allAddresses, setAllAddresses] = useState([]);
   const { accessToken } = useAccessToken();
+  const userContext = useUser();
 
   // Address Form
   const [addressModalVisible, setAddressModalVisible] = useState(false);
@@ -831,7 +834,6 @@ const PersonalDetailsScreen = () => {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'multipart/form-data',
         },
         body: formData,
       });
@@ -842,6 +844,9 @@ const PersonalDetailsScreen = () => {
         await fetchUserData();
         setImageTimestamp(Date.now());
         setLocalPhotoUri(null);
+        if (userContext?.fetchUserData) {
+          userContext.fetchUserData(accessToken);
+        }
       } else {
         setLocalPhotoUri(null);
         Alert.alert('Error', data.message || 'Failed to upload photo');
@@ -853,6 +858,52 @@ const PersonalDetailsScreen = () => {
     } finally {
       setUploadingPhoto(false);
     }
+  };
+
+  const handleDeletePhoto = async () => {
+    Alert.alert(
+      'Delete Photo',
+      'Are you sure you want to delete your profile picture?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              setUploadingPhoto(true);
+              const response = await fetch('https://api.docapp.co.in/api/auth/delete-profile-pic', {
+                method: 'DELETE',
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                  'Content-Type': 'application/json',
+                },
+              });
+
+              const data = await response.json();
+
+              if (!response.ok) {
+                Alert.alert('Delete Failed', data.message || 'Unable to delete profile photo.');
+                return;
+              }
+
+              Alert.alert('Success', 'Profile photo removed successfully!');
+              await fetchUserData();
+              setImageTimestamp(Date.now());
+              setLocalPhotoUri(null);
+              if (userContext?.fetchUserData) {
+                userContext.fetchUserData(accessToken);
+              }
+            } catch (error) {
+              console.error('Error deleting photo:', error);
+              Alert.alert('Error', 'Failed to delete photo.');
+            } finally {
+              setUploadingPhoto(false);
+            }
+          },
+        },
+      ]
+    );
   };
 
   useEffect(() => {
@@ -904,7 +955,16 @@ const PersonalDetailsScreen = () => {
           {/* Avatar with Active Dot */}
           <TouchableOpacity style={tw`relative mt-2`} onPress={handleUploadPhoto} disabled={uploadingPhoto}>
             <Image
-              source={{ uri: localPhotoUri || (general.profile_picture ? `${general.profile_picture}?t=${imageTimestamp}` : 'https://via.placeholder.com/150') }}
+              key={localPhotoUri || (general.profile_picture ? `${general.profile_picture}?t=${imageTimestamp}` : 'main_avatar')}
+              source={{
+                uri: localPhotoUri || (
+                  general.profile_picture
+                    ? `${general.profile_picture.split('?')[0]}?t=${imageTimestamp}`
+                    : (userData?.doctorProfile?.profile_picture
+                        ? `${userData.doctorProfile.profile_picture.split('?')[0]}?t=${imageTimestamp}`
+                        : 'https://res.cloudinary.com/dwshjkk42/image/upload/v1751270760/doctor_8997187_mgopyu.png')
+                )
+              }}
               style={[tw`w-24 h-24 rounded-full`, styles.avatarShadow]}
             />
             {uploadingPhoto ? (
@@ -917,7 +977,7 @@ const PersonalDetailsScreen = () => {
 
           {/* User Info */}
           <Text style={tw`text-[24px] font-bold text-[#001A41] mt-4 text-center`}>
-            {userData.username || 'Dr. Alexander Sterling'}
+            {userData.username}
           </Text>
           <Text style={tw`text-[16px] font-medium text-[#001A41]/80 mt-1 text-center`}>
             {userData.email}
@@ -1167,8 +1227,58 @@ const PersonalDetailsScreen = () => {
         <Modal visible={editProfileVisible} transparent animationType="fade">
           <View style={styles.modalContainer}>
             <View style={styles.modalBox}>
-              <Text style={tw`text-lg font-bold text-[#001A41] mb-3`}>Edit Profile</Text>
+              <Text style={tw`text-lg font-bold text-[#001A41] mb-4 text-center`}>Edit Profile</Text>
 
+              {/* Profile Photo Section in Modal */}
+              <View style={tw`items-center mb-5`}>
+                <View style={tw`relative`}>
+                  <Image
+                    key={localPhotoUri || (general.profile_picture ? `${general.profile_picture}?t=${imageTimestamp}` : 'modal_avatar')}
+                    source={{
+                      uri: localPhotoUri || (
+                        general.profile_picture
+                          ? `${general.profile_picture.split('?')[0]}?t=${imageTimestamp}`
+                          : (userData?.doctorProfile?.profile_picture
+                              ? `${userData.doctorProfile.profile_picture.split('?')[0]}?t=${imageTimestamp}`
+                              : 'https://res.cloudinary.com/dwshjkk42/image/upload/v1751270760/doctor_8997187_mgopyu.png')
+                      )
+                    }}
+                    style={tw`w-24 h-24 rounded-full border-2 border-[#124CB8]`}
+                  />
+                  {uploadingPhoto && (
+                    <View style={[tw`absolute w-24 h-24 rounded-full justify-center items-center`, { backgroundColor: 'rgba(0,0,0,0.5)' }]}>
+                      <ActivityIndicator color="#FFFFFF" />
+                    </View>
+                  )}
+                </View>
+
+                {/* Photo Action Buttons */}
+                <View style={tw`flex-row items-center gap-3 mt-3`}>
+                  <TouchableOpacity
+                    style={tw`flex-row items-center bg-[#124CB8] px-3.5 py-1.5 rounded-full gap-1.5`}
+                    onPress={handleUploadPhoto}
+                    disabled={uploadingPhoto}
+                  >
+                    <Camera size={14} color="#FFFFFF" />
+                    <Text style={tw`text-white text-xs font-semibold`}>
+                      {general.profile_picture || userData?.doctorProfile?.profile_picture ? 'Change Photo' : 'Upload Photo'}
+                    </Text>
+                  </TouchableOpacity>
+
+                  {(general.profile_picture || userData?.doctorProfile?.profile_picture) && (
+                    <TouchableOpacity
+                      style={tw`flex-row items-center bg-red-50 border border-red-200 px-3 py-1.5 rounded-full gap-1.5`}
+                      onPress={handleDeletePhoto}
+                      disabled={uploadingPhoto}
+                    >
+                      <Trash2 size={14} color="#DC2626" />
+                      <Text style={tw`text-red-600 text-xs font-semibold`}>Delete</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              </View>
+
+              <Text style={tw`text-sm font-semibold text-gray-700 mb-2`}>Date of Birth</Text>
               <TouchableOpacity
                 onPress={() => setShowEditDatePicker(true)}
                 style={tw`bg-[#F9FAFB] px-4 py-3 rounded-xl border border-gray-200 mb-4`}

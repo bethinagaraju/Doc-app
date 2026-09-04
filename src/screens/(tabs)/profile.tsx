@@ -49,8 +49,7 @@ export default function ProfileScreen() {
   );
 
   const rawProfilePic = (userData as any)?.doctorProfile?.profile_picture || (userData as any)?.generalUser?.profile_picture || user?.generalUser?.profile_picture;
-  const lastUpdated = (userData as any)?.doctorProfile?.updatedAt || (userData as any)?.generalUser?.updatedAt || '1';
-  const profileImageSource = rawProfilePic ? { uri: `${rawProfilePic}?t=${new Date(lastUpdated).getTime() || lastUpdated}` } : undefined;
+  const profileImageSource = rawProfilePic ? { uri: rawProfilePic } : undefined;
 
   // ===========================
   // 🚀 Upload Photo Integration
@@ -70,9 +69,9 @@ export default function ProfileScreen() {
       const formData = new FormData();
       formData.append('image', {
         uri: photo.uri,
-        type: photo.type,
+        type: photo.type || 'image/jpeg',
         name: photo.fileName || 'photo.jpg',
-      });
+      } as any);
 
       setLoading(true);
 
@@ -92,6 +91,8 @@ export default function ProfileScreen() {
       }
 
       if (data?.image_url) {
+        // Append a timestamp to bypass React Native's aggressive image caching
+        const freshImageUrl = data.image_url + (data.image_url.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
         setUserData(prev => {
           // prefer updating doctorProfile if present, otherwise update generalUser
           if (prev && (prev as any).doctorProfile) {
@@ -99,14 +100,14 @@ export default function ProfileScreen() {
               ...(prev || {}),
               doctorProfile: {
                 ...((prev as any).doctorProfile || {}),
-                profile_picture: data.image_url,
+                profile_picture: freshImageUrl,
               },
             }
           }
 
           return {
             ...(prev || {}),
-            ...({ generalUser: { ...(((prev as any)?.generalUser) || {}), profile_picture: data.image_url } } as any),
+            ...({ generalUser: { ...(((prev as any)?.generalUser) || {}), profile_picture: freshImageUrl } } as any),
           }
         })
       }

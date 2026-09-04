@@ -25,6 +25,12 @@ const PatientCard: React.FC<PatientCardProps> = ({
     appointmentTime = '',
     appointmentType = '',
 }) => {
+    const cleanAvatar = avatarUrl
+        ? (avatarUrl.includes('?t=') || avatarUrl.includes('&t=')
+            ? avatarUrl
+            : `${avatarUrl.split('?')[0]}?t=${new Date().getTime()}`)
+        : 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150';
+
     return (
         /* Section - Patient Card Container */
         <View
@@ -43,7 +49,8 @@ const PatientCard: React.FC<PatientCardProps> = ({
             <View style={tw`w-full flex-row items-center gap-[16px]`}>
                 {/* Patient Profile Avatar */}
                 <Image
-                    source={{ uri: avatarUrl }}
+                    key={cleanAvatar}
+                    source={{ uri: cleanAvatar }}
                     style={tw`w-[64px] h-[64px] rounded-[12px] bg-[#DBE9FF]`}
                     resizeMode="cover"
                 />

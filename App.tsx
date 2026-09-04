@@ -9,6 +9,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Footer from './src/screens/(tabs)/Footer';
 import { LoadingProvider } from './src/components/LoadingOverlay';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import IncomingCallOverlay from './src/components/IncomingCallOverlay';
 
 // All screen imports
 import OnboardingScreen from './src/screens/onboarding';
@@ -74,6 +75,7 @@ import HospitalAppointmentsScreen from './src/screens/HospitalAppointmentsScreen
 import FollowUpAppointmentScreen from './src/screens/FollowUpAppointmentScreen';
 import AppointmentDetailsScreen from './src/screens/(tabs)/AppointmentDetailsScreen';
 import PatientVideoCallScreen from './src/screens/PatientVideoCall';
+import CallCompletedScreen from './src/screens/CallCompletedScreen';
 
 const Stack = createStackNavigator();
 
@@ -142,6 +144,7 @@ function RootNavigator() {
         <Stack.Screen name="Searcheverything" component={SearchEverything} />
         <Stack.Screen name="VideoCall" component={VideoCallScreen} />
         <Stack.Screen name="PatientVideoCall" component={PatientVideoCallScreen} />
+        <Stack.Screen name="CallCompleted" component={CallCompletedScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="Notification" component={NotificationScreen} />
         <Stack.Screen name="AllSpecialtiesScreen" component={AllSpecialtiesScreen} />
@@ -197,6 +200,8 @@ function RootNavigator() {
         <Stack.Screen name="AddDoctor" component={AddDoctorScreen} />
       </Stack.Navigator>
 
+      <IncomingCallOverlay />
+      
       {!isDoctorNavigatorActive() && !AUTH_SCREENS.includes(currentRoute || '') && !isKeyboardVisible && <Footer />}
     </NavigationContainer>
   );

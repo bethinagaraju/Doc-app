@@ -2,10 +2,12 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import tw from 'twrnc';
+import { useUser } from '../../screens/contexts/UserContext';
 
 interface PrimaryActionBannerProps {
     statusText?: string;
     patientName?: string;
+    appointmentType?: string;
     onStartConsultation?: () => void;
     onReschedule?: () => void;
 }
@@ -13,11 +15,20 @@ interface PrimaryActionBannerProps {
 const PrimaryActionBanner: React.FC<PrimaryActionBannerProps> = ({
     statusText = '',
     patientName = '',
+    appointmentType = '',
     onStartConsultation,
     onReschedule,
 }) => {
+    const { user } = useUser();
+
+    if (user?.role !== 'doctor' || appointmentType !== 'online_video') {
+        return null;
+    }
+
     return (
+
         /* Status & Primary Action Banner Container */
+
         <View
             style={[
                 tw`w-full max-w-[350px] bg-white rounded-[12px] p-[24px] border border-[#DAE1E7] gap-[12px]`,
@@ -30,8 +41,10 @@ const PrimaryActionBanner: React.FC<PrimaryActionBannerProps> = ({
                 },
             ]}
         >
+
             {/* Status Header Container */}
             <View style={tw`w-full gap-[4px]`}>
+
                 {/* Status Dot & Label Row */}
                 <View style={tw`flex-row items-center gap-[8px]`}>
                     <View style={tw`w-[10px] h-[10px] bg-[#124CB8] rounded-full`} />
@@ -49,6 +62,7 @@ const PrimaryActionBanner: React.FC<PrimaryActionBannerProps> = ({
                 >
                     Consultation with {patientName}
                 </Text>
+
             </View>
 
             {/* Buttons Action Group */}

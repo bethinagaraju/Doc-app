@@ -86,6 +86,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { DoctorStackParamList } from '../types/navigation';
 import { useAccessToken } from '../../screens/contexts/AccessTokenContext';
+import { useUser } from '../../screens/contexts/UserContext';
 
 type DoctorHeaderProps = {
   title: string;
@@ -112,15 +113,18 @@ const DoctorHeader: React.FC<DoctorHeaderProps> = ({
 }) => {
   const navigation = useNavigation<NativeStackNavigationProp<DoctorStackParamList>>();
   const { accessToken } = useAccessToken();
+  const { user } = useUser();
 
   const normalizedTitle = title?.toString().trim().toLowerCase();
   const showBack = normalizedTitle !== 'dashboard' && normalizedTitle !== 'home';
 
-  const [doctor, setDoctor] = useState<UserData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [localDoctor, setLocalDoctor] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
 
   const fetchDoctorData = async () => {
+    if (!accessToken) return;
     try {
+      setLoading(true);
       const response = await fetch('https://api.docapp.co.in/api/auth/get-user-data', {
         method: 'GET',
         headers: {
@@ -132,7 +136,7 @@ const DoctorHeader: React.FC<DoctorHeaderProps> = ({
       if (!response.ok) throw new Error('Failed to fetch doctor data');
 
       const result = await response.json();
-      setDoctor(result.userData);
+      setLocalDoctor(result.userData);
     } catch (error) {
       console.error('Error fetching doctor info:', error);
     } finally {
@@ -141,10 +145,13 @@ const DoctorHeader: React.FC<DoctorHeaderProps> = ({
   };
 
   useEffect(() => {
-    if (showDoctorInfo) {
+    if (showDoctorInfo && !user && accessToken) {
       fetchDoctorData();
     }
-  }, [showDoctorInfo]);
+  }, [showDoctorInfo, user, accessToken]);
+
+  const activeDoctor = user || localDoctor;
+  const profilePic = activeDoctor?.doctorProfile?.profile_picture || 'https://res.cloudinary.com/dwshjkk42/image/upload/v1751270760/doctor_8997187_mgopyu.png';
 
   return (
     <View style={tw`bg-[#059669] px-4 pt-12 pb-3`}>
@@ -185,18 +192,19 @@ const DoctorHeader: React.FC<DoctorHeaderProps> = ({
       {showDoctorInfo && (
         <View style={tw`mt-4 flex-row items-center`}>
           <Image
-            source={{ uri: doctor?.doctorProfile?.profile_picture || 'https://randomuser.me/api/portraits/men/1.jpg' }}
+            key={profilePic}
+            source={{ uri: profilePic }}
             style={tw`w-12 h-12 rounded-full`}
           />
           <View style={tw`ml-3`}>
-            {loading ? (
+            {loading && !activeDoctor ? (
               <ActivityIndicator size="small" color="#fff" />
             ) : (
               <>
                 <Text style={tw`text-white text-lg font-bold`}>
-                  {doctor?.username ? `Dr. ${doctor.username}` : 'Unknown Doctor'}
+                  {activeDoctor?.username ? `Dr. ${activeDoctor.username}` : 'Doctor'}
                 </Text>
-                <Text style={tw`text-[#1d9be3]`}>{doctor?.doctorProfile?.specialization || 'Doctor'}</Text>
+                <Text style={tw`text-[#1d9be3]`}>{activeDoctor?.doctorProfile?.specialization || 'Doctor'}</Text>
               </>
             )}
           </View>

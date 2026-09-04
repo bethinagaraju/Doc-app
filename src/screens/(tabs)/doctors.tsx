@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -10,8 +10,9 @@ import {
   Switch,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { X } from 'lucide-react-native';
 import Geolocation from 'react-native-geolocation-service';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import tw from 'twrnc';
 import DoctorCard, { DoctorCardSkeleton } from '../../components/DoctorCard';
 import UsersearchFilter from '../../components/UsersearchFilter';
@@ -19,7 +20,39 @@ import { useAccessToken } from '../contexts/AccessTokenContext';
 import { useUser } from '../contexts/UserContext';
 import FeaturedBentoSection from '../../components/FeaturedBentoSection';
 
-const departments = ['Cardiologist', 'Dermatologist', 'Dentist', 'Neurologist'];
+const departments = [
+  "Ayurveda",
+  "Cardiology",
+  "Dentistry",
+  "Dermatology",
+  "Diabetology",
+  "Diet & Nutrition",
+  "ENT",
+  "Endocrinology",
+  "Gastroenterology",
+  "General Physician",
+  "General Surgery",
+  "Gynecology",
+  "Homeopathy",
+  "Internal Medicine",
+  "Nephrology",
+  "Neurology",
+  "Obstetrics",
+  "Oncology",
+  "Ophthalmology",
+  "Orthopedics",
+  "Pediatrics",
+  "Physiotherapy",
+  "Plastic Surgery",
+  "Psychiatry",
+  "Psychology",
+  "Pulmonology",
+  "Rheumatology",
+  "Sexology",
+  "Siddha",
+  "Unani",
+  "Urology"
+];
 
 const cityPincodes: any = {
   Warangal: '506006',
@@ -158,21 +191,22 @@ const FindDoctorsScreen = () => {
 
   /* ================= LOAD DOCTORS ================= */
 
-  useEffect(() => {
-    if (!accessToken) return;
+  useFocusEffect(
+    useCallback(() => {
+      if (!accessToken) return;
 
-    if (useLiveLocation) {
-      fetchByLiveLocation();
-    } else {
-      fetchGeneral();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accessToken, selectedCity, selectedDepartment, useLiveLocation]);
+      if (useLiveLocation) {
+        fetchByLiveLocation();
+      } else {
+        fetchGeneral();
+      }
+    }, [accessToken, selectedCity, selectedDepartment, useLiveLocation])
+  );
 
   /* ================= UI ================= */
 
   return (
-    <SafeAreaView style={[tw`flex-1 px-4`]}>
+    <SafeAreaView style={[tw`flex-1 px-4 pb-16`]}>
       {/* <PageHeader
         title="Find Doctors"
         backgroundColor="#16a34a"
@@ -201,6 +235,28 @@ const FindDoctorsScreen = () => {
               selectedMode={consultationMode}
               setSelectedMode={setConsultationMode}
             />
+
+            {/* Selected Filters Chips */}
+            {(selectedDepartment !== '' || selectedCity !== '') && (
+              <View style={tw`flex-row flex-wrap mt-3 px-1`}>
+                {selectedDepartment !== '' && (
+                  <View style={tw`bg-[#E1E8ED] px-3 py-1.5 rounded-full flex-row items-center mr-2 mb-2`}>
+                    <Text style={tw`text-[#124CB8] text-[13px] font-semibold mr-1`}>{selectedDepartment}</Text>
+                    <TouchableOpacity onPress={() => setSelectedDepartment('')}>
+                      <X size={14} color="#124CB8" />
+                    </TouchableOpacity>
+                  </View>
+                )}
+                {selectedCity !== '' && (
+                  <View style={tw`bg-[#E1E8ED] px-3 py-1.5 rounded-full flex-row items-center mr-2 mb-2`}>
+                    <Text style={tw`text-[#124CB8] text-[13px] font-semibold mr-1`}>{selectedCity}</Text>
+                    <TouchableOpacity onPress={() => setSelectedCity('')}>
+                      <X size={14} color="#124CB8" />
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+            )}
 
             <View style={tw`my-2 items-center w-full`}>
               <FeaturedBentoSection />
@@ -234,10 +290,14 @@ const FindDoctorsScreen = () => {
           </View>
         }
         renderItem={({ item }) => (
-          <DoctorCard
-            item={item}
-            onPress={() => handleCardPress(item)}
-          />
+          <View style={tw`mb-4`}>
+
+            <DoctorCard
+              item={item}
+              onPress={() => handleCardPress(item)}
+            />
+
+          </View>
         )}
       />
     </SafeAreaView>

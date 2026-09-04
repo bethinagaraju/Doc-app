@@ -102,9 +102,25 @@ const HomeScreen = () => {
   const user = useUser();
   const { accessToken } = useAccessToken();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const baseProfilePic = userData?.generalUser?.profile_picture;
-  const lastUpdated = userData?.generalUser?.updatedAt || '1';
-  const profileImageUri = baseProfilePic ? `${baseProfilePic}?t=${new Date(lastUpdated).getTime() || lastUpdated}` : 'https://randomuser.me/api/portraits/men/4.jpg';
+
+  const activeUser = userData || user?.user;
+  const rawProfilePic =
+    activeUser?.generalUser?.profile_picture ||
+    activeUser?.doctorProfile?.profile_picture ||
+    user?.user?.generalUser?.profile_picture ||
+    user?.user?.doctorProfile?.profile_picture;
+
+  const cleanUrl = rawProfilePic ? rawProfilePic.split('?')[0] : '';
+  const lastUpdated =
+    activeUser?.generalUser?.updatedAt ||
+    activeUser?.doctorProfile?.updatedAt ||
+    user?.user?.generalUser?.updatedAt ||
+    user?.user?.doctorProfile?.updatedAt;
+
+  const ts = lastUpdated ? new Date(lastUpdated).getTime() : '';
+  const profileImageUri = cleanUrl
+    ? (ts ? `${cleanUrl}?t=${ts}` : `${cleanUrl}?t=${new Date().getTime()}`)
+    : 'https://randomuser.me/api/portraits/men/4.jpg';
 
   const [selectedLanguage, setSelectedLanguage] = useState('English');
   const [showLanguageModal, setShowLanguageModal] = useState(false);
@@ -112,13 +128,15 @@ const HomeScreen = () => {
   useFocusEffect(
     useCallback(() => {
       const fetchUserData = async () => {
+        if (!accessToken) return;
         try {
           const response = await fetch('https://api.docapp.co.in/api/auth/get-user-data', {
             method: 'GET',
             headers: {
-              ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+              Authorization: `Bearer ${accessToken}`,
               'Content-Type': 'application/json',
             },
+            credentials: 'include',
           });
 
           const result = await response.json();
@@ -129,8 +147,16 @@ const HomeScreen = () => {
           }
 
           if (result?.userData) {
-            setUserData(result.userData);
-            console.log('User Data in HomeScreen:', result.userData);
+            const fetched = result.userData;
+            const now = new Date().getTime();
+            if (fetched.generalUser?.profile_picture) {
+              fetched.generalUser.profile_picture = `${fetched.generalUser.profile_picture.split('?')[0]}?t=${now}`;
+            }
+            if (fetched.doctorProfile?.profile_picture) {
+              fetched.doctorProfile.profile_picture = `${fetched.doctorProfile.profile_picture.split('?')[0]}?t=${now}`;
+            }
+            setUserData(fetched);
+            console.log('User Data in HomeScreen:', fetched);
           } else {
             console.log('No user data found');
           }
@@ -406,6 +432,7 @@ const HomeScreen = () => {
               ]}
             >
               <Image
+                key={profileImageUri}
                 source={{ uri: profileImageUri }}
                 style={[
                   tw`rounded-full`,
@@ -615,7 +642,7 @@ const HomeScreen = () => {
             {banners.map((_, index) => (
               <View
                 key={index}
-                style={tw`w-2 h-2 bg-gray-300 rounded-full mx-1 ${activeBannerIndex === index ? 'bg-green-800 w-4 shadow-sm' : ''
+                style={tw`w-2 h-2 bg-gray-300 rounded-full mx-1 ${activeBannerIndex === index ? 'bg-[#124CB8] w-4 shadow-sm' : ''
                   }`}
               />
             ))}

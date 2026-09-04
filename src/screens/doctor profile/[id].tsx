@@ -22,23 +22,72 @@ import ProfileTopBar from '../../components/ProfileTopBar';
 import DoctorProfileInfo from '../../components/DoctorProfileInfo';
 import BookAppointmentButton from '../../components/BookAppointmentButton';
 
+const calculateExperience = (startDateStr?: string) => {
+  if (!startDateStr) return null;
+  const startYear = parseInt(startDateStr.substring(0, 4), 10);
+  if (isNaN(startYear)) return null;
+  const currentYear = new Date().getFullYear();
+  const diff = currentYear - startYear;
+  return diff > 0 ? diff.toString() : '0';
+};
+
 const DoctorProfileScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const { doctor } = route.params as any;
 
   const [reviews, setReviews] = useState<any[]>([]);
+  const [loadingReviews, setLoadingReviews] = useState<boolean>(true);
   const [selectedTab, setSelectedTab] = useState<'Reviews' | 'About'>('About');
 
   const { consultationMode } = useUser(); // online or offline
 
   useEffect(() => {
-    setReviews([
-      { name: 'Rohit Sharma', rating: 5, comment: 'Excellent doctor.' },
-      { name: 'Priya Verma', rating: 4, comment: 'Good experience.' },
-      { name: 'Amit Joshi', rating: 5, comment: 'Very professional.' },
-    ]);
-  }, []);
+    const fetchReviews = async () => {
+      try {
+        const docId = doctor?.user_id || doctor?.id;
+        if (!docId) {
+          setLoadingReviews(false);
+          return;
+        }
+
+        const url = `https://api.docapp.co.in/api/reviews/get-doctor-rating/${docId}`;
+        console.log('--- Fetching Doctor Reviews ---');
+        console.log('URL:', url);
+
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          }
+        });
+        console.log('Response Status:', response.status);
+
+        const data = await response.json();
+        console.log('Response Data:', JSON.stringify(data, null, 2));
+
+        if (data && data.reviews) {
+          const formattedReviews = data.reviews.map((r: any) => ({
+            name: 'Anonymous Patient',
+            rating: r.rating || 5,
+            comment: r.review_text || '',
+          }));
+          setReviews(formattedReviews);
+        } else {
+          setReviews([]);
+        }
+      } catch (error) {
+        console.error('--- Error fetching doctor reviews ---');
+        console.error('Error details:', error);
+        setReviews([]);
+      } finally {
+        setLoadingReviews(false);
+      }
+    };
+
+    fetchReviews();
+  }, [doctor]);
 
   const handleBookNowPress = () => {
     navigation.navigate('DoctorSlots', {
@@ -86,25 +135,31 @@ const DoctorProfileScreen = () => {
 
             {/* Reviews Container */}
             <View style={tw`w-[358px] bg-white/50 border border-[#DEE3EB]/20 rounded-[16px] p-[16px] flex-col items-start gap-4`}>
-              {reviews.map((review, index) => (
-                <View key={index} style={tw`w-full border-b border-[#DEE3EB]/20 pb-4 ${index === reviews.length - 1 ? 'border-b-0 pb-0' : ''}`}>
-                  <Text style={tw`text-[16px] font-bold text-[#191C1E] font-['Public Sans']`}>{review.name}</Text>
+              {loadingReviews ? (
+                <ActivityIndicator size="small" color="#16a34a" style={tw`my-4 self-center w-full`} />
+              ) : reviews.length === 0 ? (
+                <Text style={tw`text-[#42474E] text-[14px] font-['Public Sans'] italic`}>No reviews yet.</Text>
+              ) : (
+                reviews.map((review, index) => (
+                  <View key={index} style={tw`w-full border-b border-[#DEE3EB]/20 pb-4 ${index === reviews.length - 1 ? 'border-b-0 pb-0' : ''}`}>
+                    <Text style={tw`text-[16px] font-bold text-[#191C1E] font-['Public Sans']`}>{review.name}</Text>
 
-                  {/* Stars */}
-                  <View style={tw`flex-row items-center gap-1 my-1.5`}>
-                    {[...Array(review.rating)].map((_, i) => (
-                      <Star key={i} size={14} color="#EAB308" fill="#EAB308" />
-                    ))}
-                    {[...Array(5 - review.rating)].map((_, i) => (
-                      <Star key={i + review.rating} size={14} color="#DEE3EB" />
-                    ))}
+                    {/* Stars */}
+                    {/* <View style={tw`flex-row items-center gap-1 my-1.5`}>
+                      {[...Array(review.rating)].map((_, i) => (
+                        <Star key={i} size={14} color="#EAB308" fill="#EAB308" />
+                      ))}
+                      {[...Array(5 - review.rating)].map((_, i) => (
+                        <Star key={i + review.rating} size={14} color="#DEE3EB" />
+                      ))}
+                    </View> */}
+
+                    <Text style={tw`text-[14px] text-[#42474E] font-normal font-['Public Sans'] leading-[22px]`}>
+                      {review.comment}
+                    </Text>
                   </View>
-
-                  <Text style={tw`text-[14px] text-[#42474E] font-normal font-['Public Sans'] leading-[22px]`}>
-                    {review.comment}
-                  </Text>
-                </View>
-              ))}
+                ))
+              )}
             </View>
           </View>
         )}
@@ -124,7 +179,7 @@ const DoctorProfileScreen = () => {
             <View style={tw`w-[358px] bg-white/50 border border-[#DEE3EB]/20 rounded-[16px] p-[16px] flex-col items-start`}>
               <Text style={tw`w-[321px] text-[16px] text-[#42474E] font-normal font-['Public Sans'] leading-[26px]`}>
                 {doctor.about_description ||
-                  `Dr. ${doctor.user?.username || 'Name'} is a board-certified ${doctor.specialization || 'specialist'} with over ${doctor.experience_years || '0'} years of experience in clinical medicine. Known for an empathetic approach, combining cutting-edge technology with personalized treatment plans to ensure the best outcomes for patients.`
+                  `Dr. ${doctor.user?.username || 'Name'} is a board-certified ${doctor.specialization || 'specialist'} with over ${calculateExperience(doctor.practice_start_date) || doctor.experience_years || '0'} years of experience in clinical medicine. Known for an empathetic approach, combining cutting-edge technology with personalized treatment plans to ensure the best outcomes for patients.`
                 }
               </Text>
             </View>

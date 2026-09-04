@@ -48,10 +48,15 @@ export default function AppointmentCard({ appointment, children }: AppointmentCa
   const displayName = isDoctor
     ? appointment.patient?.username || appointment.patientName || `Patient #${appointment.user_id || appointment.id}`
     : appointment.doctor?.username || `Doctor #${appointment.doctor_id}`;
-
-  const profilePic = isDoctor
+  const rawProfilePic = isDoctor
     ? appointment.patient?.generalUser?.profile_picture
     : appointment.doctor?.doctorProfile?.profile_picture;
+
+  const profilePic = rawProfilePic
+    ? (rawProfilePic.includes('?t=') || rawProfilePic.includes('&t=')
+        ? rawProfilePic
+        : `${rawProfilePic}${rawProfilePic.includes('?') ? '&' : '?'}t=${new Date().getTime()}`)
+    : null;
 
   return (
     <View style={tw`bg-white p-4 mb-4 rounded-[12px] border border-[#DAE1E7] flex-col relative`}>
@@ -62,7 +67,7 @@ export default function AppointmentCard({ appointment, children }: AppointmentCa
           {/* Avatar Background */}
           <View style={tw`w-12 h-12 bg-[#DBE3F1] rounded-lg items-center justify-center overflow-hidden`}>
             {profilePic ? (
-              <Image source={{ uri: profilePic }} style={tw`w-full h-full`} resizeMode="cover" />
+              <Image key={profilePic} source={{ uri: profilePic }} style={tw`w-full h-full`} resizeMode="cover" />
             ) : (
               <User size={24} color="#124CB8" />
             )}

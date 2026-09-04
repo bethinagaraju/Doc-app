@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -19,12 +19,13 @@ import {
   ThumbsUp,
   VerifiedIcon,
 } from 'lucide-react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import tw from 'twrnc';
 import { DoctorStackParamList } from '../types/navigation';
 import DoctorHeader from '../components/DoctorHeader';
 import { useAccessToken } from '../../screens/contexts/AccessTokenContext';
+import { useUser } from '../../screens/contexts/UserContext';
 
 const API_GET_USER = 'https://api.docapp.co.in/api/auth/get-user-data';
 
@@ -33,6 +34,7 @@ type DoctorNavigationProp = NativeStackNavigationProp<DoctorStackParamList>;
 const DoctorProfileScreen = () => {
   const navigation = useNavigation<DoctorNavigationProp>();
   const { accessToken } = useAccessToken();
+  const { user, fetchUserData: refreshGlobalUser } = useUser();
   const [userData, setUserData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -72,6 +74,7 @@ const DoctorProfileScreen = () => {
 
   // Fetch user data from API
   const fetchUserData = async () => {
+    if (!accessToken) return;
     try {
       const response = await fetch(API_GET_USER, {
         method: 'GET',
@@ -84,7 +87,12 @@ const DoctorProfileScreen = () => {
       const data = await response.json();
 
       if (response.ok && data.userData) {
-        setUserData(data.userData);
+        const fetched = data.userData;
+        const ts = new Date().getTime();
+        if (fetched.doctorProfile?.profile_picture) {
+          fetched.doctorProfile.profile_picture += (fetched.doctorProfile.profile_picture.includes('?') ? '&' : '?') + 't=' + ts;
+        }
+        setUserData(fetched);
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -93,9 +101,14 @@ const DoctorProfileScreen = () => {
     }
   };
 
-  useEffect(() => {
-    fetchUserData();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserData();
+      if (refreshGlobalUser && accessToken) {
+        refreshGlobalUser(accessToken);
+      }
+    }, [accessToken])
+  );
 
   // Get doctor info from API data
   const getDoctorInfo = () => {

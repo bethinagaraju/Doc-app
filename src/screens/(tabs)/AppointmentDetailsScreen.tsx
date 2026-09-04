@@ -15,14 +15,17 @@ import tw from "twrnc";
 import { launchImageLibrary } from "react-native-image-picker";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { useAccessToken } from "../contexts/AccessTokenContext";
+import { useUser } from "../contexts/UserContext";
 import ProfileTopBar from "../../components/ProfileTopBar";
 import AppointmentCard from "../../components/AppointmentCard";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PrimaryActionBanner from "../../Doctor/components/PrimaryActionBanner";
 import PatientCard from "../../Doctor/components/PatientCard";
+import AppointmentPatientInfo from "../../Doctor/components/AppointmentPatientInfo";
 import PatientDocuments from "../../Doctor/components/PatientDocuments";
 import PatientPrescriptionCard from "../../Doctor/components/PatientPrescriptionCard";
 import AppointmentAdditionalInfoCard from "../../Doctor/components/AppointmentAdditionalInfoCard";
+import FollowUpAppointmentCard from "../../Doctor/components/FollowUpAppointmentCard";
 
 type PrescriptionItem = {
   drug: string;
@@ -83,6 +86,7 @@ export default function AppointmentDetailsScreen() {
   const { appointment, selectedTab } = route.params;
   const navigation = useNavigation<any>();
   const { accessToken } = useAccessToken();
+  const { user } = useUser();
 
   // Add Prescription Modal (Upcoming)
   const [modalVisible, setModalVisible] = useState(false);
@@ -442,7 +446,7 @@ export default function AppointmentDetailsScreen() {
     <SafeAreaView style={tw`flex-1 bg-white`}>
       <ProfileTopBar />
 
-      <ScrollView contentContainerStyle={tw`p-4 pb-12`}>
+      <ScrollView contentContainerStyle={tw`p-4 pb-18`}>
         {/* <View style={tw`flex-row items-center mb-4`}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={tw`mr-3`}>
             <Text style={tw`text-blue-600 font-bold text-lg`}>← Back</Text>
@@ -463,89 +467,19 @@ export default function AppointmentDetailsScreen() {
           <PrimaryActionBanner
             statusText={`${"UPCOMING"} • ${new Date(appointment.appointment_date).toLocaleDateString("en-GB")} ${appointment.appointment_start_time}`}
             patientName={appointment.patient?.username || appointment.patientName || `Patient #${appointment.user_id || appointment.id}`}
+            appointmentType={appointment.appointment_type}
             onStartConsultation={() => handleStartConsultation()}
             onReschedule={() => handleReschedule()}
           />
         </View>
 
-        <AppointmentCard appointment={appointment as any} />
+        {user?.role !== 'doctor' && user?.role?.toLowerCase() !== 'doctor' && (
+          <AppointmentCard appointment={appointment as any} />
+        )}
 
-        {(() => {
-          const name = appointment.patient?.username || appointment.patientName || `User #${appointment.user_id}`;
-          const id = `Patient ID: #${appointment.user_id || appointment.id}`;
-          const avatar = appointment.patient?.generalUser?.profile_picture || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150';
-
-          let age = 'N/A';
-          const dob = appointment.patient?.generalUser?.date_of_birth;
-          if (dob) {
-            const birthDate = new Date(dob);
-            const today = new Date();
-            let calculatedAge = today.getFullYear() - birthDate.getFullYear();
-            const m = today.getMonth() - birthDate.getMonth();
-            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-              calculatedAge--;
-            }
-            if (!isNaN(calculatedAge)) {
-              age = `${calculatedAge} yrs`;
-            }
-          }
-          const gender = appointment.patient?.generalUser?.gender || 'N/A';
-          const ageGenderStr = `${age} / ${gender}`;
-
-          const apptDateStr = appointment.appointment_date
-            ? new Date(appointment.appointment_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
-            : 'N/A';
-
-          const formatTime = (timeStr?: string) => {
-            if (!timeStr) return '';
-            const parts = timeStr.split(':');
-            if (parts.length >= 2) {
-              let hours = parseInt(parts[0], 10);
-              const minutes = parts[1];
-              const ampm = hours >= 12 ? 'PM' : 'AM';
-              hours = hours % 12 || 12;
-              return `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
-            }
-            return timeStr;
-          };
-
-          const calculateDuration = (startStr?: string, endStr?: string) => {
-            if (!startStr || !endStr) return '';
-            const startParts = startStr.split(':').map(Number);
-            const endParts = endStr.split(':').map(Number);
-            if (startParts.length >= 2 && endParts.length >= 2) {
-              const startMinutes = startParts[0] * 60 + startParts[1];
-              const endMinutes = endParts[0] * 60 + endParts[1];
-              let diff = endMinutes - startMinutes;
-              if (diff < 0) diff += 24 * 60; // handle midnight wrap if any
-              if (diff >= 60) {
-                const hrs = Math.floor(diff / 60);
-                const mins = diff % 60;
-                return mins > 0 ? `${hrs}h ${mins}m` : `${hrs}h`;
-              }
-              return `${diff} mins`;
-            }
-            return '';
-          };
-
-          const durationFormatted = calculateDuration(appointment.appointment_start_time, appointment.appointment_end_time);
-
-          const apptTimeStr = durationFormatted || 'N/A';
-
-          return (
-            <View style={tw`mb-4`}>
-              <PatientCard
-                patientName={name}
-                patientId={id}
-                avatarUrl={avatar}
-                ageGender={ageGenderStr}
-                appointmentIdDisplay={`#${appointment.id}`}
-                appointmentTime={apptTimeStr}
-                appointmentType={appointment.appointment_type || 'N/A'}
-              />
-            </View>
-          );
-        })()}
+        {user?.role === 'doctor' && (
+          <AppointmentPatientInfo appointment={appointment as any} />
+        )}
 
 
 
@@ -561,80 +495,9 @@ export default function AppointmentDetailsScreen() {
           />
         </View>
 
-        {appointment.checkupAppointment && appointment.checkupAppointment.length > 0 && (() => {
-          const checkup = appointment.checkupAppointment[0];
-          const checkupDateFormatted = checkup.checkup_date ? new Date(checkup.checkup_date).toDateString() : 'N/A';
-          
-          const formatTimeLocal = (timeStr?: string) => {
-            if (!timeStr) return '';
-            const parts = timeStr.split(':');
-            if (parts.length >= 2) {
-              let hours = parseInt(parts[0], 10);
-              const minutes = parts[1];
-              const ampm = hours >= 12 ? 'PM' : 'AM';
-              hours = hours % 12 || 12;
-              return `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
-            }
-            return timeStr;
-          };
-
-          const checkupTimeFormatted = `${formatTimeLocal(checkup.checkup_start_time)} - ${formatTimeLocal(checkup.checkup_end_time)}`;
-          
-          return (
-            <View style={tw`mb-4`}>
-              <View
-                style={[
-                  tw`w-full bg-[#FFF7ED] rounded-[12px] p-[24px] border border-[#FED7AA] gap-[12px]`,
-                  {
-                    shadowColor: '#EA580C',
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.05,
-                    shadowRadius: 20,
-                    elevation: 4,
-                  },
-                ]}
-              >
-                <Text style={tw`text-[18px] font-semibold text-[#EA580C] font-['Inter'] leading-[24px] mb-[4px]`}>
-                  Follow-up Appointment Details
-                </Text>
-
-                {/* Follow-up ID */}
-                <View style={tw`flex-row justify-between py-[8px] border-b border-[#FFEDD5]`}>
-                  <Text style={tw`text-[14px] text-[#9A3412] font-['Inter']`}>Follow-up ID</Text>
-                  <Text style={tw`text-[14px] text-[#7C2D12] font-semibold font-['Inter']`}>#{checkup.id}</Text>
-                </View>
-
-                {/* Follow-up Date */}
-                <View style={tw`flex-row justify-between py-[8px] border-b border-[#FFEDD5]`}>
-                  <Text style={tw`text-[14px] text-[#9A3412] font-['Inter']`}>Follow-up Date</Text>
-                  <Text style={tw`text-[14px] text-[#7C2D12] font-semibold font-['Inter']`}>{checkupDateFormatted}</Text>
-                </View>
-
-                {/* Follow-up Time */}
-                <View style={tw`flex-row justify-between py-[8px] border-b border-[#FFEDD5]`}>
-                  <Text style={tw`text-[14px] text-[#9A3412] font-['Inter']`}>Follow-up Time</Text>
-                  <Text style={tw`text-[14px] text-[#7C2D12] font-semibold font-['Inter']`}>
-                    {checkupTimeFormatted}
-                  </Text>
-                </View>
-
-                {/* Follow-up Status */}
-                <View style={tw`flex-row justify-between py-[8px] border-b border-[#FFEDD5]`}>
-                  <Text style={tw`text-[14px] text-[#9A3412] font-['Inter']`}>Status</Text>
-                  <Text style={tw`text-[14px] text-[#7C2D12] font-semibold capitalize font-['Inter']`}>{checkup.checkup_status}</Text>
-                </View>
-
-                {/* Payment Status */}
-                <View style={tw`flex-row justify-between py-[8px]`}>
-                  <Text style={tw`text-[14px] text-[#9A3412] font-['Inter']`}>Payment Required</Text>
-                  <Text style={tw`text-[14px] text-[#7C2D12] font-semibold font-['Inter']`}>
-                    {checkup.is_payment_required ? "Yes" : "No (Free)"}
-                  </Text>
-                </View>
-              </View>
-            </View>
-          );
-        })()}
+        {appointment.checkupAppointment && appointment.checkupAppointment.length > 0 && (
+          <FollowUpAppointmentCard checkup={appointment.checkupAppointment[0]} />
+        )}
 
         <View style={tw`mb-4`}>
           <PatientDocuments
@@ -674,7 +537,7 @@ export default function AppointmentDetailsScreen() {
           />
         </View>
 
-        {selectedTab === "Upcoming" && (
+        {selectedTab === "Upcoming" && user?.role === 'doctor' && (
           <View
             style={[
               tw`w-full bg-white rounded-[12px] p-[24px] border border-[#DAE1E7] gap-[16px] mb-8`,
@@ -693,6 +556,7 @@ export default function AppointmentDetailsScreen() {
 
             {/* Row of 2 buttons */}
             <View style={tw`flex-row gap-[12px]`}>
+
               {appointment.appointment_status !== "closed" && (
                 <TouchableOpacity
                   onPress={() =>
@@ -701,10 +565,10 @@ export default function AppointmentDetailsScreen() {
                       { text: "Close Appointment", style: "destructive", onPress: () => handleCloseAppointment() },
                     ])
                   }
-                  style={tw`flex-1 bg-[#16A34A] py-3 px-4 rounded-[10px] items-center justify-center`}
+                  style={tw`flex-1 bg-[#16A34A] py-3 px-2 items-center justify-center`}
                   activeOpacity={0.8}
                 >
-                  <Text style={tw`text-white font-semibold text-[14px] font-['Inter'] text-center`}>Close Appointment</Text>
+                  <Text style={tw`text-white font-semibold text-[12px] font-['Inter'] text-center`}>Close Appointment</Text>
                 </TouchableOpacity>
               )}
 
@@ -715,10 +579,10 @@ export default function AppointmentDetailsScreen() {
                     { text: "Delete", style: "destructive", onPress: () => handleDelete(appointment.id) },
                   ])
                 }
-                style={tw`flex-1 bg-[#DC2626] py-3 px-4 rounded-[10px] items-center justify-center`}
+                style={tw`flex-1 bg-[#DC2626] py-3 px-2 items-center justify-center`}
                 activeOpacity={0.8}
               >
-                <Text style={tw`text-white font-semibold text-[14px] font-['Inter'] text-center`}>Delete Appointment</Text>
+                <Text style={tw`text-white font-semibold text-[12px] font-['Inter'] text-center`}>Delete Appointment</Text>
               </TouchableOpacity>
             </View>
 
@@ -740,7 +604,7 @@ export default function AppointmentDetailsScreen() {
           </View>
         )}
 
-        {selectedTab === "Completed" && (
+        {selectedTab === "Completed" && user?.role !== 'doctor' && user?.role?.toLowerCase() !== 'doctor' && (
           <View
             style={[
               tw`w-full bg-white rounded-[12px] p-[24px] border border-[#DAE1E7] gap-[16px] mb-8`,

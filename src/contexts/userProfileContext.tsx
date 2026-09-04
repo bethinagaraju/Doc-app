@@ -60,9 +60,17 @@ export const UserProfileProvider = ({ children }: { children: ReactNode }) => {
 
     const json = await res.json()
     if (res.ok && json && json.userData) {
-      setUserData(json.userData as UserData)
-      console.log('Fetched user data from the context:', json.userData)
-      return json.userData as UserData
+      const fetchedUser = json.userData;
+      const ts = new Date().getTime();
+      if (fetchedUser.generalUser?.profile_picture) {
+        fetchedUser.generalUser.profile_picture += (fetchedUser.generalUser.profile_picture.includes('?') ? '&' : '?') + 't=' + ts;
+      }
+      if (fetchedUser.doctorProfile?.profile_picture) {
+        fetchedUser.doctorProfile.profile_picture += (fetchedUser.doctorProfile.profile_picture.includes('?') ? '&' : '?') + 't=' + ts;
+      }
+      setUserData(fetchedUser as UserData)
+      console.log('Fetched user data from the context:', fetchedUser)
+      return fetchedUser as UserData
     }
 
     throw new Error(json?.message || 'Failed to fetch user data')

@@ -3,6 +3,7 @@ import { View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-na
 import { Bell } from 'lucide-react-native';
 import tw from 'twrnc';
 import { useAccessToken } from '../../screens/contexts/AccessTokenContext';
+import { useUser } from '../../screens/contexts/UserContext';
 
 interface DocProfileTopBarProps {
     userProfilePicture?: string;
@@ -15,12 +16,15 @@ const DocProfileTopBar: React.FC<DocProfileTopBarProps> = ({
     appName = 'DocApp',
     onNotificationPress,
 }) => {
+    const { user, fetchUserData } = useUser();
     const { accessToken } = useAccessToken();
-    const [doctor, setDoctor] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
+    const [localDoctor, setLocalDoctor] = useState<any>(null);
+    const [loading, setLoading] = useState(false);
 
     const fetchDoctorData = async () => {
+        if (!accessToken) return;
         try {
+            setLoading(true);
             const response = await fetch('https://api.docapp.co.in/api/auth/get-user-data', {
                 method: 'GET',
                 headers: {
@@ -32,7 +36,7 @@ const DocProfileTopBar: React.FC<DocProfileTopBarProps> = ({
             if (!response.ok) throw new Error('Failed to fetch doctor data');
 
             const result = await response.json();
-            setDoctor(result.userData);
+            setLocalDoctor(result.userData);
         } catch (error) {
             console.error('Error fetching doctor info:', error);
         } finally {
@@ -41,10 +45,20 @@ const DocProfileTopBar: React.FC<DocProfileTopBarProps> = ({
     };
 
     useEffect(() => {
-        fetchDoctorData();
-    }, []);
+        if (!user && accessToken) {
+            fetchDoctorData();
+        }
+    }, [user, accessToken]);
 
-    const profilePicUri = userProfilePicture || doctor?.doctorProfile?.profile_picture || 'https://via.placeholder.com/150';
+    const rawPic =
+        userProfilePicture ||
+        user?.doctorProfile?.profile_picture ||
+        user?.generalUser?.profile_picture ||
+        localDoctor?.doctorProfile?.profile_picture ||
+        localDoctor?.generalUser?.profile_picture;
+
+    const profilePicUri = rawPic || 'https://res.cloudinary.com/dwshjkk42/image/upload/v1751270760/doctor_8997187_mgopyu.png';
+
     return (
         /* Header - TopAppBar */
         <View style={tw`w-full max-w-[1280px] h-[64px] bg-[#F8F9FF] shadow-sm`}>
@@ -54,10 +68,11 @@ const DocProfileTopBar: React.FC<DocProfileTopBarProps> = ({
                 {/* Left Side Container (Profile Pic + App Title) */}
                 <View style={tw`flex-row items-center gap-3`}>
                     {/* Doctor profile picture */}
-                    {loading ? (
+                    {loading && !rawPic ? (
                         <ActivityIndicator size="small" color="#124CB8" style={tw`w-10 h-10`} />
                     ) : (
                         <Image
+                            key={profilePicUri}
                             source={{ uri: profilePicUri }}
                             style={tw`w-10 h-10 rounded-full border-2 border-[#DAE1FF]`}
                         />
