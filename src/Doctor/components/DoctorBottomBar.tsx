@@ -1,12 +1,13 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import tw from 'twrnc';
+import { useNavigation, useNavigationState } from "@react-navigation/native";
 
-type Tab = "Dashboard" | "Visits" | "Schedule" | "Profile";
+export type Tab = "Dashboard" | "Visits" | "Schedule" | "Profile";
 
 interface Props {
-    activeTab: Tab;
+    activeTab?: Tab;
     onTabPress?: (tab: Tab) => void;
 }
 
@@ -16,9 +17,33 @@ const TEXT = "#434653";
 const WHITE = "#EBEEFF";
 
 export default function DoctorBottomBar({
-    activeTab,
+    activeTab: propActiveTab,
     onTabPress,
 }: Props) {
+    const navigation = useNavigation<any>();
+    const state = useNavigationState((s) => s);
+
+    const getActiveRouteName = (navState: any): string => {
+        if (!navState) return 'DoctorDashboard';
+        const route = navState.routes[navState.index];
+        if (route?.state) {
+            return getActiveRouteName(route.state);
+        }
+        return route?.name || 'DoctorDashboard';
+    };
+
+    const currentRoute = getActiveRouteName(state);
+
+    const getResolvedActiveTab = (): Tab => {
+        if (propActiveTab) return propActiveTab;
+        if (currentRoute === 'DoctorProfile' || currentRoute === 'Account') return 'Profile';
+        if (currentRoute === 'AppointmentManagement' || currentRoute === 'DoctorCalendar') return 'Schedule';
+        if (currentRoute === 'AppointmentsScreen' || currentRoute === 'Healthfeed' || currentRoute === 'DoctorConsult') return 'Visits';
+        return 'Dashboard';
+    };
+
+    const activeTab = getResolvedActiveTab();
+
     const tabs: Tab[] = [
         "Dashboard",
         "Visits",
@@ -26,9 +51,33 @@ export default function DoctorBottomBar({
         "Profile",
     ];
 
+    const handlePress = (tab: Tab) => {
+        if (onTabPress) {
+            onTabPress(tab);
+            return;
+        }
+
+        if (tab === activeTab) return;
+
+        switch (tab) {
+            case "Dashboard":
+                navigation.navigate("DoctorDashboard");
+                break;
+            case "Visits":
+                navigation.navigate("AppointmentsScreen");
+                break;
+            case "Schedule":
+                navigation.navigate("AppointmentManagement");
+                break;
+            case "Profile":
+                navigation.navigate("DoctorProfile");
+                break;
+        }
+    };
+
     return (
         <View
-            style={tw`absolute bottom-0 left-0 right-0 bg-[#E4EFFF] px-2 py-3 rounded-t-3xl shadow-lg flex-row justify-between items-center`}
+            style={tw`absolute bottom-0 left-0 right-0 bg-[#E4EFFF] px-2 py-3 rounded-t-3xl shadow-lg flex-row justify-between items-center z-50`}
         >
             {tabs.map((tab) => {
                 const active = activeTab === tab;
@@ -37,7 +86,7 @@ export default function DoctorBottomBar({
                     <TouchableOpacity
                         key={tab}
                         activeOpacity={0.8}
-                        onPress={() => onTabPress?.(tab)}
+                        onPress={() => handlePress(tab)}
                         style={tw.style(
                             "items-center justify-center px-5 py-1 rounded-full",
                             active && "bg-[#124CB8]"

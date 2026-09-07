@@ -76,6 +76,7 @@ import FollowUpAppointmentScreen from './src/screens/FollowUpAppointmentScreen';
 import AppointmentDetailsScreen from './src/screens/(tabs)/AppointmentDetailsScreen';
 import PatientVideoCallScreen from './src/screens/PatientVideoCall';
 import CallCompletedScreen from './src/screens/CallCompletedScreen';
+import DoctorBottomBar from './src/Doctor/components/DoctorBottomBar';
 
 const Stack = createStackNavigator();
 
@@ -83,6 +84,18 @@ const AUTH_SCREENS = [
   'AuthLayout', 'Signup', 'Login', 'DoctorLogin', 'CompleteProfile',
   'AppointmentBooking', 'DoctorProfile', 'AppoinmentPaymentScreen',
   'DoctorNavigator'
+];
+
+const DOCTOR_BOTTOM_BAR_SCREENS = [
+  'DoctorDashboard',
+  'DoctorProfile',
+  'AppointmentManagement',
+  'AppointmentsScreen',
+  'Healthfeed',
+  'DoctorConsult',
+  'DoctorEarnings',
+  'DoctorCalendar',
+  'DoctorPatients',
 ];
 
 function RootNavigator() {
@@ -128,6 +141,12 @@ function RootNavigator() {
   };
 
   if (checkingLogin) return null;
+
+  const isDoctorBottomBarVisible = () => {
+    if (!isDoctorNavigatorActive() || isKeyboardVisible) return false;
+    if (!currentRoute || currentRoute === 'DoctorNavigator') return true;
+    return DOCTOR_BOTTOM_BAR_SCREENS.includes(currentRoute);
+  };
 
   return (
     <NavigationContainer ref={navigationRef} onReady={handleStateChange} onStateChange={handleStateChange}>
@@ -203,6 +222,7 @@ function RootNavigator() {
       <IncomingCallOverlay />
       
       {!isDoctorNavigatorActive() && !AUTH_SCREENS.includes(currentRoute || '') && !isKeyboardVisible && <Footer />}
+      {isDoctorBottomBarVisible() && <DoctorBottomBar />}
     </NavigationContainer>
   );
 }

@@ -16,6 +16,7 @@ import AppointmentCard, { AppointmentCardSkeleton } from "../../components/Appoi
 import { SafeAreaView } from "react-native-safe-area-context";
 import PatientAppointmentCard from "../../components/PatientAppointmentCard";
 import { useUser } from "../contexts/UserContext";
+import DoctorBottomBar from "../../Doctor/components/DoctorBottomBar";
 
 type PrescriptionItem = {
   drug: string;
@@ -133,7 +134,7 @@ export default function AppointmentsScreen() {
     <SafeAreaView style={tw`flex-1 bg-white`}>
       <ProfileTopBar />
 
-      <ScrollView contentContainerStyle={tw`pb-10`} stickyHeaderIndices={[1]} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={tw`pb-28`} stickyHeaderIndices={[1]} showsVerticalScrollIndicator={false}>
         <View style={tw`px-4 mt-6 gap-2 mb-2`}>
           <Text style={tw`text-[#191C1E] font-bold text-[24px] leading-[32px]`}>
             My Appointments
@@ -168,8 +169,6 @@ export default function AppointmentsScreen() {
           </ScrollView>
           
         </View>
-
-
 
         {/* Appointment List */}
         <View style={tw`p-4`}>

@@ -1,6 +1,6 @@
 
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,10 +8,10 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
-  ActivityIndicator,
   Platform,
   TextInput,
   KeyboardAvoidingView,
+  Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -24,6 +24,77 @@ import ProfileTopBar from '../../components/ProfileTopBar';
 import SlotDurationCard from '../components/SlotDurationCard';
 import ConsultationFeesCard from '../components/ConsultationFeesCard';
 import WeeklyScheduleSection from '../components/WeeklyScheduleSection';
+import DoctorBottomBar from '../components/DoctorBottomBar';
+
+const AppointmentManagementSkeleton = () => {
+  const pulseAnim = useRef(new Animated.Value(0.4)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 0.9,
+          duration: 750,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 0.4,
+          duration: 750,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, [pulseAnim]);
+
+  return (
+    <SafeAreaView style={tw`flex-1 bg-[#F8F9FF]`}>
+      <ProfileTopBar />
+      <ScrollView style={tw`p-4`} contentContainerStyle={tw`pb-28`} showsVerticalScrollIndicator={false}>
+        <Animated.View style={[tw`gap-4`, { opacity: pulseAnim }]}>
+          {/* Slot Duration Card Skeleton */}
+          <View style={tw`bg-white rounded-2xl p-5 border border-[#C3C6D5]/30 gap-4 shadow-sm`}>
+            <View style={tw`w-44 h-5 bg-gray-200 rounded`} />
+            <View style={tw`w-64 h-3.5 bg-gray-200 rounded`} />
+            <View style={tw`flex-row gap-2 mt-1`}>
+              {[15, 30, 45, 60].map((val) => (
+                <View key={val} style={tw`flex-1 h-11 bg-gray-200 rounded-xl`} />
+              ))}
+            </View>
+          </View>
+
+          {/* Consultation Fee Card Skeleton */}
+          <View style={tw`bg-white rounded-2xl p-5 border border-[#C3C6D5]/30 gap-4 shadow-sm`}>
+            <View style={tw`w-40 h-5 bg-gray-200 rounded`} />
+            <View style={tw`w-56 h-3.5 bg-gray-200 rounded`} />
+            <View style={tw`flex-row gap-3 items-center mt-1`}>
+              <View style={tw`flex-1 h-12 bg-gray-200 rounded-xl`} />
+              <View style={tw`w-28 h-12 bg-gray-200 rounded-xl`} />
+            </View>
+          </View>
+
+          {/* Weekly Schedule Section Skeleton */}
+          <View style={tw`bg-white rounded-2xl p-5 border border-[#C3C6D5]/30 gap-4 shadow-sm mb-10`}>
+            <View style={tw`w-48 h-5 bg-gray-200 rounded`} />
+            <View style={tw`w-60 h-3.5 bg-gray-200 rounded`} />
+
+            {['Monday', 'Tuesday', 'Wednesday'].map((day) => (
+              <View key={day} style={tw`p-4 rounded-xl bg-gray-50 border border-gray-100 gap-3 mt-2`}>
+                <View style={tw`flex-row justify-between items-center`}>
+                  <View style={tw`w-24 h-5 bg-gray-200 rounded`} />
+                  <View style={tw`w-16 h-6 bg-gray-200 rounded-full`} />
+                </View>
+                <View style={tw`flex-row gap-3`}>
+                  <View style={tw`flex-1 h-10 bg-gray-200 rounded-lg`} />
+                  <View style={tw`flex-1 h-10 bg-gray-200 rounded-lg`} />
+                </View>
+              </View>
+            ))}
+          </View>
+        </Animated.View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
 
 interface ScheduleItem {
   day: string;
@@ -289,12 +360,7 @@ const AppointmentManagementScreen = () => {
   };
 
   if (loading) {
-    return (
-      <SafeAreaView style={tw`flex-1 items-center justify-center`}>
-        <ActivityIndicator size="large" color="#F8F9FF" />
-        <Text style={tw`text-green-700 mt-2`}>Loading Doctor Data...</Text>
-      </SafeAreaView>
-    );
+    return <AppointmentManagementSkeleton />;
   }
 
   return (
@@ -310,7 +376,7 @@ const AppointmentManagementScreen = () => {
 
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={tw`flex-1`}>
-        <ScrollView style={tw`p-4`}>
+        <ScrollView style={tw`p-4`} contentContainerStyle={tw`pb-28`} showsVerticalScrollIndicator={false}>
 
           <View style={tw`gap-4`}>
             <SlotDurationCard

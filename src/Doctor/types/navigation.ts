@@ -20,6 +20,7 @@ export type DoctorStackParamList = {
   Availability: undefined;
   Certifications: undefined;
   ConsultationFees: undefined;
+  AccountSecurity: undefined;
   AddSpecialization: undefined;
   AddTimeSlot: undefined;
   Ray: undefined;

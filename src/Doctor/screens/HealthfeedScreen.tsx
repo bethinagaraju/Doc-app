@@ -46,11 +46,12 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
   Alert,
 } from 'react-native';
 import tw from 'twrnc';
 import PageLayout from '../../components/PageLayout';
+import { AppointmentCardSkeleton } from '../../components/AppointmentCard';
+import DoctorBottomBar from '../components/DoctorBottomBar';
 
 type Appointment = {
   id: number;
@@ -162,8 +163,6 @@ export default function AppointmentsScreen() {
     return true;
   });
 
-  if (loading) return <ActivityIndicator size="large" style={tw`mt-10`} />;
-
   return (
     <PageLayout
       title="My Appointments"
@@ -190,8 +189,14 @@ export default function AppointmentsScreen() {
       </View>
 
       {/* Appointment List */}
-      <ScrollView style={tw`p-4`}>
-        {filteredAppointments.length === 0 ? (
+      <ScrollView style={tw`p-4`} contentContainerStyle={tw`pb-28`} showsVerticalScrollIndicator={false}>
+        {loading ? (
+          <>
+            <AppointmentCardSkeleton />
+            <AppointmentCardSkeleton />
+            <AppointmentCardSkeleton />
+          </>
+        ) : filteredAppointments.length === 0 ? (
           <Text style={tw`text-center mt-10 text-gray-500`}>
             No {selectedTab.toLowerCase()} appointments found
           </Text>

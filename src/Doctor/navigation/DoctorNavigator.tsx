@@ -30,6 +30,7 @@ import PrivacyPolicyScreen from '../screens/PrivacyPolicyScreen';
 import OpenSourceLicensesScreen from '../screens/OpenSourceLicensesScreen';
 import LiveLocationScreen from '../screens/LiveLocationScreen';
 import AIDoctorChatScreen from '../screens/AIDoctorChatScreen';
+import AccountSecurityScreen from '../screens/AccountSecurityScreen';
 import AppointmentsScreen from '../../screens/(tabs)/appointments';
 import FollowUpAppointmentScreen from '../../screens/FollowUpAppointmentScreen';
 import { View, Text } from 'react-native';
@@ -54,6 +55,7 @@ const DoctorNavigator = () => {
       initialRouteName="DoctorDashboard"
       screenOptions={{
         headerShown: false,
+        animation: 'fade',
         contentStyle: { backgroundColor: 'white' },
       }}
     >
@@ -77,6 +79,7 @@ const DoctorNavigator = () => {
       <Stack.Screen name="Availability" component={AvailabilityScreen} />
       <Stack.Screen name="Certifications" component={CertificationsScreen} />
       <Stack.Screen name="ConsultationFees" component={ConsultationFeesScreen} />
+      <Stack.Screen name="AccountSecurity" component={AccountSecurityScreen} />
       <Stack.Screen name="Ray" component={RayScreen} />
       <Stack.Screen name="Account" component={AccountScreen} />
       <Stack.Screen name="CashlessSettings" component={CashlessSettingsScreen} />

@@ -79,6 +79,7 @@ const EarningsSnapshot: React.FC<EarningsSnapshotProps> = ({
                         {percentageChange}
                     </Text>
                 </View>
+
             </View>
 
             {/* Visual Bar Chart Container */}

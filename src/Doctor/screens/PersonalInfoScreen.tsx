@@ -1,10 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, Alert, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  TextInput,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  Animated,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { DoctorStackParamList } from '../types/navigation';
-import DoctorHeader from '../components/DoctorHeader';
 import tw from 'twrnc';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useAccessToken } from '../../screens/contexts/AccessTokenContext';
@@ -13,8 +23,9 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import DocProfileTopBar from '../components/DocProfileTopBar';
 import ProfilePhotoSection from '../components/ProfilePhotoSection';
 import DocStatCard from '../components/DocStatCard';
-import AccountSecuritySettings from '../components/AccountSecuritySettings';
+import DoctorAddressSection from '../components/DoctorAddressSection';
 import { Picker } from '@react-native-picker/picker';
+import { Mail, Phone, Calendar, Briefcase, UserCheck, Sparkles } from 'lucide-react-native';
 
 const SPECIALIZATION_OPTIONS = [
   "General Physician",
@@ -64,19 +75,83 @@ const API_BASE = 'https://api.docapp.co.in';
 const API_GET_USER = `${API_BASE}/api/auth/get-user-data`;
 const API_UPDATE_PROFILE = `${API_BASE}/api/auth/profile/complete/doctor`;
 const API_UPLOAD_PHOTO = `${API_BASE}/api/auth/upload-photo`;
-const API_UPLOAD_BANK = `${API_BASE}/api/auth/upload/bank-details`;
-const API_ADD_ADDRESS = `${API_BASE}/api/address/addAddress`;
-const API_GET_ALL_ADDRESS = `${API_BASE}/api/address/getAllAddress`;
 
-// Type definition for Address
-interface Address {
-  id: number;
-  street: string;
-  city: string;
-  state: string;
-  pincode: string;
-  active: boolean;
-}
+const PersonalInfoSkeleton = () => {
+  const pulseAnim = useRef(new Animated.Value(0.4)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 0.9,
+          duration: 750,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 0.4,
+          duration: 750,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, [pulseAnim]);
+
+  return (
+    <SafeAreaView style={tw`flex-1 bg-[#F8F9FF]`}>
+      <DocProfileTopBar />
+      <ScrollView contentContainerStyle={tw`p-5 pb-28`} showsVerticalScrollIndicator={false}>
+        {/* Tabs Skeleton */}
+        <Animated.View style={[tw`flex-row justify-center mb-6 bg-[#EEF4FF] rounded-2xl p-1.5`, { opacity: pulseAnim }]}>
+          <View style={tw`flex-1 py-4 bg-[#DAE1FF]/80 rounded-xl mr-1`} />
+          <View style={tw`flex-1 py-4 bg-[#DAE1FF]/40 rounded-xl ml-1`} />
+        </Animated.View>
+
+        {/* Profile Avatar & Header Skeleton */}
+        <Animated.View style={[tw`w-full bg-white rounded-2xl p-6 items-center mb-5 border border-[#DAE1FF]/60`, { opacity: pulseAnim }]}>
+          <View style={tw`w-28 h-28 rounded-full bg-[#DAE1FF]/60 mb-4`} />
+          <View style={tw`w-48 h-6 bg-[#DAE1FF]/70 rounded-md mb-2`} />
+          <View style={tw`w-36 h-4 bg-[#DAE1FF]/50 rounded mb-3`} />
+          <View style={tw`flex-row gap-4 mt-2`}>
+            <View style={tw`w-28 h-4 bg-[#DAE1FF]/40 rounded`} />
+            <View style={tw`w-28 h-4 bg-[#DAE1FF]/40 rounded`} />
+          </View>
+        </Animated.View>
+
+        {/* Stats Card Skeleton */}
+        <Animated.View style={[tw`w-full bg-[#3766D2]/40 rounded-2xl p-6 mb-5 h-[150px] justify-between`, { opacity: pulseAnim }]}>
+          <View style={tw`w-32 h-4 bg-white/40 rounded`} />
+          <View style={tw`w-24 h-8 bg-white/60 rounded-md`} />
+          <View style={tw`w-40 h-4 bg-white/40 rounded`} />
+        </Animated.View>
+
+        {/* Current Details Card Skeleton */}
+        <Animated.View style={[tw`w-full bg-white rounded-2xl p-5 mb-5 border border-[#DAE1FF]/60 gap-3`, { opacity: pulseAnim }]}>
+          <View style={tw`w-44 h-5 bg-[#DAE1FF]/70 rounded mb-2`} />
+          {[1, 2, 3, 4].map((i) => (
+            <View key={i} style={tw`p-3.5 bg-[#F8F9FF] rounded-xl flex-row items-center gap-3 border border-[#DAE1FF]/40`}>
+              <View style={tw`w-6 h-6 rounded-full bg-[#DAE1FF]/60`} />
+              <View style={tw`flex-1 gap-1.5`}>
+                <View style={tw`w-24 h-3 bg-[#DAE1FF]/40 rounded`} />
+                <View style={tw`w-48 h-4 bg-[#DAE1FF]/60 rounded`} />
+              </View>
+            </View>
+          ))}
+        </Animated.View>
+
+        {/* Form Card Skeleton */}
+        <Animated.View style={[tw`w-full bg-white rounded-2xl p-5 border border-[#DAE1FF]/60 gap-3.5`, { opacity: pulseAnim }]}>
+          <View style={tw`w-48 h-5 bg-[#DAE1FF]/70 rounded mb-1`} />
+          {[1, 2, 3, 4].map((i) => (
+            <View key={i} style={tw`gap-1.5`}>
+              <View style={tw`w-24 h-3.5 bg-[#DAE1FF]/50 rounded`} />
+              <View style={tw`w-full h-12 bg-[#F8F9FF] rounded-xl border border-[#DAE1FF]/40`} />
+            </View>
+          ))}
+        </Animated.View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
 
 const PersonalInfoScreen = () => {
   const navigation = useNavigation<DoctorNavigationProp>();
@@ -84,10 +159,11 @@ const PersonalInfoScreen = () => {
   const { fetchUserData } = useUser();
   const [personalInfo, setPersonalInfo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
-  // 🔀 Tab State: 'personal' | 'bank' | 'address'
-  const [activeTab, setActiveTab] = useState<'personal' | 'bank' | 'address'>('personal');
+  // 🔀 Tab State: 'personal' | 'address'
+  const [activeTab, setActiveTab] = useState<'personal' | 'address'>('personal');
 
   // 📝 Personal Form State
   const [form, setForm] = useState({
@@ -96,24 +172,6 @@ const PersonalInfoScreen = () => {
     specialization: '',
     license_number: '',
     practice_start_date: '',
-  });
-
-  // 🏦 Bank Form State
-  const [bankForm, setBankForm] = useState({
-    beneficiary_name: '',
-    account_number: '',
-    confirm_account_number: '',
-    ifsc_code: '',
-  });
-
-  // 📍 Address State
-  const [addresses, setAddresses] = useState<Address[]>([]);
-  const [addressLoading, setAddressLoading] = useState(false);
-  const [addressForm, setAddressForm] = useState({
-    street: '',
-    city: '',
-    state: '',
-    pincode: ''
   });
 
   // ================================================================================================
@@ -169,41 +227,9 @@ const PersonalInfoScreen = () => {
     }
   };
 
-  // ================================================================================================
-  // 📍 Fetch Addresses
-  // ================================================================================================
-  const fetchAddresses = async () => {
-    try {
-      setAddressLoading(true);
-      const response = await fetch(API_GET_ALL_ADDRESS, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-        },
-        credentials: 'include',
-      });
-      const data = await response.json();
-
-      if (response.ok && data.addresses) {
-        setAddresses(data.addresses);
-      }
-    } catch (error) {
-      console.error('Error fetching addresses:', error);
-    } finally {
-      setAddressLoading(false);
-    }
-  };
-
   useEffect(() => {
     fetchData();
   }, []);
-
-  // Fetch addresses when tab switches to 'address'
-  useEffect(() => {
-    if (activeTab === 'address') {
-      fetchAddresses();
-    }
-  }, [activeTab]);
 
   const handleConfirmDate = (date: Date) => {
     const year = date.getFullYear();
@@ -243,7 +269,7 @@ const PersonalInfoScreen = () => {
         Alert.alert('Error', data.message || 'Upload failed');
         return;
       }
-      Alert.alert('Success', 'Profile picture updated!');
+      Alert.alert('Success', 'Profile picture updated successfully!');
       fetchData();
       fetchUserData(accessToken);
     } catch (error) {
@@ -259,6 +285,7 @@ const PersonalInfoScreen = () => {
   // ================================================================================================
   const handleUpdateProfile = async () => {
     try {
+      setSaving(true);
       const payload = {
         ...form,
         practice_start_date: form.practice_start_date,
@@ -286,99 +313,8 @@ const PersonalInfoScreen = () => {
     } catch (error) {
       console.error('❌ Network Error:', error);
       Alert.alert('Network Error', 'Please try again later.');
-    }
-  };
-
-  // ================================================================================================
-  // 🏦 Update Bank Details
-  // ================================================================================================
-  const handleUpdateBankDetails = async () => {
-    if (!bankForm.beneficiary_name || !bankForm.account_number || !bankForm.ifsc_code) {
-      Alert.alert("Missing Fields", "Please fill in all bank details.");
-      return;
-    }
-    if (bankForm.account_number !== bankForm.confirm_account_number) {
-      Alert.alert("Mismatch", "Account numbers do not match.");
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const payload = {
-        beneficiary_name: bankForm.beneficiary_name,
-        account_number: bankForm.account_number,
-        ifsc_code: bankForm.ifsc_code
-      };
-
-      const response = await fetch(API_UPLOAD_BANK, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
-        },
-        credentials: 'include',
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        Alert.alert('Success', 'Bank details updated successfully!');
-        setBankForm({ beneficiary_name: '', account_number: '', confirm_account_number: '', ifsc_code: '' });
-      } else {
-        Alert.alert('Error', data.message || 'Failed to update bank details');
-      }
-    } catch (error) {
-      console.error('❌ Network Error:', error);
-      Alert.alert('Network Error', 'Please try again later.');
     } finally {
-      setLoading(false);
-    }
-  };
-
-  // ================================================================================================
-  // 📍 Add New Address
-  // ================================================================================================
-  const handleAddAddress = async () => {
-    // Validation
-    if (!addressForm.street || !addressForm.city || !addressForm.state || !addressForm.pincode) {
-      Alert.alert('Missing Fields', 'Please fill in all address fields.');
-      return;
-    }
-
-    try {
-      setAddressLoading(true);
-      const payload = {
-        street: addressForm.street,
-        city: addressForm.city,
-        state: addressForm.state,
-        pincode: addressForm.pincode
-      };
-
-      const response = await fetch(API_ADD_ADDRESS, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
-        },
-        credentials: 'include',
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        Alert.alert('Success', 'Address added successfully!');
-        setAddressForm({ street: '', city: '', state: '', pincode: '' }); // Reset form
-        fetchAddresses(); // Refresh list
-      } else {
-        Alert.alert('Error', data.message || 'Failed to add address');
-      }
-    } catch (error) {
-      console.error('❌ Network Error:', error);
-      Alert.alert('Network Error', 'Please try again later.');
-    } finally {
-      setAddressLoading(false);
+      setSaving(false);
     }
   };
 
@@ -446,51 +382,37 @@ const PersonalInfoScreen = () => {
   };
 
   if (loading || !personalInfo) {
-    return (
-      <View style={tw`flex-1 bg-green-700 justify-center items-center`}>
-        <ActivityIndicator size="large" color="#fff" />
-        <Text style={tw`text-green-100 text-lg mt-3`}>Loading...</Text>
-      </View>
-    );
+    return <PersonalInfoSkeleton />;
   }
 
   return (
     <SafeAreaView style={tw`flex-1 bg-[#F8F9FF]`}>
-
       <View>
         <DocProfileTopBar userProfilePicture={personalInfo?.profilePicture} />
       </View>
 
-
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={tw`flex-1`}>
-        <ScrollView contentContainerStyle={tw`p-5 pb-20`}>
+        <ScrollView contentContainerStyle={tw`p-5 pb-28`} showsVerticalScrollIndicator={false}>
 
-          {/* 🔀 Tabs Switcher */}
-          <View style={tw`flex-row justify-center mb-6 bg-white rounded-full p-1 shadow-sm`}>
+          {/* 🔀 Tabs Switcher in Present Blue Theme */}
+          <View style={tw`flex-row justify-center mb-6 bg-[#EEF4FF] border border-[#DAE1FF] rounded-2xl p-1.5 shadow-sm`}>
             <TouchableOpacity
+              activeOpacity={0.85}
               onPress={() => setActiveTab('personal')}
-              style={tw`flex-1 py-3 rounded-full items-center ${activeTab === 'personal' ? 'bg-green-600' : 'bg-transparent'}`}
+              style={tw`flex-1 py-3 rounded-xl items-center ${activeTab === 'personal' ? 'bg-[#124CB8] shadow-sm' : 'bg-transparent'}`}
             >
-              <Text style={tw`font-bold text-xs ${activeTab === 'personal' ? 'text-white' : 'text-gray-500'}`}>
-                Personal
+              <Text style={tw`font-semibold text-sm ${activeTab === 'personal' ? 'text-white' : 'text-[#434653]'}`}>
+                Personal Info
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
+              activeOpacity={0.85}
               onPress={() => setActiveTab('address')}
-              style={tw`flex-1 py-3 rounded-full items-center ${activeTab === 'address' ? 'bg-green-600' : 'bg-transparent'}`}
+              style={tw`flex-1 py-3 rounded-xl items-center ${activeTab === 'address' ? 'bg-[#124CB8] shadow-sm' : 'bg-transparent'}`}
             >
-              <Text style={tw`font-bold text-xs ${activeTab === 'address' ? 'text-white' : 'text-gray-500'}`}>
-                Address
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setActiveTab('bank')}
-              style={tw`flex-1 py-3 rounded-full items-center ${activeTab === 'bank' ? 'bg-green-600' : 'bg-transparent'}`}
-            >
-              <Text style={tw`font-bold text-xs ${activeTab === 'bank' ? 'text-white' : 'text-gray-500'}`}>
-                Bank Info
+              <Text style={tw`font-semibold text-sm ${activeTab === 'address' ? 'text-white' : 'text-[#434653]'}`}>
+                Clinic Address
               </Text>
             </TouchableOpacity>
           </View>
@@ -499,243 +421,204 @@ const PersonalInfoScreen = () => {
                                      VIEW 1: PERSONAL INFO
           ============================================================================ */}
           {activeTab === 'personal' && (
-            <>
+            <View style={tw`gap-5`}>
               {/* Profile Photo Section */}
               <ProfilePhotoSection
                 profilePicture={personalInfo.profilePicture}
                 name={personalInfo.name}
                 specialization={personalInfo.specialization}
+                experienceYears={calculateExperience(personalInfo.practiceStartDate).replace(' years', '').replace(' year', '') || '14'}
+                licenseNumber={personalInfo.licenseNumber || 'MC-99201-B'}
                 onUploadPress={handlePhotoUpload}
-                onDeletePress={handleDeletePhoto}
               />
-
-              {/* Read-Only Info */}
-              <View style={tw`bg-white rounded-2xl p-5 shadow-sm mb-5`}>
-                <Text style={tw`text-lg font-bold text-green-700 mb-4`}>Current Details</Text>
-                <Text style={tw`mb-1 text-gray-700`}>Email: {personalInfo.email}</Text>
-                <Text style={tw`mb-1 text-gray-700`}>Phone: {personalInfo.phone}</Text>
-                <Text style={tw`mb-1 text-gray-700`}>Practice Start: {personalInfo.practiceStartDate}</Text>
-                <Text style={tw`mb-1 text-gray-700`}>Experience: {calculateExperience(personalInfo.practiceStartDate)}</Text>
-              </View>
 
               {/* Stats Card */}
-              <View style={tw`mb-6`}>
-                <DocStatCard
-                  patientSatisfaction="4.9/5.0"
-                  totalConsultations="1,240+"
-                />
-              </View>
+              <DocStatCard
+                patientSatisfaction="4.9/5.0"
+                totalConsultations="1,240+"
+              />
 
-              {/* Editable Form */}
-              <View style={tw`bg-white rounded-2xl p-5 shadow-sm`}>
-                <Text style={tw`text-lg font-bold text-green-700 mb-4`}>Update Personal Info</Text>
-
-                <Text style={tw`text-xs text-gray-500 mb-1 ml-1`}>Date of Birth</Text>
-                <TextInput
-                  placeholder="YYYY-MM-DD"
-                  value={form.date_of_birth}
-                  onChangeText={(t) => setForm({ ...form, date_of_birth: t })}
-                  style={tw`border border-gray-300 rounded p-3 mb-3 bg-gray-50`}
-                />
-
-                <Text style={tw`text-xs text-gray-500 mb-1 ml-1`}>Gender</Text>
-                <View style={tw`border border-gray-300 rounded mb-3 bg-gray-50 overflow-hidden justify-center h-12`}>
-                  <Picker
-                    selectedValue={form.gender}
-                    onValueChange={(itemValue) => setForm({ ...form, gender: itemValue })}
-                    style={tw`w-full`}
-                  >
-                    <Picker.Item label="Select Gender" value="" color="#9CA3AF" />
-                    {GENDER_OPTIONS.map((gender, index) => (
-                      <Picker.Item key={index} label={gender} value={gender} color="#1F2937" />
-                    ))}
-                  </Picker>
-                </View>
-
-                <Text style={tw`text-xs text-gray-500 mb-1 ml-1`}>Specialization</Text>
-                <View style={tw`border border-gray-300 rounded mb-3 bg-gray-50 overflow-hidden justify-center h-12`}>
-                  <Picker
-                    selectedValue={form.specialization}
-                    onValueChange={(itemValue) => setForm({ ...form, specialization: itemValue })}
-                    style={tw`w-full`}
-                  >
-                    <Picker.Item label="Select Specialization" value="" color="#9CA3AF" />
-                    {SPECIALIZATION_OPTIONS.map((spec, index) => (
-                      <Picker.Item key={index} label={spec} value={spec} color="#1F2937" />
-                    ))}
-                  </Picker>
-                </View>
-
-                <Text style={tw`text-xs text-gray-500 mb-1 ml-1`}>License Number</Text>
-                <TextInput
-                  placeholder="Medical License No."
-                  value={form.license_number}
-                  onChangeText={(t) => setForm({ ...form, license_number: t })}
-                  style={tw`border border-gray-300 rounded p-3 mb-3 bg-gray-50`}
-                />
-
-                <Text style={tw`text-xs text-gray-500 mb-1 ml-1`}>Practice Start Date</Text>
-                <TouchableOpacity
-                  onPress={() => setDatePickerVisibility(true)}
-                  style={tw`border border-gray-300 rounded p-3 mb-5 bg-gray-50`}
-                >
-                  <Text style={form.practice_start_date ? tw`text-gray-800` : tw`text-gray-400`}>
-                    {form.practice_start_date || "YYYY-MM"}
+              {/* Current Details Card */}
+              <View
+                style={[
+                  tw`w-full bg-white rounded-[16px] border border-[#DAE1FF]/80 overflow-hidden`,
+                  {
+                    shadowColor: '#102A43',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.05,
+                    shadowRadius: 16,
+                    elevation: 3,
+                  },
+                ]}
+              >
+                <View style={tw`bg-[#EEF4FF] border-b border-[#DAE1FF] px-5 py-4 flex-row items-center gap-2.5`}>
+                  <View style={tw`w-8 h-8 rounded-full bg-[#124CB8]/10 justify-center items-center`}>
+                    <UserCheck size={17} color="#124CB8" />
+                  </View>
+                  <Text style={tw`text-[18px] font-semibold text-[#011D35] font-['Inter']`}>
+                    Current Account Details
                   </Text>
-                </TouchableOpacity>
+                </View>
 
-                <DateTimePickerModal
-                  isVisible={isDatePickerVisible}
-                  mode="date"
-                  onConfirm={handleConfirmDate}
-                  onCancel={() => setDatePickerVisibility(false)}
-                />
+                <View style={tw`p-5 gap-3`}>
+                  <View style={tw`flex-row items-center gap-3 p-3 bg-[#F8F9FF] rounded-xl border border-[#DAE1FF]/60`}>
+                    <Mail size={18} color="#124CB8" />
+                    <View style={tw`flex-1`}>
+                      <Text style={tw`text-[11px] font-semibold text-[#434653] uppercase`}>Email Address</Text>
+                      <Text style={tw`text-[14px] font-medium text-[#011D35]`}>{personalInfo.email || 'Not specified'}</Text>
+                    </View>
+                  </View>
 
-                <TouchableOpacity style={tw`bg-emerald-500 rounded-full px-6 py-3 items-center`} onPress={handleUpdateProfile}>
-                  <Text style={tw`text-white font-bold text-base`}>Save Personal Info</Text>
-                </TouchableOpacity>
+                  <View style={tw`flex-row items-center gap-3 p-3 bg-[#F8F9FF] rounded-xl border border-[#DAE1FF]/60`}>
+                    <Phone size={18} color="#124CB8" />
+                    <View style={tw`flex-1`}>
+                      <Text style={tw`text-[11px] font-semibold text-[#434653] uppercase`}>Phone Number</Text>
+                      <Text style={tw`text-[14px] font-medium text-[#011D35]`}>{personalInfo.phone || 'Not specified'}</Text>
+                    </View>
+                  </View>
+
+                  <View style={tw`flex-row items-center gap-3 p-3 bg-[#F8F9FF] rounded-xl border border-[#DAE1FF]/60`}>
+                    <Calendar size={18} color="#124CB8" />
+                    <View style={tw`flex-1`}>
+                      <Text style={tw`text-[11px] font-semibold text-[#434653] uppercase`}>Practice Started</Text>
+                      <Text style={tw`text-[14px] font-medium text-[#011D35]`}>{personalInfo.practiceStartDate || 'Not specified'}</Text>
+                    </View>
+                  </View>
+
+                  <View style={tw`flex-row items-center gap-3 p-3 bg-[#F8F9FF] rounded-xl border border-[#DAE1FF]/60`}>
+                    <Briefcase size={18} color="#124CB8" />
+                    <View style={tw`flex-1`}>
+                      <Text style={tw`text-[11px] font-semibold text-[#434653] uppercase`}>Total Experience</Text>
+                      <Text style={tw`text-[14px] font-medium text-[#011D35]`}>{calculateExperience(personalInfo.practiceStartDate)}</Text>
+                    </View>
+                  </View>
+                </View>
               </View>
 
-              <View style={tw`mt-6`}>
-                <AccountSecuritySettings />
+              {/* Editable Form Card */}
+              <View
+                style={[
+                  tw`w-full bg-white rounded-[16px] border border-[#DAE1FF]/80 overflow-hidden`,
+                  {
+                    shadowColor: '#102A43',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.05,
+                    shadowRadius: 16,
+                    elevation: 3,
+                  },
+                ]}
+              >
+                <View style={tw`bg-[#EEF4FF] border-b border-[#DAE1FF] px-5 py-4 flex-row items-center gap-2.5`}>
+                  <View style={tw`w-8 h-8 rounded-full bg-[#124CB8]/10 justify-center items-center`}>
+                    <Sparkles size={17} color="#124CB8" />
+                  </View>
+                  <View>
+                    <Text style={tw`text-[18px] font-semibold text-[#011D35] font-['Inter']`}>
+                      Update Personal Info
+                    </Text>
+                    <Text style={tw`text-[12px] text-[#434653]`}>
+                      Keep your professional profile credentials current
+                    </Text>
+                  </View>
+                </View>
+
+                <View style={tw`p-5 gap-3.5`}>
+                  <View>
+                    <Text style={tw`text-[13px] font-semibold text-[#434653] mb-1.5 ml-0.5`}>Date of Birth</Text>
+                    <TextInput
+                      placeholder="YYYY-MM-DD"
+                      placeholderTextColor="#9CA3AF"
+                      value={form.date_of_birth}
+                      onChangeText={(t) => setForm({ ...form, date_of_birth: t })}
+                      style={tw`border border-[#DAE1FF] rounded-xl px-4 py-3 text-[14px] text-[#011D35] bg-[#F8F9FF]`}
+                    />
+                  </View>
+
+                  <View>
+                    <Text style={tw`text-[13px] font-semibold text-[#434653] mb-1.5 ml-0.5`}>Gender</Text>
+                    <View style={tw`border border-[#DAE1FF] rounded-xl bg-[#F8F9FF] overflow-hidden justify-center h-12`}>
+                      <Picker
+                        selectedValue={form.gender}
+                        onValueChange={(itemValue) => setForm({ ...form, gender: itemValue })}
+                        style={tw`w-full`}
+                      >
+                        <Picker.Item label="Select Gender" value="" color="#9CA3AF" />
+                        {GENDER_OPTIONS.map((gender, index) => (
+                          <Picker.Item key={index} label={gender} value={gender} color="#011D35" />
+                        ))}
+                      </Picker>
+                    </View>
+                  </View>
+
+                  <View>
+                    <Text style={tw`text-[13px] font-semibold text-[#434653] mb-1.5 ml-0.5`}>Specialization</Text>
+                    <View style={tw`border border-[#DAE1FF] rounded-xl bg-[#F8F9FF] overflow-hidden justify-center h-12`}>
+                      <Picker
+                        selectedValue={form.specialization}
+                        onValueChange={(itemValue) => setForm({ ...form, specialization: itemValue })}
+                        style={tw`w-full`}
+                      >
+                        <Picker.Item label="Select Specialization" value="" color="#9CA3AF" />
+                        {SPECIALIZATION_OPTIONS.map((spec, index) => (
+                          <Picker.Item key={index} label={spec} value={spec} color="#011D35" />
+                        ))}
+                      </Picker>
+                    </View>
+                  </View>
+
+                  <View>
+                    <Text style={tw`text-[13px] font-semibold text-[#434653] mb-1.5 ml-0.5`}>Medical License Number</Text>
+                    <TextInput
+                      placeholder="e.g. MC-99201-B"
+                      placeholderTextColor="#9CA3AF"
+                      value={form.license_number}
+                      onChangeText={(t) => setForm({ ...form, license_number: t })}
+                      style={tw`border border-[#DAE1FF] rounded-xl px-4 py-3 text-[14px] text-[#011D35] bg-[#F8F9FF]`}
+                    />
+                  </View>
+
+                  <View>
+                    <Text style={tw`text-[13px] font-semibold text-[#434653] mb-1.5 ml-0.5`}>Practice Start Date</Text>
+                    <TouchableOpacity
+                      activeOpacity={0.8}
+                      onPress={() => setDatePickerVisibility(true)}
+                      style={tw`border border-[#DAE1FF] rounded-xl px-4 py-3.5 bg-[#F8F9FF]`}
+                    >
+                      <Text style={form.practice_start_date ? tw`text-[#011D35] text-[14px]` : tw`text-gray-400 text-[14px]`}>
+                        {form.practice_start_date || "YYYY-MM"}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  <DateTimePickerModal
+                    isVisible={isDatePickerVisible}
+                    mode="date"
+                    onConfirm={handleConfirmDate}
+                    onCancel={() => setDatePickerVisibility(false)}
+                  />
+
+                  <TouchableOpacity
+                    activeOpacity={0.85}
+                    style={tw`bg-[#124CB8] rounded-xl py-3.5 items-center justify-center mt-2 shadow-sm`}
+                    onPress={handleUpdateProfile}
+                    disabled={saving}
+                  >
+                    {saving ? (
+                      <ActivityIndicator color="#FFFFFF" size="small" />
+                    ) : (
+                      <Text style={tw`text-white font-bold text-[15px]`}>Save Personal Info</Text>
+                    )}
+                  </TouchableOpacity>
+                </View>
               </View>
-
-
-            </>
+            </View>
           )}
 
           {/* ============================================================================
-                                     VIEW 2: ADDRESS INFO (NEW)
+                                     VIEW 2: ADDRESS INFO
           ============================================================================ */}
           {activeTab === 'address' && (
-            <>
-              {/* Existing Addresses List */}
-              <View style={tw`bg-white rounded-2xl p-5 shadow-sm mb-5`}>
-                <Text style={tw`text-lg font-bold text-green-700 mb-4`}>Clinic Addresses</Text>
-
-                {addressLoading ? (
-                  <ActivityIndicator color="green" />
-                ) : addresses.length === 0 ? (
-                  <Text style={tw`text-gray-500 italic`}>No addresses added yet.</Text>
-                ) : (
-                  addresses.map((addr) => (
-                    <View key={addr.id} style={tw`border-b border-gray-100 py-3`}>
-                      <Text style={tw`font-bold text-gray-800`}>{addr.street}</Text>
-                      <Text style={tw`text-gray-600`}>{addr.city}, {addr.state} - {addr.pincode}</Text>
-                    </View>
-                  ))
-                )}
-              </View>
-
-              {/* Add Address Form */}
-              <View style={tw`bg-white rounded-2xl p-5 shadow-sm`}>
-                <Text style={tw`text-lg font-bold text-green-700 mb-2`}>Add New Address</Text>
-                <Text style={tw`text-gray-500 text-sm mb-4`}>Where is your clinic located?</Text>
-
-                <Text style={tw`text-xs text-gray-500 mb-1 ml-1`}>Street / Area</Text>
-                <TextInput
-                  placeholder="e.g. Rangashaipet"
-                  value={addressForm.street}
-                  onChangeText={(t) => setAddressForm({ ...addressForm, street: t })}
-                  style={tw`border border-gray-300 rounded p-3 mb-3 bg-gray-50`}
-                />
-
-                <View style={tw`flex-row justify-between`}>
-                  <View style={tw`flex-1 mr-2`}>
-                    <Text style={tw`text-xs text-gray-500 mb-1 ml-1`}>City</Text>
-                    <TextInput
-                      placeholder="e.g. Warangal"
-                      value={addressForm.city}
-                      onChangeText={(t) => setAddressForm({ ...addressForm, city: t })}
-                      style={tw`border border-gray-300 rounded p-3 mb-3 bg-gray-50`}
-                    />
-                  </View>
-                  <View style={tw`flex-1 ml-2`}>
-                    <Text style={tw`text-xs text-gray-500 mb-1 ml-1`}>Pincode</Text>
-                    <TextInput
-                      placeholder="e.g. 506002"
-                      value={addressForm.pincode}
-                      keyboardType="number-pad"
-                      onChangeText={(t) => setAddressForm({ ...addressForm, pincode: t })}
-                      style={tw`border border-gray-300 rounded p-3 mb-3 bg-gray-50`}
-                    />
-                  </View>
-                </View>
-
-                <Text style={tw`text-xs text-gray-500 mb-1 ml-1`}>State</Text>
-                <TextInput
-                  placeholder="e.g. Telangana"
-                  value={addressForm.state}
-                  onChangeText={(t) => setAddressForm({ ...addressForm, state: t })}
-                  style={tw`border border-gray-300 rounded p-3 mb-5 bg-gray-50`}
-                />
-
-                <TouchableOpacity
-                  style={tw`bg-emerald-500 rounded-full px-6 py-3 items-center`}
-                  onPress={handleAddAddress}
-                  disabled={addressLoading}
-                >
-                  {addressLoading ? (
-                    <ActivityIndicator color="#fff" />
-                  ) : (
-                    <Text style={tw`text-white font-bold text-base`}>Add Address</Text>
-                  )}
-                </TouchableOpacity>
-              </View>
-            </>
-          )}
-
-          {/* ============================================================================
-                                     VIEW 3: BANK INFO
-          ============================================================================ */}
-          {activeTab === 'bank' && (
-            <View style={tw`bg-white rounded-2xl p-5 shadow-sm`}>
-              <Text style={tw`text-lg font-bold text-green-700 mb-2`}>Bank Account Details</Text>
-              <Text style={tw`text-gray-500 text-sm mb-6`}>Please provide your bank details to receive payouts.</Text>
-
-              <Text style={tw`text-xs text-gray-500 mb-1 ml-1`}>Beneficiary Name</Text>
-              <TextInput
-                placeholder="Name as per Bank Records"
-                value={bankForm.beneficiary_name}
-                onChangeText={(t) => setBankForm({ ...bankForm, beneficiary_name: t })}
-                style={tw`border border-gray-300 rounded p-3 mb-4 bg-gray-50`}
-              />
-
-              <Text style={tw`text-xs text-gray-500 mb-1 ml-1`}>Account Number</Text>
-              <TextInput
-                placeholder="Enter Account Number"
-                value={bankForm.account_number}
-                keyboardType="number-pad"
-                secureTextEntry={true}
-                onChangeText={(t) => setBankForm({ ...bankForm, account_number: t })}
-                style={tw`border border-gray-300 rounded p-3 mb-4 bg-gray-50`}
-              />
-
-              <Text style={tw`text-xs text-gray-500 mb-1 ml-1`}>Confirm Account Number</Text>
-              <TextInput
-                placeholder="Re-enter Account Number"
-                value={bankForm.confirm_account_number}
-                keyboardType="number-pad"
-                onChangeText={(t) => setBankForm({ ...bankForm, confirm_account_number: t })}
-                style={tw`border border-gray-300 rounded p-3 mb-4 bg-gray-50`}
-              />
-
-              <Text style={tw`text-xs text-gray-500 mb-1 ml-1`}>IFSC Code</Text>
-              <TextInput
-                placeholder="e.g. HDFC0001234"
-                value={bankForm.ifsc_code}
-                autoCapitalize="characters"
-                onChangeText={(t) => setBankForm({ ...bankForm, ifsc_code: t })}
-                style={tw`border border-gray-300 rounded p-3 mb-6 bg-gray-50`}
-              />
-
-              <TouchableOpacity
-                style={tw`bg-emerald-500 rounded-full px-6 py-3 items-center`}
-                onPress={handleUpdateBankDetails}
-              >
-                <Text style={tw`text-white font-bold text-base`}>Save Bank Details</Text>
-              </TouchableOpacity>
-            </View>
+            <DoctorAddressSection />
           )}
 
         </ScrollView>

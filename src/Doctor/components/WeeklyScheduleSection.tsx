@@ -410,6 +410,8 @@ const WeeklyScheduleSection: React.FC<WeeklyScheduleSectionProps> = ({
         onCancel={() =>
           setPickerState((prev) => ({ ...prev, visible: false }))
         }
+        accentColor="#124CB8"
+        buttonTextColorIOS="#124CB8"
       />
     </View>
   );

@@ -151,7 +151,7 @@ const DoctorDashboardScreen = () => {
 
         <ScrollView
           style={tw`flex-1`}
-          contentContainerStyle={tw`p-4`}
+          contentContainerStyle={tw`p-4 pb-28`}
           showsVerticalScrollIndicator={false}
         >
           <View style={tw`mb-1`}>
@@ -240,28 +240,6 @@ const DoctorDashboardScreen = () => {
             </View>
           </View>
         </ScrollView>
-
-
-        <DoctorBottomBar
-          activeTab="Dashboard"
-          onTabPress={(tab) => {
-            switch (tab) {
-              case "Dashboard":
-                navigation.navigate("DoctorDashboard");
-                break;
-              case "Visits":
-                navigation.navigate("AppointmentsScreen");
-                break;
-              case "Schedule":
-                navigation.navigate("AppointmentManagement");
-                break;
-              case "Profile":
-                navigation.navigate("DoctorProfile");
-                break;
-            }
-          }}
-        />
-
       </SafeAreaView>
     </>
   );

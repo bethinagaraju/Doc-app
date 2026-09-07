@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { Bell } from 'lucide-react-native';
 import tw from 'twrnc';
 import { useAccessToken } from '../../screens/contexts/AccessTokenContext';
@@ -69,7 +69,7 @@ const DocProfileTopBar: React.FC<DocProfileTopBarProps> = ({
                 <View style={tw`flex-row items-center gap-3`}>
                     {/* Doctor profile picture */}
                     {loading && !rawPic ? (
-                        <ActivityIndicator size="small" color="#124CB8" style={tw`w-10 h-10`} />
+                        <View style={tw`w-10 h-10 rounded-full bg-[#DAE1FF] border-2 border-[#DAE1FF]`} />
                     ) : (
                         <Image
                             key={profilePicUri}

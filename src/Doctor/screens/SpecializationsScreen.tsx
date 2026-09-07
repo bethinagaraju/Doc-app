@@ -207,9 +207,17 @@ const SpecializationsScreen = ({ navigation }: any) => {
         showsVerticalScrollIndicator={false}
       >
         {statusLoading ? (
-          <View style={tw`flex-1 justify-center items-center py-20`}>
-            <ActivityIndicator size="large" color="#124CB8" />
-            <Text style={tw`text-sm font-medium text-[#434653] mt-3 font-['Inter']`}>Fetching KYC status...</Text>
+          <View style={tw`gap-5`}>
+            <View style={tw`bg-white p-6 rounded-3xl border border-[#C3C6D5]/20 shadow-sm items-center gap-3`}>
+              <View style={tw`w-14 h-14 rounded-full bg-[#DAE1FF]/60`} />
+              <View style={tw`w-48 h-6 bg-[#DAE1FF]/70 rounded`} />
+              <View style={tw`w-64 h-4 bg-[#DAE1FF]/40 rounded`} />
+            </View>
+            <View style={tw`bg-white p-6 rounded-3xl border border-[#C3C6D5]/20 shadow-sm gap-3`}>
+              <View style={tw`w-36 h-5 bg-[#DAE1FF]/70 rounded`} />
+              <View style={tw`h-14 bg-[#F8F9FF] rounded-2xl`} />
+              <View style={tw`h-14 bg-[#F8F9FF] rounded-2xl`} />
+            </View>
           </View>
         ) : account ? (
           /* ================= ONBOARDED ACCOUNT UI ================= */
