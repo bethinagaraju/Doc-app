@@ -12,9 +12,7 @@ import {
   CheckCircle2,
 } from 'lucide-react-native';
 import tw from 'twrnc';
-import ScheduleTimePickerModal, {
-  formatDisplay12Hr,
-} from './ScheduleTimePickerModal';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 export interface ScheduleItem {
   day: string;
@@ -43,6 +41,39 @@ const MODES = [
   { key: 'hybrid', label: 'Hybrid', icon: Layers },
 ];
 
+export const formatDisplay12Hr = (time24?: string): string => {
+  if (!time24 || !time24.includes(':')) return time24 || '';
+  const cleanStr = time24.replace(/(AM|PM)/gi, '').trim();
+  const [hStr, mStr] = cleanStr.split(':');
+  let h = parseInt(hStr, 10) || 0;
+  const m = parseInt(mStr, 10) || 0;
+  const isPM = /PM/i.test(time24) || h >= 12;
+  let hour12 = h % 12;
+  if (hour12 === 0) hour12 = 12;
+  const period = isPM ? 'PM' : 'AM';
+  const formattedMinutes = m.toString().padStart(2, '0');
+  return `${hour12}:${formattedMinutes} ${period}`;
+};
+
+const parseTimeToDate = (timeStr?: string): Date => {
+  const date = new Date();
+  if (!timeStr || !timeStr.includes(':')) {
+    date.setHours(9, 0, 0, 0);
+    return date;
+  }
+
+  const cleanStr = timeStr.replace(/(AM|PM)/gi, '').trim();
+  const [hStr, mStr] = cleanStr.split(':');
+  let h = parseInt(hStr, 10) || 0;
+  const m = parseInt(mStr, 10) || 0;
+
+  if (/PM/i.test(timeStr) && h < 12) h += 12;
+  if (/AM/i.test(timeStr) && h === 12) h = 0;
+
+  date.setHours(h, m, 0, 0);
+  return date;
+};
+
 const WeeklyScheduleSection: React.FC<WeeklyScheduleSectionProps> = ({
   schedule,
   openTimePicker,
@@ -62,8 +93,6 @@ const WeeklyScheduleSection: React.FC<WeeklyScheduleSectionProps> = ({
     breakIndex: number | null;
     breakField: 'start' | 'end' | null;
     initialTime: string;
-    title: string;
-    subtitle: string;
   }>({
     visible: false,
     dayIndex: null,
@@ -71,8 +100,6 @@ const WeeklyScheduleSection: React.FC<WeeklyScheduleSectionProps> = ({
     breakIndex: null,
     breakField: null,
     initialTime: '',
-    title: 'Select Time',
-    subtitle: '',
   });
 
   const handleOpenPicker = (
@@ -82,25 +109,17 @@ const WeeklyScheduleSection: React.FC<WeeklyScheduleSectionProps> = ({
     breakField: 'start' | 'end' | null = null
   ) => {
     const dayItem = schedule[dayIndex];
-    const dayName = dayItem?.day
-      ? dayItem.day.charAt(0).toUpperCase() + dayItem.day.slice(1)
-      : '';
 
     let initial = '';
-    let pickerTitle = 'Select Time';
 
     if (breakIndex !== null && breakField) {
       initial =
         dayItem?.breaks[breakIndex]?.[breakField] ||
         (breakField === 'start' ? '13:00' : '14:00');
-      pickerTitle =
-        breakField === 'start' ? 'Break Start Time' : 'Break End Time';
     } else if (field === 'loginTime') {
       initial = dayItem?.loginTime || '09:00';
-      pickerTitle = 'Start Working Hour';
     } else if (field === 'logoutTime') {
       initial = dayItem?.logoutTime || '17:00';
-      pickerTitle = 'End Working Hour';
     }
 
     setPickerState({
@@ -110,12 +129,14 @@ const WeeklyScheduleSection: React.FC<WeeklyScheduleSectionProps> = ({
       breakIndex,
       breakField,
       initialTime: initial,
-      title: pickerTitle,
-      subtitle: dayName,
     });
   };
 
-  const handleConfirmTime = (time24: string) => {
+  const handleConfirmDate = (selectedDate: Date) => {
+    const hours = selectedDate.getHours().toString().padStart(2, '0');
+    const minutes = selectedDate.getMinutes().toString().padStart(2, '0');
+    const time24 = `${hours}:${minutes}`;
+
     const { dayIndex, field, breakIndex, breakField } = pickerState;
     if (dayIndex === null) return;
 
@@ -132,10 +153,13 @@ const WeeklyScheduleSection: React.FC<WeeklyScheduleSectionProps> = ({
     } else {
       handleChange(dayIndex, field as keyof ScheduleItem, time24);
     }
+
+    setPickerState((prev) => ({ ...prev, visible: false }));
   };
 
   return (
     <View style={tw`w-full mt-4`}>
+
       {/* Header Section */}
       <View style={tw`bg-white border border-[#DAE1E7] rounded-2xl p-4 mb-4 shadow-sm`}>
         <View style={tw`flex-row items-center gap-2`}>
@@ -377,14 +401,13 @@ const WeeklyScheduleSection: React.FC<WeeklyScheduleSectionProps> = ({
         </Text>
       </TouchableOpacity>
 
-      {/* Custom Themed Time Picker Modal */}
-      <ScheduleTimePickerModal
-        visible={pickerState.visible}
-        initialTime={pickerState.initialTime}
-        title={pickerState.title}
-        subtitle={pickerState.subtitle}
-        onConfirm={handleConfirmTime}
-        onClose={() =>
+      {/* Ready-made React Native DateTimePicker Modal */}
+      <DateTimePickerModal
+        isVisible={pickerState.visible}
+        mode="time"
+        date={parseTimeToDate(pickerState.initialTime)}
+        onConfirm={handleConfirmDate}
+        onCancel={() =>
           setPickerState((prev) => ({ ...prev, visible: false }))
         }
       />

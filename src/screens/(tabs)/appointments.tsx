@@ -166,6 +166,7 @@ export default function AppointmentsScreen() {
               </TouchableOpacity>
             ))}
           </ScrollView>
+          
         </View>
 
 

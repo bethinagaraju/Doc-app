@@ -11,7 +11,7 @@ interface EarningsSnapshotProps {
 }
 
 const EarningsSnapshot: React.FC<EarningsSnapshotProps> = ({
-    amount = '$1,240.00',
+    amount = '$1,2400.00',
     percentageChange = '+12% vs yesterday',
     timeframe = 'Today',
     onFilterPress,
