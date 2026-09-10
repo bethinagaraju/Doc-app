@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { View, Text, Image, TouchableOpacity, useWindowDimensions } from 'react-native';
 import Svg, { Path, Rect, Circle } from 'react-native-svg';
 import tw from 'twrnc';
 
@@ -33,6 +33,10 @@ const getPatientCardProfilePicture = (appointment: any) => {
 };
 
 const PatientAppointmentCard: React.FC<PatientAppointmentCardProps> = ({ appointment, onPress }) => {
+    const { width } = useWindowDimensions();
+    const isTablet = width >= 768;
+    const iconSize = isTablet ? "22" : "16";
+
     const doctor = appointment?.doctor;
     const doctorName = doctor?.username || "Dr. Sarah Jenkins";
     const specialization = doctor?.doctorProfile?.specialization || "Cardiologist";
@@ -57,8 +61,8 @@ const PatientAppointmentCard: React.FC<PatientAppointmentCardProps> = ({ appoint
         return `${hours}:${minutes} ${ampm}`;
     };
 
-    const formattedTime = appointment?.appointment_start_time 
-        ? formatTime(appointment.appointment_start_time) 
+    const formattedTime = appointment?.appointment_start_time
+        ? formatTime(appointment.appointment_start_time)
         : '10:30 AM';
 
     // Status Styling
@@ -78,59 +82,67 @@ const PatientAppointmentCard: React.FC<PatientAppointmentCardProps> = ({ appoint
     const statusStyle = getStatusStyle(statusText);
 
     return (
-        <View style={tw`flex flex-col items-start p-5 gap-4 w-full max-w-[358px] bg-white border border-[#DEE3EB] rounded-[12px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] self-center mb-4`}>
+        <View style={tw`flex flex-col items-start p-4 md:p-6 gap-4 w-full max-w-[800px] bg-white border border-[#DEE3EB] rounded-[12px] shadow-sm self-center mb-4`}>
 
             {/* Top Header Section */}
-            <View style={tw`flex flex-row justify-between items-start w-full`}>
+            <View style={tw`flex flex-row justify-between items-start w-full gap-2`}>
                 {/* Doctor Info & Avatar */}
-                <View style={tw`flex flex-row items-start gap-4`}>
+                <View style={tw`flex flex-row items-center gap-4 flex-shrink`}>
                     <Image
                         key={profilePic}
                         source={{ uri: profilePic }}
-                        style={tw`w-14 h-14 rounded-[12px] bg-[#CAE6FF]`}
+                        style={tw`w-14 h-14 md:w-20 md:h-20 rounded-[12px] bg-[#CAE6FF] flex-shrink-0`}
                         resizeMode="cover"
                     />
-                    <View style={tw`flex flex-col justify-center h-14`}>
-                        <Text style={tw`font-bold text-[18px] leading-[28px] text-[#191C1E] font-['Public_Sans']`}>
+                    <View style={tw`flex flex-col justify-center flex-1`}>
+                        <Text
+                            style={tw`font-bold text-[18px] md:text-[22px] leading-tight text-[#191C1E] font-['Public_Sans']`}
+                            numberOfLines={1}
+                            adjustsFontSizeToFit
+                            minimumFontScale={0.8}
+                        >
                             {doctorName}
                         </Text>
-                        <Text style={tw`font-medium text-[14px] leading-[20px] text-[#124CB8] font-['Public_Sans']`}>
+                        <Text
+                            style={tw`font-medium text-[14px] md:text-[16px] leading-tight text-[#124CB8] font-['Public_Sans'] mt-1`}
+                            numberOfLines={1}
+                        >
                             {specialization}
                         </Text>
                     </View>
                 </View>
 
                 {/* Status Badge */}
-                <View style={tw`flex flex-col items-start px-3 py-1 ${statusStyle.bg} rounded-full`}>
-                    <Text style={tw`font-bold text-[12px] leading-[16px] ${statusStyle.text} font-['Public_Sans'] uppercase`}>
+                <View style={tw`flex flex-col justify-center items-center px-3 py-1 md:px-4 md:py-1.5 ${statusStyle.bg} rounded-full flex-shrink-0`}>
+                    <Text style={tw`font-bold text-[12px] md:text-[13px] ${statusStyle.text} font-['Public_Sans'] uppercase`}>
                         {statusText}
                     </Text>
                 </View>
             </View>
 
             {/* Horizontal Divider */}
-            <View style={tw`w-full h-[1px] bg-[#EEEEEE] my-1`} />
+            <View style={tw`w-full h-[1px] bg-[#EEEEEE]`} />
 
             {/* Date and Time Section */}
-            <View style={tw`flex flex-row items-center w-full relative h-5`}>
+            <View style={tw`flex flex-row items-center justify-start flex-wrap gap-x-6 gap-y-2 w-full`}>
                 {/* Date */}
-                <View style={tw`flex flex-row items-center gap-2 absolute left-0`}>
-                    <Svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#72777F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <View style={tw`flex flex-row items-center gap-2`}>
+                    <Svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none" stroke="#72777F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <Rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
                         <Path d="M16 2v4M8 2v4M3 10h18" />
                     </Svg>
-                    <Text style={tw`font-medium text-[14px] leading-[20px] text-[#191C1E] font-['Public_Sans']`}>
+                    <Text style={tw`font-medium text-[14px] md:text-[16px] text-[#191C1E] font-['Public_Sans']`}>
                         {formattedDate}
                     </Text>
                 </View>
 
                 {/* Time */}
-                <View style={tw`flex flex-row items-center gap-2 absolute left-[166px]`}>
-                    <Svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#72777F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <View style={tw`flex flex-row items-center gap-2`}>
+                    <Svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none" stroke="#72777F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <Circle cx="12" cy="12" r="10" />
                         <Path d="M12 6v6l4 2" />
                     </Svg>
-                    <Text style={tw`font-medium text-[14px] leading-[20px] text-[#191C1E] font-['Public_Sans']`}>
+                    <Text style={tw`font-medium text-[14px] md:text-[16px] text-[#191C1E] font-['Public_Sans']`}>
                         {formattedTime}
                     </Text>
                 </View>
@@ -142,24 +154,24 @@ const PatientAppointmentCard: React.FC<PatientAppointmentCardProps> = ({ appoint
                 const formattedCheckupDate = cDateObj && !isNaN(cDateObj.getTime())
                     ? cDateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
                     : 'N/A';
-                
+
                 const checkupTimeFormatted = `${formatTime(checkup.checkup_start_time)} - ${formatTime(checkup.checkup_end_time)}`;
 
                 return (
-                    <View style={tw`w-full bg-[#FFF7ED] border border-[#FED7AA] rounded-[8px] p-3 flex-col gap-1 mt-2`}>
+                    <View style={tw`w-full bg-[#FFF7ED] border border-[#FED7AA] rounded-[8px] p-3 md:p-4 flex-col gap-1`}>
                         <View style={tw`flex-row items-center gap-1.5`}>
                             <View style={tw`w-2 h-2 rounded-full bg-[#EA580C]`} />
-                            <Text style={tw`text-[#EA580C] font-bold text-[14px] font-['Public_Sans']`}>
+                            <Text style={tw`text-[#EA580C] font-bold text-[14px] md:text-[16px] font-['Public_Sans']`}>
                                 Follow-up Booked
                             </Text>
                         </View>
-                        <Text style={tw`text-[#42474E] text-[13px] font-['Public_Sans']`}>
+                        <Text style={tw`text-[#42474E] text-[13px] md:text-[15px] font-['Public_Sans']`}>
                             Date: <Text style={tw`font-semibold text-[#191C1E]`}>{formattedCheckupDate}</Text>
                         </Text>
-                        <Text style={tw`text-[#42474E] text-[13px] font-['Public_Sans']`}>
+                        <Text style={tw`text-[#42474E] text-[13px] md:text-[15px] font-['Public_Sans']`}>
                             Time: <Text style={tw`font-semibold text-[#191C1E]`}>{checkupTimeFormatted}</Text>
                         </Text>
-                        <Text style={tw`text-[#42474E] text-[13px] font-['Public_Sans']`}>
+                        <Text style={tw`text-[#42474E] text-[13px] md:text-[15px] font-['Public_Sans']`}>
                             Status: <Text style={tw`font-semibold capitalize text-[#191C1E]`}>{checkup.checkup_status}</Text>
                         </Text>
                     </View>
@@ -168,14 +180,14 @@ const PatientAppointmentCard: React.FC<PatientAppointmentCardProps> = ({ appoint
 
             {/* Action Button */}
             <TouchableOpacity
-                style={tw`flex flex-row justify-center items-center py-3 gap-2 w-full bg-[#E8E9EF] rounded-[8px] mt-2`}
-                activeOpacity={0.8}
+                style={tw`flex flex-row justify-center items-center py-3 md:py-4 gap-2 w-full bg-[#E8E9EF] rounded-[8px] mt-1`}
+                activeOpacity={0.7}
                 onPress={onPress}
             >
-                <Text style={tw`font-semibold text-[16px] leading-[24px] text-center text-[#0C1D29] font-['Public_Sans']`}>
+                <Text style={tw`font-semibold text-[16px] md:text-[18px] text-center text-[#0C1D29] font-['Public_Sans']`}>
                     View Details
                 </Text>
-                <Svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0C1D29" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <Svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none" stroke="#0C1D29" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <Path d="M5 12h14M12 5l7 7-7 7" />
                 </Svg>
             </TouchableOpacity>

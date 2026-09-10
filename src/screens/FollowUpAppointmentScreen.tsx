@@ -14,6 +14,8 @@ import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ArrowLeft } from "lucide-react-native";
 import tw from "twrnc";
+import Svg, { Path } from 'react-native-svg';
+import DateSelector from './user_components/DateSelector';
 import { useAccessToken } from "./contexts/AccessTokenContext";
 import { useUser } from "./contexts/UserContext";
 
@@ -63,6 +65,33 @@ type RootStackParamList = {
 
 type FollowUpAppointmentScreenRouteProp = RouteProp<RootStackParamList, "FollowUpAppointment">;
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
+const getSlotPeriod = (slotStr: string): 'morning' | 'afternoon' | 'evening' => {
+  const startTime = slotStr.split('-')[0]?.trim();
+  if (!startTime) return 'morning';
+  const hour = parseInt(startTime.split(':')[0], 10);
+  if (isNaN(hour)) return 'morning';
+
+  if (hour < 12) {
+    return 'morning';
+  } else if (hour >= 12 && hour < 16) {
+    return 'afternoon';
+  } else {
+    return 'evening';
+  }
+};
+
+const formatSlotStart12Hr = (slotStr: string) => {
+  const start = slotStr.split('-')[0]?.trim();
+  if (!start) return slotStr;
+  const timeParts = start.split(':');
+  let hour = parseInt(timeParts[0], 10);
+  const minute = timeParts[1] || '00';
+  if (isNaN(hour)) return slotStr;
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  hour = hour % 12 || 12;
+  return `${hour}:${minute} ${ampm}`;
+};
 
 const FollowUpAppointmentScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
@@ -340,216 +369,191 @@ const FollowUpAppointmentScreen: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={tw`flex-1 bg-green-600`} edges={["top", "left", "right"]}>
-      <StatusBar backgroundColor="#16a34a" barStyle="light-content" />
+    <SafeAreaView style={tw`flex-1 bg-white`}>
+      <StatusBar backgroundColor="#ffffff" barStyle="dark-content" />
+      {/* Header */}
+      <View style={tw`bg-white px-4 py-4 flex-row items-center border-b border-gray-100`}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={tw`mr-3`}>
+          <ArrowLeft size={24} color="#191C1E" />
+        </TouchableOpacity>
+        <Text style={tw`text-[#191C1E] text-lg font-bold`}>Book Follow-up Appointment</Text>
+      </View>
 
-      <View style={tw`flex-1 bg-green-50`}>
-        {/* Header */}
-        <View style={tw`bg-green-600 px-4 py-4 flex-row items-center`}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={tw`mr-3`}>
-            <ArrowLeft size={24} color="#fff" />
-          </TouchableOpacity>
-          <Text style={tw`text-white text-xl font-bold`}>Book Follow-up Appointment</Text>
-        </View>
-
-        <ScrollView style={tw`flex-1 p-4`}>
-          {/* Info about pricing */}
-          {/* <View style={tw`bg-blue-50 p-4 rounded-xl mb-4`}>
-          <Text style={tw`text-base text-blue-800 text-center font-medium`}>
-            📌 Follow-up is FREE if booked between 5-15 days after appointment completion.
-          </Text>
-          <Text style={tw`text-sm text-blue-600 text-center mt-2`}>
-            Before 5 days: Not eligible | After 15 days: Paid
-          </Text>
-        </View> */}
-
+      <ScrollView contentContainerStyle={tw`pb-10`} showsVerticalScrollIndicator={false}>
+        <View style={tw`p-4 mb-6`}>
           {/* Show parent appointment info */}
-          <View style={tw`bg-white p-4 rounded-xl mb-4 shadow-sm`}>
-            <Text style={tw`text-lg font-bold text-green-700 mb-2`}>Parent Appointment Details</Text>
-            <Text style={tw`text-base text-gray-700`}>
-              Appointment ID: #{parentAppointment.id}
-            </Text>
-            <Text style={tw`text-base text-gray-700`}>
-              Doctor ID: #{doctorUserId}
-            </Text>
-            <Text style={tw`text-base text-gray-700`}>
-              Completed on: {new Date(parentAppointment.appointment_date).toDateString()}
-            </Text>
-            <Text style={tw`text-base text-gray-700 capitalize`}>
-              Type: {parentAppointment.appointment_type}
-            </Text>
+          <View style={tw`bg-gray-50 border border-gray-100 p-4 rounded-2xl mb-6 shadow-sm`}>
+            <Text style={tw`text-[16px] font-bold text-[#191C1E] mb-2`}>Parent Appointment Details</Text>
+            <View style={tw`flex-row justify-between mb-1`}>
+              <Text style={tw`text-sm text-gray-500`}>Appointment ID:</Text>
+              <Text style={tw`text-sm font-semibold text-[#191C1E]`}>#{parentAppointment.id}</Text>
+            </View>
+            <View style={tw`flex-row justify-between mb-1`}>
+              <Text style={tw`text-sm text-gray-500`}>Completed on:</Text>
+              <Text style={tw`text-sm font-semibold text-[#191C1E]`}>
+                {new Date(parentAppointment.appointment_date).toDateString()}
+              </Text>
+            </View>
+            <View style={tw`flex-row justify-between`}>
+              <Text style={tw`text-sm text-gray-500`}>Type:</Text>
+              <Text style={tw`text-sm font-semibold text-[#191C1E] capitalize`}>
+                {parentAppointment.appointment_type}
+              </Text>
+            </View>
           </View>
 
           {/* Appointment Type Selector */}
-          <View style={tw`bg-white p-4 rounded-xl mb-4 shadow-sm`}>
-            <Text style={tw`text-lg font-bold text-green-700 mb-3`}>Appointment Type</Text>
-            <View style={tw`flex-row bg-green-100 rounded-xl p-2`}>
-              <TouchableOpacity
-                onPress={() => setFollowUpType("online_video")}
-                style={tw`flex-1 py-3 rounded-lg ${followUpType === "online_video" ? "bg-green-600" : "bg-transparent"
-                  }`}
-              >
-                <Text
-                  style={tw`text-center font-semibold ${followUpType === "online_video" ? "text-white" : "text-green-800"
-                    }`}
-                >
-                  Online Video
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setFollowUpType("in_person")}
-                style={tw`flex-1 py-3 rounded-lg ${followUpType === "in_person" ? "bg-green-600" : "bg-transparent"
-                  }`}
-              >
-                <Text
-                  style={tw`text-center font-semibold ${followUpType === "in_person" ? "text-white" : "text-green-800"
-                    }`}
-                >
-                  In Person
-                </Text>
-              </TouchableOpacity>
-            </View>
+          <View style={tw`flex-row justify-center mb-6 bg-gray-100 rounded-full p-1 shadow-sm`}>
+            <TouchableOpacity
+              onPress={() => setFollowUpType("online_video")}
+              style={tw`flex-1 py-3 rounded-full items-center ${followUpType === "online_video" ? "bg-[#124CB8] shadow-sm" : "bg-transparent"
+                }`}
+            >
+              <Text style={tw`font-bold text-sm ${followUpType === "online_video" ? "text-white" : "text-gray-500"
+                }`}>
+                Online / Video
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setFollowUpType("in_person")}
+              style={tw`flex-1 py-3 rounded-full items-center ${followUpType === "in_person" ? "bg-[#124CB8] shadow-sm" : "bg-transparent"
+                }`}
+            >
+              <Text style={tw`font-bold text-sm ${followUpType === "in_person" ? "text-white" : "text-gray-500"
+                }`}>
+                Offline / In-Clinic
+              </Text>
+            </TouchableOpacity>
           </View>
 
           {/* Availability Section */}
-          <View style={tw`bg-white rounded-xl shadow-sm p-4 mb-4`}>
-            <Text style={tw`text-lg font-bold text-green-700 mb-3`}>
-              Available Slots ({followUpType === "online_video" ? "ONLINE" : "OFFLINE"})
-            </Text>
+          {loadingSlots ? (
+            <ActivityIndicator size="large" color="#124CB8" style={tw`my-8`} />
+          ) : Object.keys(slotsByDate).length > 0 ? (
+            <>
+              {/* Date Selector */}
+              <View style={tw`mb-4`}>
+                <DateSelector
+                  slotsByDate={slotsByDate}
+                  selectedDate={selectedDate}
+                  setSelectedDate={(date: string) => {
+                    setSelectedDate(date);
+                    setSelectedSlot("");
+                  }}
+                />
+              </View>
 
-            {loadingSlots ? (
-              <ActivityIndicator size="large" color="#16a34a" style={tw`my-8`} />
-            ) : Object.keys(slotsByDate).length > 0 ? (
-              <>
-                {/* Date Selector */}
-                <Text style={tw`text-base font-semibold text-green-700 mb-2`}>Select Date</Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={tw`mb-4`}>
-                  {Object.keys(slotsByDate).map((date) => {
-                    const pricing = getFollowUpPricing(parentAppointment.appointment_date, date);
-                    return (
-                      <TouchableOpacity
-                        key={date}
-                        style={tw`px-4 py-3 mr-3 rounded-xl ${selectedDate === date ? "bg-green-600" : "bg-green-100"
-                          }`}
-                        onPress={() => {
-                          setSelectedDate(date);
-                          setSelectedSlot("");
-                        }}
-                      >
-                        <Text
-                          style={tw`text-base font-semibold ${selectedDate === date ? "text-white" : "text-green-800"
-                            }`}
-                        >
-                          {new Date(date).toLocaleDateString("en-US", {
-                            weekday: "short",
-                            month: "short",
-                            day: "numeric",
-                          })}
-                        </Text>
-                        <Text
-                          style={tw`text-xs mt-1 ${selectedDate === date ? "text-green-100" : pricing.free ? "text-green-600" : "text-yellow-600"
-                            }`}
-                        >
-                          {pricing.free ? "FREE" : pricing.eligible ? "PAID" : "N/A"}
-                        </Text>
-                      </TouchableOpacity>
-                    );
-                  })}
-                </ScrollView>
-
-                {/* Pricing indicator for selected date */}
-                {selectedDate && (
-                  <View
-                    style={tw`p-3 rounded-lg mb-4 ${getFollowUpPricing(parentAppointment.appointment_date, selectedDate).free
-                      ? "bg-green-100"
+              {/* Pricing indicator for selected date */}
+              {selectedDate && (
+                <View
+                  style={tw`p-3 rounded-xl mb-6 ${getFollowUpPricing(parentAppointment.appointment_date, selectedDate).free
+                    ? "bg-green-50 border border-green-200"
+                    : getFollowUpPricing(parentAppointment.appointment_date, selectedDate).eligible
+                      ? "bg-yellow-50 border border-yellow-200"
+                      : "bg-red-50 border border-red-200"
+                    }`}
+                >
+                  <Text
+                    style={tw`text-[13px] text-center font-semibold ${getFollowUpPricing(parentAppointment.appointment_date, selectedDate).free
+                      ? "text-green-700"
                       : getFollowUpPricing(parentAppointment.appointment_date, selectedDate).eligible
-                        ? "bg-yellow-100"
-                        : "bg-red-100"
+                        ? "text-yellow-700"
+                        : "text-red-700"
                       }`}
                   >
-                    <Text
-                      style={tw`text-sm text-center font-medium ${getFollowUpPricing(parentAppointment.appointment_date, selectedDate).free
-                        ? "text-green-800"
-                        : getFollowUpPricing(parentAppointment.appointment_date, selectedDate).eligible
-                          ? "text-yellow-800"
-                          : "text-red-800"
-                        }`}
-                    >
-                      {getFollowUpPricing(parentAppointment.appointment_date, selectedDate).message}
-                    </Text>
-                  </View>
-                )}
+                    {getFollowUpPricing(parentAppointment.appointment_date, selectedDate).message}
+                  </Text>
+                </View>
+              )}
 
-                {/* Time Slots */}
-                <Text style={tw`text-base font-semibold text-green-700 mb-2`}>Select Time Slot</Text>
-                {slotsByDate[selectedDate]?.slots?.length > 0 ? (
-                  <FlatList
-                    data={slotsByDate[selectedDate].slots}
-                    keyExtractor={(item, index) => `${item}_${index}`}
-                    numColumns={3}
-                    scrollEnabled={false}
-                    columnWrapperStyle={tw`justify-between mb-2`}
-                    renderItem={({ item }) => {
-                      const isSelected = selectedSlot === item;
-                      return (
-                        <TouchableOpacity
-                          onPress={() => setSelectedSlot(item)}
-                          style={tw`px-3 py-3 rounded-xl flex-1 mx-1 border ${isSelected
-                            ? "bg-green-600 border-green-700"
-                            : "bg-green-100 border-green-300"
-                            }`}
-                        >
-                          <Text
-                            style={tw`${isSelected ? "text-white" : "text-green-800"
-                              } font-semibold text-xs text-center`}
-                          >
-                            {item}
-                          </Text>
-                        </TouchableOpacity>
-                      );
-                    }}
-                  />
-                ) : (
-                  <Text style={tw`text-green-400 text-base`}>
+              {/* Time Slots */}
+              {slotsByDate[selectedDate]?.slots && slotsByDate[selectedDate].slots.length > 0 ? (() => {
+                const slots = slotsByDate[selectedDate].slots;
+                const morningSlots = slots.filter(s => getSlotPeriod(s) === 'morning');
+                const afternoonSlots = slots.filter(s => getSlotPeriod(s) === 'afternoon');
+                const eveningSlots = slots.filter(s => getSlotPeriod(s) === 'evening');
+
+                const renderSlotGroup = (title: string, periodSlots: string[], icon: string) => {
+                  if (periodSlots.length === 0) return null;
+                  return (
+                    <View style={tw`mb-6`}>
+                      <Text style={tw`text-[16px] font-bold text-[#191C1E] font-['Public_Sans'] mb-3`}>
+                        {icon}  {title}
+                      </Text>
+                      <View style={tw`flex-row flex-wrap -mx-1`}>
+                        {periodSlots.map((item, index) => {
+                          const isSelected = selectedSlot === item;
+                          return (
+                            <TouchableOpacity
+                              key={`${item}_${index}`}
+                              onPress={() => setSelectedSlot(item)}
+                              activeOpacity={0.8}
+                              style={[
+                                tw`justify-center items-center h-[46px] border rounded-[12px] m-1`,
+                                {
+                                  width: '30.5%',
+                                  borderColor: isSelected ? '#124CB8' : '#E6E9EC',
+                                  backgroundColor: isSelected ? '#F0F7FF' : '#fff',
+                                }
+                              ]}
+                            >
+                              <Text style={tw`text-[13px] font-['Public_Sans'] ${isSelected ? 'text-[#124CB8] font-bold' : 'text-[#41484D] font-medium'}`}>
+                                {formatSlotStart12Hr(item)}
+                              </Text>
+                            </TouchableOpacity>
+                          );
+                        })}
+                      </View>
+                    </View>
+                  );
+                };
+
+                return (
+                  <View style={tw`flex-col`}>
+                    {renderSlotGroup("Morning Slots", morningSlots, "☀️")}
+                    {renderSlotGroup("Afternoon Slots", afternoonSlots, "🌤️")}
+                    {renderSlotGroup("Evening Slots", eveningSlots, "🌙")}
+                  </View>
+                );
+              })() : (
+                <View style={tw`py-10 bg-gray-50 border border-gray-100 rounded-[16px] items-center justify-center`}>
+                  <Text style={tw`text-[#72777F] text-[15px] font-semibold font-['Public_Sans']`}>
                     No slots available for this date.
                   </Text>
-                )}
-              </>
-            ) : (
-              <Text style={tw`text-green-400 text-base text-center py-4`}>
+                </View>
+              )}
+
+              {/* Book Button */}
+              {selectedSlot && (
+                <TouchableOpacity
+                  style={tw`bg-[#124CB8] py-4 px-8 rounded-2xl flex-row justify-center items-center shadow-lg mt-2 mb-6 ${followUpLoading ? 'opacity-70' : ''}`}
+                  onPress={handleScheduleFollowUp}
+                  disabled={followUpLoading}
+                >
+                  {followUpLoading ? (
+                    <ActivityIndicator color="#fff" style={tw`mr-2`} />
+                  ) : (
+                    <Text style={tw`text-white text-[16px] font-semibold mr-2`}>
+                      Schedule Follow-up
+                    </Text>
+                  )}
+                  {!followUpLoading && (
+                    <Svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <Path d="M12.175 9H0V7H12.175L6.575 1.4L8 0L16 8L8 16L6.575 14.6L12.175 9Z" fill="white" />
+                    </Svg>
+                  )}
+                </TouchableOpacity>
+              )}
+            </>
+          ) : (
+            <View style={tw`py-10 bg-gray-50 border border-gray-100 rounded-[16px] items-center justify-center`}>
+              <Text style={tw`text-[#72777F] text-[15px] font-semibold font-['Public_Sans']`}>
                 No {followUpType === "online_video" ? "online" : "offline"} slots available.
               </Text>
-            )}
-          </View>
-
-          {/* Book Button */}
-          {selectedSlot && (
-            <View style={tw`mb-6`}>
-              <TouchableOpacity
-                onPress={handleScheduleFollowUp}
-                style={tw`bg-orange-500 py-4 rounded-full items-center justify-center mb-3`}
-                disabled={followUpLoading}
-              >
-                {followUpLoading ? (
-                  <ActivityIndicator color="#fff" />
-                ) : (
-                  <Text style={tw`text-white text-center font-bold text-base`}>
-                    Schedule Follow-up
-                  </Text>
-                )}
-              </TouchableOpacity>
-
-              {/* Cancel Button */}
-              <TouchableOpacity
-                onPress={() => navigation.goBack()}
-                style={tw`bg-gray-400 py-3 rounded-full`}
-              >
-                <Text style={tw`text-white text-center font-semibold`}>Cancel</Text>
-              </TouchableOpacity>
             </View>
           )}
-        </ScrollView>
-      </View>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

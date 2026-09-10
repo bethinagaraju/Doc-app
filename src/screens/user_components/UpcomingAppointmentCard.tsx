@@ -70,7 +70,7 @@ const UpcomingAppointmentCard = () => {
 
     return (
         <View
-            style={tw`mx-4 mt-5 px-6 py-6 rounded-2xl w-full max-w-[320px] self-center overflow-hidden bg-[#3766D2] shadow-2xl shadow-[#2558C3]/15`}>
+            style={tw`mt-5 px-6 py-6 rounded-2xl w-full max-w-[500px] self-center overflow-hidden bg-[#3766D2] shadow-2xl shadow-[#2558C3]/15`}>
 
             {/* Abstract Pulse Decoration using the provided PNG */}
             <View
@@ -97,7 +97,7 @@ const UpcomingAppointmentCard = () => {
                             color="#EBEEFF"
                         />
                     </View>
-                    <Text style={tw`text-xs font-semibold uppercase tracking-[0.6px] text-[#EBEEFF]`}>
+                    <Text style={tw`text-xs font-semibold uppercase tracking-[0.6px] text-[#EBEEFF] flex-shrink`}>
                         Next Appointment
                     </Text>
                 </View>
@@ -120,7 +120,7 @@ const UpcomingAppointmentCard = () => {
                         style={tw`items-center justify-center rounded-full self-center w-[56px] h-[56px] py-1 px-2 bg-[#EBEEFF]/20`}
                     >
                         <Text style={tw`text-xl font-semibold text-center text-[#EBEEFF]`}>{day}</Text>
-                        <Text style={tw`text-[14px] font-semibold text-center tracking-[0.6px] text-[#EBEEFF]`}>
+                        <Text style={tw`text-[14px] font-semibold text-center tracking-[0.6px] text-[#EBEEFF]`} numberOfLines={1}>
                             {month}
                         </Text>
                     </View>
@@ -128,7 +128,7 @@ const UpcomingAppointmentCard = () => {
                 </View>
 
                 {/* Bottom Row: Time & Call to Action button */}
-                <View style={tw`flex-row items-center justify-between w-full`}>
+                <View style={tw`flex-row flex-wrap items-center justify-between w-full gap-y-3`}>
                     <View style={tw`flex-row items-center gap-1`}>
                         <View style={tw`w-3 h-3 justify-center items-center`}>
                             <Icon

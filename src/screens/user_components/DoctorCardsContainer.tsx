@@ -1,9 +1,17 @@
 import React from 'react';
-import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, Image, TouchableOpacity, useWindowDimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
 
 const DoctorCardsContainer = () => {
+    const { width } = useWindowDimensions();
+
+    // Dynamic Card Width:
+    // On tiny phones (e.g. 320px width), the parent has 40px padding. Available space is 280px.
+    // If the card is 300px, it overflows. So we cap the card width at (width - 60) to leave room for gaps.
+    // On tablets (768px+), we expand the card to 340px for a more premium look.
+    const cardWidth = width >= 768 ? 340 : Math.min(300, width - 60);
+
     // Sample data array for multiple Doctor Cards looping 
     const doctors = [
         {
@@ -28,32 +36,18 @@ const DoctorCardsContainer = () => {
 
     return (
         /* Section Wrapper to center and align elements with other app blocks */
-        <View style={tw`flex-col self-center my-4 w-full max-w-[320px] gap-3`}>
+        <View style={tw`flex-col self-center my-4 w-full max-w-[600px] md:max-w-full md:px-8 gap-3`}>
             {/* Header Row: Title & See All Button */}
-            <View style={tw`flex-row justify-between items-center w-full h-7 mb-2`}>
+            <View style={tw`flex-row justify-between items-center w-full mb-2 gap-2`}>
                 <Text
-                    style={[
-                        tw`font-semibold`,
-                        {
-                            fontSize: 20,
-                            lineHeight: 28,
-                            color: '#011D35',
-                        }
-                    ]}
+                    style={tw`text-[20px] md:text-2xl font-semibold text-[#011D35] flex-shrink`}
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
                 >
                     Recommended Specialists
                 </Text>
-                <TouchableOpacity activeOpacity={0.7} onPress={() => { }}>
-                    <Text
-                        style={[
-                            tw`font-semibold tracking-[0.6px]`,
-                            {
-                                fontSize: 12,
-                                lineHeight: 16,
-                                color: '#124CB8',
-                            }
-                        ]}
-                    >
+                <TouchableOpacity activeOpacity={0.7}>
+                    <Text style={tw`text-[12px] md:text-sm font-semibold tracking-[0.6px] text-[#124CB8]`}>
                         See All
                     </Text>
                 </TouchableOpacity>
@@ -63,32 +57,21 @@ const DoctorCardsContainer = () => {
             <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{
-                    gap: 12,
-                }}
-                style={[
-                    tw`w-full`,
-                    {
-                        height: 160,
-                    },
-                ]}
+                contentContainerStyle={{ gap: 16 }}
+                style={tw`w-full`}
+                snapToInterval={cardWidth + 16}
+                decelerationRate="fast"
             >
                 {doctors.map((doc) => (
                     /* Doctor Card */
                     <View
                         key={doc.id}
                         style={[
-                            tw`flex-col bg-white border border-[#C3C6D5] rounded-xl px-4 py-4`,
+                            tw`flex-col bg-white border border-[#C3C6D5] rounded-xl px-4 py-4 justify-between shadow-sm`,
                             {
-                                width: 300,
-                                minWidth: 300,
-                                height: 150,
-                                shadowColor: 'rgba(0, 0, 0, 0.05)',
-                                shadowOffset: { width: 0, height: 1 },
-                                shadowOpacity: 1,
-                                shadowRadius: 2,
-                                elevation: 1,
-                                justifyContent: 'space-between',
+                                width: cardWidth,
+                                minHeight: 150,
+                                elevation: 2,
                             },
                         ]}
                     >
@@ -97,70 +80,36 @@ const DoctorCardsContainer = () => {
                             {/* Doctor Image */}
                             <Image
                                 source={{ uri: doc.imageUri }}
-                                style={[
-                                    tw`rounded-lg`,
-                                    {
-                                        width: 80,
-                                        height: 80,
-                                    },
-                                ]}
+                                style={tw`w-20 h-20 md:w-24 md:h-24 rounded-lg bg-gray-100`}
                             />
 
                             {/* Text Container */}
                             <View style={tw`flex-1 justify-center`}>
                                 {/* Doctor Name */}
                                 <Text
-                                    style={[
-                                        tw`font-semibold`,
-                                        {
-                                            fontSize: 15,
-                                            lineHeight: 20,
-                                            color: '#011D35',
-                                        },
-                                    ]}
+                                    style={tw`text-[15px] md:text-lg font-semibold text-[#011D35] leading-tight`}
                                     numberOfLines={1}
+                                    adjustsFontSizeToFit
+                                    minimumFontScale={0.8}
                                 >
                                     {doc.name}
                                 </Text>
 
                                 {/* Subtitle / Specialty */}
                                 <Text
-                                    style={[
-                                        tw`font-normal mt-1`,
-                                        {
-                                            fontSize: 13,
-                                            lineHeight: 18,
-                                            color: '#575F6B',
-                                        },
-                                    ]}
+                                    style={tw`text-[13px] md:text-base font-normal mt-1 text-[#575F6B]`}
                                     numberOfLines={1}
                                 >
                                     {doc.specialty}
                                 </Text>
 
                                 {/* Rating Row */}
-                                <View style={tw`flex-row items-center mt-1.5 gap-1`}>
-                                    <Icon name="star" size={11} color="#EAB308" />
-                                    <Text
-                                        style={[
-                                            tw`font-bold`,
-                                            {
-                                                fontSize: 12,
-                                                color: '#011D35',
-                                            },
-                                        ]}
-                                    >
+                                <View style={tw`flex-row flex-wrap items-center mt-1.5 gap-1`}>
+                                    <Icon name="star" size={12} color="#EAB308" />
+                                    <Text style={tw`text-[12px] md:text-sm font-bold text-[#011D35]`}>
                                         {doc.rating}
                                     </Text>
-                                    <Text
-                                        style={[
-                                            tw`font-semibold ml-1`,
-                                            {
-                                                fontSize: 12,
-                                                color: '#737684',
-                                            },
-                                        ]}
-                                    >
+                                    <Text style={tw`text-[12px] md:text-sm font-semibold ml-1 text-[#737684]`}>
                                         ({doc.reviews})
                                     </Text>
                                 </View>
@@ -168,21 +117,16 @@ const DoctorCardsContainer = () => {
                         </View>
 
                         {/* Horizontal Divider */}
-                        <View style={[tw`w-full border-t border-[#E4EFFF] mt-2`]} />
+                        <View style={tw`w-full border-t border-[#E4EFFF] mt-3`} />
 
                         {/* Bottom Row / Distance & Arrow Action Line */}
-                        <View style={tw`flex-row justify-between items-center w-full mt-1.5`}>
+                        <View style={tw`flex-row justify-between items-center w-full mt-2 gap-2`}>
                             {/* Distance Container */}
-                            <View style={tw`flex-row items-center gap-1`}>
-                                <Icon name="location-outline" size={12} color="#434653" />
+                            <View style={tw`flex-row items-center gap-1 flex-shrink`}>
+                                <Icon name="location-outline" size={14} color="#434653" />
                                 <Text
-                                    style={[
-                                        tw`font-semibold`,
-                                        {
-                                            fontSize: 12,
-                                            color: '#434653',
-                                        },
-                                    ]}
+                                    style={tw`text-[12px] md:text-sm font-semibold text-[#434653] flex-shrink`}
+                                    numberOfLines={1}
                                 >
                                     {doc.distance}
                                 </Text>

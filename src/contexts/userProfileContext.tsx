@@ -61,13 +61,7 @@ export const UserProfileProvider = ({ children }: { children: ReactNode }) => {
     const json = await res.json()
     if (res.ok && json && json.userData) {
       const fetchedUser = json.userData;
-      const ts = new Date().getTime();
-      if (fetchedUser.generalUser?.profile_picture) {
-        fetchedUser.generalUser.profile_picture += (fetchedUser.generalUser.profile_picture.includes('?') ? '&' : '?') + 't=' + ts;
-      }
-      if (fetchedUser.doctorProfile?.profile_picture) {
-        fetchedUser.doctorProfile.profile_picture += (fetchedUser.doctorProfile.profile_picture.includes('?') ? '&' : '?') + 't=' + ts;
-      }
+
       setUserData(fetchedUser as UserData)
       console.log('Fetched user data from the context:', fetchedUser)
       return fetchedUser as UserData

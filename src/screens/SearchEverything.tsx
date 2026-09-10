@@ -59,7 +59,7 @@ const SearchScreen = () => {
     { title: 'Notification', type: 'Account', icon: <Settings size={20} color="#202b6d" />, action: () => (navigation as any).navigate('Notification') },
     { title: 'Help Center', type: 'Support', icon: <HelpCircle size={20} color="#202b6d" />, action: () => (navigation as any).navigate('HelpCenter') },
     { title: 'Emergency Services', type: 'Support', icon: <HelpCircle size={20} color="#202b6d" />, action: () => (navigation as any).navigate('EmergencyServices') }
-   
+
     // ...add more as needed
   ];
 
@@ -89,8 +89,8 @@ const SearchScreen = () => {
         {/* Header */}
         <View style={tw`flex-row items-center justify-between mb-4`}>
           <View style={tw`flex-row items-center flex-1`}>
-            <Pressable 
-              onPress={() => navigation.goBack()} 
+            <Pressable
+              onPress={() => navigation.goBack()}
               style={tw`p-2 mr-3`}
             >
               <ArrowLeft size={24} color="#202b6d" />

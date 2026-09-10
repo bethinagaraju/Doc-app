@@ -253,6 +253,7 @@ const DoctorSlotsScreen = () => {
 
       <ScrollView contentContainerStyle={tw`pb-32`} showsVerticalScrollIndicator={false}>
         <View style={tw`p-4 mb-6`}>
+
           <View style={tw`flex-row justify-center mb-5 bg-gray-100 rounded-full p-1 shadow-sm`}>
             <TouchableOpacity
               onPress={() => setConsultationMode('online')}
@@ -319,7 +320,7 @@ const DoctorSlotsScreen = () => {
                       <Text style={tw`text-[16px] font-bold text-[#191C1E] font-['Public_Sans'] mb-3`}>
                         {icon}  {title}
                       </Text>
-                      <View style={tw`flex-row flex-wrap -mx-1`}>
+                      <View style={tw`flex-row flex-wrap gap-2`}>
                         {periodSlots.map((item, index) => {
                           const isSelected = selectedSlot === item;
                           return (
@@ -328,15 +329,14 @@ const DoctorSlotsScreen = () => {
                               onPress={() => setSelectedSlot(item)}
                               activeOpacity={0.8}
                               style={[
-                                tw`justify-center items-center h-[46px] border rounded-[12px] m-1`,
+                                tw`justify-center items-center min-h-[46px] border rounded-[12px] w-[31%] md:w-[23%] px-1`,
                                 {
-                                  width: '30.5%',
                                   borderColor: isSelected ? '#124CB8' : '#E6E9EC',
                                   backgroundColor: isSelected ? '#F0F7FF' : '#fff',
                                 }
                               ]}
                             >
-                              <Text style={tw`text-[13px] font-['Public_Sans'] ${isSelected ? 'text-[#124CB8] font-bold' : 'text-[#41484D] font-medium'}`}>
+                              <Text numberOfLines={1} style={tw`text-[13px] font-['Public_Sans'] ${isSelected ? 'text-[#124CB8] font-bold' : 'text-[#41484D] font-medium'}`}>
                                 {formatSlotStart12Hr(item)}
                               </Text>
                             </TouchableOpacity>

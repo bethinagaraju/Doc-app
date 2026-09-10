@@ -30,7 +30,7 @@ const FollowUpAppointmentCard: React.FC<FollowUpAppointmentCardProps> = ({ check
     <View style={tw`mb-4`}>
       <View
         style={[
-          tw`w-full bg-[#FFF7ED] rounded-[12px] p-[24px] border border-[#FED7AA] gap-[12px]`,
+          tw`w-full max-w-[600px] self-center bg-[#FFF7ED] rounded-[12px] p-4 md:p-6 border border-[#FED7AA] gap-[12px]`,
           {
             shadowColor: '#EA580C',
             shadowOffset: { width: 0, height: 4 },
@@ -41,46 +41,46 @@ const FollowUpAppointmentCard: React.FC<FollowUpAppointmentCardProps> = ({ check
         ]}
       >
 
-        <Text style={tw`text-[18px] font-semibold text-[#EA580C] font-['Inter'] leading-[24px] mb-[4px]`}>
+        <Text style={tw`text-[16px] md:text-[18px] font-semibold text-[#EA580C] font-['Inter'] leading-[24px] mb-[4px]`}>
           Follow-up Appointment Details
         </Text>
 
         {/* Follow-up ID */}
         <View style={tw`flex-row justify-between py-[8px] border-b border-[#FFEDD5]`}>
-          <Text style={tw`text-[14px] text-[#9A3412] font-['Inter']`}>Follow-up ID</Text>
-          <Text style={tw`text-[14px] text-[#7C2D12] font-semibold font-['Inter']`}>#{checkup.id}</Text>
+          <Text style={tw`text-[12px] md:text-[14px] flex-1 pr-2 text-[#9A3412] font-['Inter']`}>Follow-up ID</Text>
+          <Text style={tw`text-[12px] md:text-[14px] text-right flex-shrink-0 text-[#7C2D12] font-semibold font-['Inter']`}>#{checkup.id}</Text>
         </View>
 
         {/* Follow-up Date */}
         <View style={tw`flex-row justify-between py-[8px] border-b border-[#FFEDD5]`}>
-          <Text style={tw`text-[14px] text-[#9A3412] font-['Inter']`}>Follow-up Date</Text>
-          <Text style={tw`text-[14px] text-[#7C2D12] font-semibold font-['Inter']`}>{checkupDateFormatted}</Text>
+          <Text style={tw`text-[12px] md:text-[14px] flex-1 pr-2 text-[#9A3412] font-['Inter']`}>Follow-up Date</Text>
+          <Text style={tw`text-[12px] md:text-[14px] text-right flex-shrink-0 text-[#7C2D12] font-semibold font-['Inter']`}>{checkupDateFormatted}</Text>
         </View>
 
         {/* Follow-up Time */}
         <View style={tw`flex-row justify-between py-[8px] border-b border-[#FFEDD5]`}>
-          <Text style={tw`text-[14px] text-[#9A3412] font-['Inter']`}>Follow-up Time</Text>
-          <Text style={tw`text-[14px] text-[#7C2D12] font-semibold font-['Inter']`}>
+          <Text style={tw`text-[12px] md:text-[14px] flex-1 pr-2 text-[#9A3412] font-['Inter']`}>Follow-up Time</Text>
+          <Text style={tw`text-[12px] md:text-[14px] text-right flex-shrink-0 text-[#7C2D12] font-semibold font-['Inter']`}>
             {checkupTimeFormatted}
           </Text>
         </View>
 
         {/* Follow-up Status */}
         <View style={tw`flex-row justify-between py-[8px] border-b border-[#FFEDD5]`}>
-          <Text style={tw`text-[14px] text-[#9A3412] font-['Inter']`}>Status</Text>
-          <Text style={tw`text-[14px] text-[#7C2D12] font-semibold capitalize font-['Inter']`}>{checkup.checkup_status}</Text>
+          <Text style={tw`text-[12px] md:text-[14px] flex-1 pr-2 text-[#9A3412] font-['Inter']`}>Status</Text>
+          <Text style={tw`text-[12px] md:text-[14px] text-right flex-shrink-0 text-[#7C2D12] font-semibold capitalize font-['Inter']`}>{checkup.checkup_status}</Text>
         </View>
 
         {/* Payment Status */}
         <View style={tw`flex-row justify-between py-[8px]`}>
-          <Text style={tw`text-[14px] text-[#9A3412] font-['Inter']`}>Payment Required</Text>
-          <Text style={tw`text-[14px] text-[#7C2D12] font-semibold font-['Inter']`}>
+          <Text style={tw`text-[12px] md:text-[14px] flex-1 pr-2 text-[#9A3412] font-['Inter']`}>Payment Required</Text>
+          <Text style={tw`text-[12px] md:text-[14px] text-right flex-shrink-0 text-[#7C2D12] font-semibold font-['Inter']`}>
             {checkup.is_payment_required ? "Yes" : "No (Free)"}
           </Text>
         </View>
 
         <TouchableOpacity
-          style={tw`mt-2 bg-[#EA580C] py-[10px] rounded-[8px] items-center justify-center`}
+          style={tw`mt-2 bg-[#EA580C] py-2.5 md:py-3.5 rounded-[8px] items-center justify-center`}
           onPress={() => navigation.push('AppointmentDetails', { appointment: checkup, selectedTab: 'Upcoming' })}
         >
           <Text style={tw`text-white font-semibold font-['Inter']`}>See More</Text>

@@ -1,93 +1,3 @@
-// import React from 'react';
-// import { View, Text } from 'react-native';
-// import tw from 'twrnc';
-
-// interface AppointmentAdditionalInfoProps {
-//     appointmentId: number | string;
-//     paymentMode?: string;
-//     appointmentDate: string;
-//     startTime: string;
-//     endTime: string;
-//     status: string;
-//     type: string;
-// }
-
-// const AppointmentAdditionalInfoCard: React.FC<AppointmentAdditionalInfoProps> = ({
-//     appointmentId,
-//     paymentMode = 'Not specified',
-//     appointmentDate,
-//     startTime,
-//     endTime,
-//     status,
-//     type,
-// }) => {
-//     const formattedDate = appointmentDate ? new Date(appointmentDate).toDateString() : 'N/A';
-
-//     return (
-//         <View
-//             style={[
-//                 tw`w-full bg-white rounded-[12px] p-[24px] border border-[#DAE1E7] gap-[12px]`,
-//                 {
-//                     shadowColor: '#102A43',
-//                     shadowOffset: { width: 0, height: 4 },
-//                     shadowOpacity: 0.05,
-//                     shadowRadius: 20,
-//                     elevation: 4,
-//                 },
-//             ]}
-//         >
-//             <Text style={tw`text-[18px] font-semibold text-[#011D35] font-['Inter'] leading-[24px] mb-[4px]`}>
-//                 Additional Info
-//             </Text>
-
-//             {/* Appointment ID */}
-//             <View style={tw`flex-row justify-between py-[8px] border-b border-[#F0F3F6]`}>
-//                 <Text style={tw`text-[14px] text-[#434653] font-['Inter']`}>Appointment ID</Text>
-//                 <Text style={tw`text-[14px] text-[#011D35] font-semibold font-['Inter']`}>#{appointmentId}</Text>
-//             </View>
-
-//             {/* Payment Mode */}
-//             <View style={tw`flex-row justify-between py-[8px] border-b border-[#F0F3F6]`}>
-//                 <Text style={tw`text-[14px] text-[#434653] font-['Inter']`}>Payment Mode</Text>
-//                 <Text style={tw`text-[14px] text-[#011D35] font-semibold capitalize font-['Inter']`}>
-//                     {paymentMode || 'Not specified'}
-//                 </Text>
-//             </View>
-
-//             {/* Appointment Date */}
-//             <View style={tw`flex-row justify-between py-[8px] border-b border-[#F0F3F6]`}>
-//                 <Text style={tw`text-[14px] text-[#434653] font-['Inter']`}>Appointment Date</Text>
-//                 <Text style={tw`text-[14px] text-[#011D35] font-semibold font-['Inter']`}>{formattedDate}</Text>
-//             </View>
-
-//             {/* Appointment Time */}
-//             <View style={tw`flex-row justify-between py-[8px] border-b border-[#F0F3F6]`}>
-//                 <Text style={tw`text-[14px] text-[#434653] font-['Inter']`}>Appointment Time</Text>
-//                 <Text style={tw`text-[14px] text-[#011D35] font-semibold font-['Inter']`}>
-//                     {startTime} - {endTime}
-//                 </Text>
-//             </View>
-
-//             {/* Status */}
-//             <View style={tw`flex-row justify-between py-[8px] border-b border-[#F0F3F6]`}>
-//                 <Text style={tw`text-[14px] text-[#434653] font-['Inter']`}>Status</Text>
-//                 <Text style={tw`text-[14px] text-[#011D35] font-semibold capitalize font-['Inter']`}>{status}</Text>
-//             </View>
-
-//             {/* Type */}
-//             <View style={tw`flex-row justify-between py-[8px]`}>
-//                 <Text style={tw`text-[14px] text-[#434653] font-['Inter']`}>Type</Text>
-//                 <Text style={tw`text-[14px] text-[#011D35] font-semibold capitalize font-['Inter']`}>{type}</Text>
-//             </View>
-//         </View>
-//     );
-// };
-
-// export default AppointmentAdditionalInfoCard;
-
-
-
-
 
 import React from 'react';
 import { View, Text } from 'react-native';
@@ -280,10 +190,10 @@ const AppointmentAdditionalInfoCard: React.FC<
                         Appointment Information
                     </Text>
 
-                    <View style={tw`flex-row justify-between`}>
+                    <View style={tw`flex-row justify-between flex-wrap md:flex-nowrap gap-2 md:gap-3`}>
                         {/* Payment */}
                         <View
-                            style={tw`flex-1 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[14px] p-[14px] mr-[8px] items-start`}
+                            style={tw`flex-1 min-w-[90px] bg-[#F8FAFC] border border-[#E2E8F0] rounded-[14px] p-[14px] items-start`}
                         >
                             <View
                                 style={tw`w-[34px] h-[34px] rounded-[10px] bg-white border border-[#E2E8F0] items-center justify-center mb-[10px] shadow-sm`}
@@ -300,7 +210,6 @@ const AppointmentAdditionalInfoCard: React.FC<
                             </Text>
 
                             <Text
-                                numberOfLines={1}
                                 style={tw`text-[13px] text-[#0F172A] font-bold capitalize mt-[4px] font-['Inter']`}
                             >
                                 {paymentMode || 'Not specified'}
@@ -309,7 +218,7 @@ const AppointmentAdditionalInfoCard: React.FC<
 
                         {/* Type */}
                         <View
-                            style={tw`flex-1 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[14px] p-[14px] mx-[4px] items-start`}
+                            style={tw`flex-1 min-w-[90px] bg-[#F8FAFC] border border-[#E2E8F0] rounded-[14px] p-[14px] items-start`}
                         >
                             <View
                                 style={tw`w-[34px] h-[34px] rounded-[10px] bg-white border border-[#E2E8F0] items-center justify-center mb-[10px] shadow-sm`}
@@ -326,7 +235,6 @@ const AppointmentAdditionalInfoCard: React.FC<
                             </Text>
 
                             <Text
-                                numberOfLines={1}
                                 style={tw`text-[13px] text-[#0F172A] font-bold capitalize mt-[4px] font-['Inter']`}
                             >
                                 {type || 'N/A'}
@@ -335,7 +243,7 @@ const AppointmentAdditionalInfoCard: React.FC<
 
                         {/* Status */}
                         <View
-                            style={tw`flex-1 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[14px] p-[14px] ml-[8px] items-start`}
+                            style={tw`flex-1 min-w-[90px] bg-[#F8FAFC] border border-[#E2E8F0] rounded-[14px] p-[14px] items-start`}
                         >
                             <View
                                 style={tw`w-[34px] h-[34px] rounded-[10px] bg-white border border-[#E2E8F0] items-center justify-center mb-[10px] shadow-sm`}
@@ -358,16 +266,9 @@ const AppointmentAdditionalInfoCard: React.FC<
                             </Text>
 
                             <View
-                                style={[
-                                    tw`self-start rounded-full px-[8px] py-[3px] mt-[4px]`,
-                                    {
-                                        backgroundColor:
-                                            statusConfig.background,
-                                    },
-                                ]}
+                                style={tw`self-start rounded-full py-[3px] mt-[4px]`}
                             >
                                 <Text
-                                    numberOfLines={1}
                                     style={[
                                         tw`text-[11px] font-bold capitalize font-['Inter']`,
                                         {

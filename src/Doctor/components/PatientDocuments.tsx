@@ -48,7 +48,7 @@ const PatientDocuments: React.FC<PatientDocumentsProps> = ({
         /* Section - Documents Card Container */
         <View
             style={[
-                tw`w-full bg-white rounded-[12px] p-[24px] border border-[#DAE1E7] gap-[16px]`,
+                tw`w-full bg-white rounded-[12px] p-4 md:p-6 border border-[#DAE1E7] gap-[16px]`,
                 {
                     shadowColor: '#102A43',
                     shadowOffset: { width: 0, height: 4 },
@@ -112,22 +112,22 @@ const PatientDocuments: React.FC<PatientDocumentsProps> = ({
                                 style={tw`w-full border border-[#C3C6D5] rounded-[8px] p-[12px] flex-row items-center gap-[12px] bg-[#FAFBFD]`}
                             >
                                 {/* Left Image Thumbnail / Icon */}
-                                <TouchableOpacity onPress={() => onView?.(doc)} style={tw`justify-center items-center`}>
+                                <TouchableOpacity onPress={() => onView?.(doc)} style={tw`justify-center items-center flex-shrink-0`}>
                                     {doc.document_url ? (
                                         <Image
                                             source={{ uri: doc.document_url }}
-                                            style={tw`w-[40px] h-[40px] rounded-[6px] bg-[#DBE9FF]`}
+                                            style={tw`w-[40px] h-[40px] rounded-[6px] bg-[#DBE9FF] flex-shrink-0`}
                                             resizeMode="cover"
                                         />
                                     ) : (
-                                        <View style={tw`w-[40px] h-[40px] rounded-[6px] bg-[#EEF4FF] justify-center items-center`}>
+                                        <View style={tw`w-[40px] h-[40px] rounded-[6px] bg-[#EEF4FF] justify-center items-center flex-shrink-0`}>
                                             <ImageIcon size={20} color="#124CB8" />
                                         </View>
                                     )}
                                 </TouchableOpacity>
 
                                 {/* Document Name & Upload Metadata */}
-                                <TouchableOpacity onPress={() => onView?.(doc)} style={tw`flex-1 flex-col justify-center`}>
+                                <TouchableOpacity onPress={() => onView?.(doc)} style={tw`flex-1 flex-col justify-center min-w-0`}>
                                     <Text
                                         style={tw`text-[14px] font-semibold text-[#011D35] font-['Inter'] leading-[20px]`}
                                         numberOfLines={1}
@@ -143,7 +143,7 @@ const PatientDocuments: React.FC<PatientDocumentsProps> = ({
                                 </TouchableOpacity>
 
                                 {/* Right Action Buttons: View, Replace, Delete */}
-                                <View style={tw`flex-row items-center gap-[10px]`}>
+                                <View style={tw`flex-row items-center gap-[10px] flex-shrink-0`}>
                                     {/* View Button */}
                                     <TouchableOpacity
                                         onPress={() => onView?.(doc)}

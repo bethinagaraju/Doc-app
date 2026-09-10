@@ -16,11 +16,11 @@ import {
   MapPin,
   Building2,
   Plus,
-  CheckCircle2,
   Navigation,
   X,
   Edit3,
   MapPinOff,
+  Trash2,
 } from 'lucide-react-native';
 import tw from 'twrnc';
 import { useAccessToken } from '../../screens/contexts/AccessTokenContext';
@@ -28,6 +28,7 @@ import { useAccessToken } from '../../screens/contexts/AccessTokenContext';
 const API_BASE = 'https://api.docapp.co.in';
 const API_ADD_ADDRESS = `${API_BASE}/api/address/addAddress`;
 const API_GET_ALL_ADDRESS = `${API_BASE}/api/address/getAllAddress`;
+const API_DELETE_ADDRESS = `${API_BASE}/api/address/deleteAddress`;
 
 export interface Address {
   id: number;
@@ -65,7 +66,7 @@ const AddressListSkeleton = () => {
   return (
     <View
       style={[
-        tw`w-full bg-white rounded-[16px] border border-[#DAE1FF]/80 overflow-hidden shadow-sm`,
+        tw`w-full bg-white rounded-2xl border border-[#DAE1FF]/80 overflow-hidden shadow-sm`,
         {
           shadowColor: '#102A43',
           shadowOffset: { width: 0, height: 4 },
@@ -76,8 +77,7 @@ const AddressListSkeleton = () => {
       ]}
     >
       <View style={tw`bg-[#EEF4FF] border-b border-[#DAE1FF] px-5 py-4 flex-row items-center justify-between`}>
-        <Animated.View style={[tw`w-36 h-5 bg-[#DAE1FF]/70 rounded`, { opacity: pulseAnim }]} />
-        <Animated.View style={[tw`w-18 h-6 bg-[#DAE1FF]/50 rounded-full`, { opacity: pulseAnim }]} />
+        <Animated.View style={[tw`w-36 h-5 bg-[#DAE1FF]/70 rounded-lg`, { opacity: pulseAnim }]} />
       </View>
 
       <View style={tw`p-5 gap-3.5`}>
@@ -89,10 +89,10 @@ const AddressListSkeleton = () => {
               { opacity: pulseAnim },
             ]}
           >
-            <View style={tw`w-9 h-9 rounded-xl bg-[#DAE1FF]/60`} />
-            <View style={tw`flex-1 gap-2`}>
-              <View style={tw`w-40 h-4 bg-[#DAE1FF]/70 rounded`} />
-              <View style={tw`w-56 h-3.5 bg-[#DAE1FF]/40 rounded`} />
+            <View style={tw`w-10 h-10 rounded-xl bg-[#DAE1FF]/60`} />
+            <View style={tw`flex-1 gap-2.5`}>
+              <View style={tw`w-40 h-4 bg-[#DAE1FF]/70 rounded-md`} />
+              <View style={tw`w-56 h-3.5 bg-[#DAE1FF]/40 rounded-md`} />
             </View>
           </Animated.View>
         ))}
@@ -106,6 +106,7 @@ const DoctorAddressSection: React.FC<DoctorAddressSectionProps> = ({ onAddressUp
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [addressLoading, setAddressLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const [addressForm, setAddressForm] = useState({
@@ -159,6 +160,49 @@ const DoctorAddressSection: React.FC<DoctorAddressSectionProps> = ({ onAddressUp
   const handleCloseModal = () => {
     setIsModalVisible(false);
     setAddressForm({ street: '', city: '', state: '', pincode: '' });
+  };
+
+  const handleDeleteAddress = (addressId: number) => {
+    Alert.alert(
+      'Delete Address',
+      'Are you sure you want to delete this address?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              setDeletingId(addressId);
+              const response = await fetch(API_DELETE_ADDRESS, {
+                method: 'DELETE',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${accessToken}`,
+                },
+                credentials: 'include',
+                body: JSON.stringify({ addressId: String(addressId) }),
+              });
+
+              const data = await response.json();
+
+              if (response.ok) {
+                Alert.alert('Success', data.message || 'Address deleted successfully');
+                fetchAddresses();
+                onAddressUpdated?.();
+              } else {
+                Alert.alert('Error', data.message || 'Failed to delete address');
+              }
+            } catch (error) {
+              console.error('❌ Error deleting address:', error);
+              Alert.alert('Network Error', 'Failed to delete address. Please try again.');
+            } finally {
+              setDeletingId(null);
+            }
+          },
+        },
+      ]
+    );
   };
 
   const handleSaveAddress = async () => {
@@ -252,7 +296,7 @@ const DoctorAddressSection: React.FC<DoctorAddressSectionProps> = ({ onAddressUp
         /* Total Addresses List Card */
         <View
           style={[
-            tw`w-full bg-white rounded-[16px] border border-[#DAE1FF]/80 overflow-hidden shadow-sm`,
+            tw`w-full bg-white rounded-2xl border border-[#DAE1FF]/80 overflow-hidden shadow-sm`,
             {
               shadowColor: '#102A43',
               shadowOffset: { width: 0, height: 4 },
@@ -268,59 +312,65 @@ const DoctorAddressSection: React.FC<DoctorAddressSectionProps> = ({ onAddressUp
               <View style={tw`w-8 h-8 rounded-full bg-[#124CB8]/10 justify-center items-center`}>
                 <Building2 size={17} color="#124CB8" />
               </View>
-              <Text style={tw`text-[18px] font-semibold text-[#011D35] font-['Inter']`}>
-                Clinic Locations ({addresses.length})
+              <Text style={tw`text-[17px] font-bold text-[#011D35] font-['Inter']`}>
+                Clinic Location
               </Text>
             </View>
 
-            {/* Edit / Add Button in Header */}
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() => handleOpenAddModal()}
-              style={tw`bg-[#124CB8] px-3 py-1.5 rounded-full flex-row items-center gap-1.5`}
-            >
-              <Plus size={13} color="#FFFFFF" />
-              <Text style={tw`text-white text-[12px] font-bold`}>Add New</Text>
-            </TouchableOpacity>
+            {/* Address Count Tag */}
+            <View style={tw`bg-[#124CB8]/10 px-2.5 py-1 rounded-full`}>
+              <Text style={tw`text-[12px] font-bold text-[#124CB8]`}>
+                {addresses.length} {addresses.length === 1 ? 'Location' : 'Locations'}
+              </Text>
+            </View>
           </View>
 
           {/* Addresses List */}
-          <View style={tw`p-5 gap-3.5`}>
+          <View style={tw`p-5 gap-3`}>
             {addresses.map((addr, index) => (
               <View
                 key={addr.id || index}
-                style={tw`p-4 rounded-xl bg-[#F8F9FF] border border-[#DAE1FF] flex-row items-start justify-between gap-3`}
+                style={tw`p-4 rounded-xl bg-[#F8FAFC] border border-[#DAE1FF]/80 flex-row items-center justify-between gap-3`}
               >
                 <View style={tw`flex-row items-start gap-3 flex-1`}>
-                  <View style={tw`w-9 h-9 rounded-xl bg-[#EEF4FF] items-center justify-center mt-0.5`}>
+                  <View style={tw`w-10 h-10 rounded-xl bg-[#EEF4FF] border border-[#DAE1FF] items-center justify-center mt-0.5`}>
                     <MapPin size={18} color="#124CB8" />
                   </View>
 
-                  <View style={tw`flex-1`}>
-                    <View style={tw`flex-row items-center gap-2 mb-1`}>
-                      <Text style={tw`font-bold text-[15px] text-[#011D35] flex-1`}>
-                        {addr.street}
-                      </Text>
-                      <View style={tw`flex-row items-center gap-1 bg-[#E8F5E9] px-2 py-0.5 rounded-full`}>
-                        <CheckCircle2 size={10} color="#16A34A" />
-                        <Text style={tw`text-[10px] font-semibold text-[#16A34A]`}>Active</Text>
-                      </View>
-                    </View>
+                  <View style={tw`flex-1 pr-1`}>
+                    <Text style={tw`font-bold text-[15px] text-[#011D35] leading-5`}>
+                      {addr.street}
+                    </Text>
 
-                    <Text style={tw`text-[13px] text-[#434653] leading-4`}>
-                      {addr.city}, {addr.state} - <Text style={tw`font-semibold text-[#011D35]`}>{addr.pincode}</Text>
+                    <Text style={tw`text-[13px] text-[#434653] mt-1 leading-4`}>
+                      {addr.city}, {addr.state} • <Text style={tw`font-semibold text-[#011D35]`}>PIN: {addr.pincode}</Text>
                     </Text>
                   </View>
                 </View>
 
-                {/* Edit Button for Address */}
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  onPress={() => handleOpenAddModal(addr)}
-                  style={tw`w-8 h-8 rounded-full bg-white border border-[#DAE1FF] items-center justify-center ml-1`}
-                >
-                  <Edit3 size={14} color="#124CB8" />
-                </TouchableOpacity>
+                {/* Action Buttons (Edit & Delete) */}
+                <View style={tw`flex-row items-center gap-2`}>
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => handleOpenAddModal(addr)}
+                    style={tw`w-9 h-9 rounded-xl bg-white border border-[#DAE1FF] items-center justify-center shadow-sm`}
+                  >
+                    <Edit3 size={15} color="#124CB8" />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => handleDeleteAddress(addr.id)}
+                    disabled={deletingId === addr.id}
+                    style={tw`w-9 h-9 rounded-xl bg-[#FEE2E2] border border-[#FECACA] items-center justify-center shadow-sm`}
+                  >
+                    {deletingId === addr.id ? (
+                      <ActivityIndicator size={12} color="#DC2626" />
+                    ) : (
+                      <Trash2 size={15} color="#DC2626" />
+                    )}
+                  </TouchableOpacity>
+                </View>
               </View>
             ))}
           </View>

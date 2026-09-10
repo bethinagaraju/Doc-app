@@ -29,7 +29,7 @@ const QuickActionsGrid = () => {
         /* Section - Quick Actions Grid */
         <View
             style={[
-                tw`flex-col self-center my-2 w-full max-w-[320px]`,
+                tw`flex-col my-2 w-full self-center max-w-[500px]`,
                 {
                     paddingTop: 8,
                     gap: 16,
@@ -39,8 +39,8 @@ const QuickActionsGrid = () => {
             {/* Container: Heading */}
             <View
                 style={[
-                    tw`flex-row items-center justify-between w-full`,
-                    { height: 28 }
+                    tw`flex-row items-center justify-between w-full px-2`,
+                    { minHeight: 28 }
                 ]}
             >
                 <Text
@@ -59,8 +59,7 @@ const QuickActionsGrid = () => {
             {/* Container: Grid of buttons */}
             <View
                 style={[
-                    tw`flex-row justify-between w-full px-4`,
-                    { height: 88 }
+                    tw`flex-row justify-around w-full`,
                 ]}
             >
                 {actions.map((action) => (
@@ -78,6 +77,8 @@ const QuickActionsGrid = () => {
                             tw`flex-col items-center`,
                             {
                                 gap: 8,
+                                flex: 1,
+                                paddingHorizontal: 4,
                             }
                         ]}
                     >
@@ -113,13 +114,14 @@ const QuickActionsGrid = () => {
 
                         {/* Text Label */}
                         <Text
-                            numberOfLines={1}
+                            numberOfLines={2}
                             style={[
                                 tw`font-semibold text-center tracking-[0.6px]`,
                                 {
                                     fontSize: 12,
                                     lineHeight: 16,
                                     color: '#434653',
+                                    flexShrink: 1,
                                 }
                             ]}
                         >

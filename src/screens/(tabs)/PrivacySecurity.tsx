@@ -7,13 +7,17 @@ import {
   Alert,
   TextInput,
   Modal,
+  ScrollView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Lock, FileText, ChevronRight, X } from 'lucide-react-native';
 import tw from 'twrnc';
-import PageLayout from '../../components/PageLayout';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import ProfileTopBar from '../../components/ProfileTopBar';
+import { useAccessToken } from '../contexts/AccessTokenContext';
 
 const PrivacySecurityScreen = () => {
+  const { accessToken } = useAccessToken();
   const navigation = useNavigation();
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [appPermissions, setAppPermissions] = useState({
@@ -65,8 +69,7 @@ const PrivacySecurityScreen = () => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          // Add authorization header if available
-          // 'Authorization': `Bearer ${user?.token}`,
+          'Authorization': `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
           newPassword: newPassword,
@@ -99,134 +102,114 @@ const PrivacySecurityScreen = () => {
   };
 
   return (
-    <PageLayout
-      title="Privacy & Security"
-      headerBackgroundColor="#2e9233ff"
-      scrollable={true}
-    >
-      {/* Two-Factor Authentication */}
-      <View style={tw`px-4`}>
-        <View style={tw`bg-white p-4 rounded-xl mb-4 flex-row justify-between items-start`}>
-          <View style={tw`flex-1 pr-3`}>
-            <Text style={tw`text-base font-medium text-gray-900`}>
-              Two-Factor Authentication
-            </Text>
-            <Text style={tw`text-gray-600 text-sm mt-1`}>
-              Adds an extra layer of security to your account.
-            </Text>
+    <SafeAreaView style={tw`flex-1 bg-white`}>
+      <ProfileTopBar title="Privacy & Security" />
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={tw`pb-10`}>
+        {/* Two-Factor Authentication */}
+        <View style={tw`px-4 mt-4`}>
+          <View style={tw`bg-white p-4 rounded-xl mb-4 flex-row justify-between items-start`}>
+            <View style={tw`flex-1 pr-3`}>
+              <Text style={tw`text-base font-medium text-gray-900`}>
+                Two-Factor Authentication
+              </Text>
+              <Text style={tw`text-gray-600 text-sm mt-1`}>
+                Adds an extra layer of security to your account.
+              </Text>
+            </View>
+            <Switch value={twoFactorEnabled} onValueChange={toggle2FA} />
           </View>
-          <Switch value={twoFactorEnabled} onValueChange={toggle2FA} />
-        </View>
 
-        {/* Change Password */}
-        <TouchableOpacity
-          style={tw`flex-row items-center justify-between bg-white p-4 rounded-xl mb-4`}
-          onPress={handleChangePassword}
-          accessibilityRole="button"
-          accessibilityLabel="Change Password"
-        >
-          <View style={tw`flex-row items-center`}>
-            <Lock size={22} color="#555" />
-            <Text style={tw`ml-3 text-base text-gray-800`}>Change Password</Text>
-          </View>
-          <ChevronRight size={20} color="#aaa" />
-        </TouchableOpacity>
-
-        {/* App Permissions Header */}
-        <Text style={tw`text-base font-semibold text-gray-800 mb-3 mt-4`}>
-          App Permissions
-        </Text>
-
-        {/* Permissions List */}
-        {Object.entries(appPermissions).map(([key, value]) => (
-          <View
-            key={key}
-            style={tw`bg-white py-4 px-4 rounded-xl mb-3 flex-row justify-between items-center`}
+          {/* Change Password */}
+          <TouchableOpacity
+            style={tw`bg-[#F1F0F4] rounded-2xl p-4 flex-row justify-between items-center mb-4`}
+            onPress={handleChangePassword}
           >
-            <Text style={tw`text-base text-gray-900 capitalize`}>{key}</Text>
-            <Switch
-              value={value}
-              onValueChange={() => togglePermission(key as keyof typeof appPermissions)}
-            />
-          </View>
-        ))}
-
-        {/* Privacy Policy */}
-        <TouchableOpacity
-          style={tw`flex-row items-center justify-between bg-white p-4 rounded-xl mt-4`}
-          onPress={handlePrivacyPolicy}
-          accessibilityRole="button"
-          accessibilityLabel="View Privacy Policy"
-        >
-          <View style={tw`flex-row items-center`}>
-            <FileText size={22} color="#555" />
-            <Text style={tw`ml-3 text-base text-gray-800`}>View Privacy Policy</Text>
-          </View>
-          <ChevronRight size={20} color="#aaa" />
-        </TouchableOpacity>
-      </View>
-
-      {/* Password Change Modal */}
-      <Modal
-        visible={showPasswordModal}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setShowPasswordModal(false)}
-      >
-        <View style={tw`flex-1 justify-center items-center bg-black bg-opacity-50`}>
-          <View style={tw`bg-white rounded-xl p-6 w-11/12 max-w-sm`}>
-            <View style={tw`flex-row justify-between items-center mb-4`}>
-              <Text style={tw`text-lg font-bold text-gray-900`}>Change Password</Text>
-              <TouchableOpacity onPress={() => setShowPasswordModal(false)}>
-                <X size={24} color="#666" />
-              </TouchableOpacity>
+            <View>
+              <Text style={tw`text-[12px] font-bold text-[#74777F] tracking-widest uppercase`}>
+                Password
+              </Text>
+              <Text style={tw`text-[14px] text-[#1A1B1F] mt-1 tracking-widest`}>
+                ••••••••••••
+              </Text>
             </View>
+            <Text style={tw`text-[#74777F] text-xl`}>›</Text>
+          </TouchableOpacity>
 
-            <Text style={tw`text-sm text-gray-600 mb-4`}>
-              Enter your new password below. Make sure it's at least 6 characters long.
-            </Text>
+          {/* App Permissions Header */}
+          <Text style={tw`text-base font-semibold text-gray-800 mb-3 mt-4`}>
+            App Permissions
+          </Text>
 
-            <TextInput
-              style={tw`border border-gray-300 rounded-lg p-3 mb-3 text-gray-900`}
-              placeholder="New Password"
-              secureTextEntry
-              value={newPassword}
-              onChangeText={setNewPassword}
-              editable={!changingPassword}
-            />
-
-            <TextInput
-              style={tw`border border-gray-300 rounded-lg p-3 mb-4 text-gray-900`}
-              placeholder="Confirm New Password"
-              secureTextEntry
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              editable={!changingPassword}
-            />
-
-            <View style={tw`flex-row gap-3`}>
-              <TouchableOpacity
-                style={tw`flex-1 bg-gray-200 rounded-lg p-3 items-center`}
-                onPress={() => setShowPasswordModal(false)}
-                disabled={changingPassword}
-              >
-                <Text style={tw`text-gray-700 font-medium`}>Cancel</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={tw`flex-1 bg-green-600 rounded-lg p-3 items-center ${changingPassword ? 'opacity-50' : ''}`}
-                onPress={submitPasswordChange}
-                disabled={changingPassword}
-              >
-                <Text style={tw`text-white font-medium`}>
-                  {changingPassword ? 'Changing...' : 'Change Password'}
-                </Text>
-              </TouchableOpacity>
+          {/* Permissions List */}
+          {Object.entries(appPermissions).map(([key, value]) => (
+            <View
+              key={key}
+              style={tw`bg-white py-4 px-4 rounded-xl mb-3 flex-row justify-between items-center`}
+            >
+              <Text style={tw`text-base text-gray-900 capitalize`}>{key}</Text>
+              <Switch
+                value={value}
+                onValueChange={() => togglePermission(key as keyof typeof appPermissions)}
+              />
             </View>
-          </View>
+          ))}
+
+          {/* Privacy Policy */}
+          <TouchableOpacity
+            style={tw`flex-row items-center justify-between bg-white p-4 rounded-xl mt-4`}
+            onPress={handlePrivacyPolicy}
+            accessibilityRole="button"
+            accessibilityLabel="View Privacy Policy"
+          >
+            <View style={tw`flex-row items-center`}>
+              <FileText size={22} color="#555" />
+              <Text style={tw`ml-3 text-base text-gray-800`}>View Privacy Policy</Text>
+            </View>
+            <ChevronRight size={20} color="#aaa" />
+          </TouchableOpacity>
         </View>
-      </Modal>
-    </PageLayout>
+
+        {/* Password Change Modal */}
+        <Modal
+          visible={showPasswordModal}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setShowPasswordModal(false)}
+        >
+          <View style={tw`flex-1 bg-[rgba(0,0,0,0.4)] justify-center items-center`}>
+            <View style={tw`w-[85%] max-w-[500px] bg-white p-6 rounded-[24px] shadow-lg`}>
+              <Text style={tw`text-lg font-bold text-[#001A41] mb-3`}>Change Password</Text>
+              <TextInput
+                style={tw`border border-[#E5E7EB] bg-[#F9FAFB] p-3 rounded-xl mb-3 text-[#1F2937]`}
+                placeholder="New Password"
+                secureTextEntry
+                value={newPassword}
+                onChangeText={setNewPassword}
+                editable={!changingPassword}
+              />
+              <TextInput
+                style={tw`border border-[#E5E7EB] bg-[#F9FAFB] p-3 rounded-xl mb-3 text-[#1F2937]`}
+                placeholder="Confirm New Password"
+                secureTextEntry
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                editable={!changingPassword}
+              />
+              <TouchableOpacity style={tw`bg-[#124CB8] py-3 md:py-4 rounded-xl mt-3`} onPress={submitPasswordChange} disabled={changingPassword}>
+                <Text style={tw`text-center text-sm md:text-base text-white font-bold`}>{changingPassword ? 'Saving...' : 'Update Password'}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={tw`bg-gray-200 py-3 md:py-4 rounded-xl mt-2`} onPress={() => {
+                setShowPasswordModal(false);
+                setNewPassword('');
+                setConfirmPassword('');
+              }}>
+                <Text style={tw`text-center text-sm md:text-base text-gray-800 font-bold`}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

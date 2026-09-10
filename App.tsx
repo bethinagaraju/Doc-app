@@ -80,10 +80,10 @@ import DoctorBottomBar from './src/Doctor/components/DoctorBottomBar';
 
 const Stack = createStackNavigator();
 
-const AUTH_SCREENS = [
+const NO_FOOTER_SCREENS = [
   'AuthLayout', 'Signup', 'Login', 'DoctorLogin', 'CompleteProfile',
   'AppointmentBooking', 'DoctorProfile', 'AppoinmentPaymentScreen',
-  'DoctorNavigator'
+  'DoctorNavigator', 'VideoCall', 'PatientVideoCall', 'VideoConsultationScreen', 'CallCompleted'
 ];
 
 const DOCTOR_BOTTOM_BAR_SCREENS = [
@@ -221,7 +221,7 @@ function RootNavigator() {
 
       <IncomingCallOverlay />
       
-      {!isDoctorNavigatorActive() && !AUTH_SCREENS.includes(currentRoute || '') && !isKeyboardVisible && <Footer />}
+      {!isDoctorNavigatorActive() && !NO_FOOTER_SCREENS.includes(currentRoute || '') && !isKeyboardVisible && <Footer />}
       {isDoctorBottomBarVisible() && <DoctorBottomBar />}
     </NavigationContainer>
   );

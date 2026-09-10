@@ -17,6 +17,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import PatientAppointmentCard from "../../components/PatientAppointmentCard";
 import { useUser } from "../contexts/UserContext";
 import DoctorBottomBar from "../../Doctor/components/DoctorBottomBar";
+import AppointmentsHeader from "../user_components/AppointmentsHeader";
 
 type PrescriptionItem = {
   drug: string;
@@ -135,39 +136,36 @@ export default function AppointmentsScreen() {
       <ProfileTopBar />
 
       <ScrollView contentContainerStyle={tw`pb-28`} stickyHeaderIndices={[1]} showsVerticalScrollIndicator={false}>
-        <View style={tw`px-4 mt-6 gap-2 mb-2`}>
-          <Text style={tw`text-[#191C1E] font-bold text-[24px] leading-[32px]`}>
-            My Appointments
-          </Text>
-          <Text style={tw`text-[#42474E] font-normal text-[14px] leading-[20px]`}>
-            Manage your past and upcoming medical consultations.
-          </Text>
-        </View>
+        <AppointmentsHeader />
 
         {/* Tabs */}
-        <View style={tw`bg-[#F8F9FF] py-3`}>
+        <View style={tw`bg-[#F8F9FF] py-3 w-full max-w-[800px] self-center`}>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={tw`px-2 flex-row gap-2 items-center`}
+            alwaysBounceHorizontal={false}
+            contentContainerStyle={tw`min-w-full px-4 md:px-8 flex-row gap-3 items-center md:justify-center`}
           >
             {tabs.map((tab) => (
               <TouchableOpacity
                 key={tab}
+                activeOpacity={0.7}
                 onPress={() => setSelectedTab(tab)}
-                style={tw`py-2 px-5 rounded-full justify-center items-center h-[36px] ${selectedTab === tab ? "bg-[#124CB8] shadow-sm" : "bg-[#E8E9EF]"
+                style={tw`py-2 px-5 md:px-8 rounded-full justify-center items-center h-[36px] md:h-[44px] ${selectedTab === tab ? "bg-[#124CB8] shadow-sm" : "bg-[#E8E9EF]"
                   }`}
               >
                 <Text
-                  style={tw`text-[14px] font-medium leading-[20px] text-center ${selectedTab === tab ? "text-white" : "text-[#42474E]"
+                  style={tw`text-[14px] md:text-[16px] font-medium leading-tight text-center ${selectedTab === tab ? "text-white" : "text-[#42474E]"
                     }`}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.8}
                 >
                   {tab}
                 </Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
-          
         </View>
 
         {/* Appointment List */}

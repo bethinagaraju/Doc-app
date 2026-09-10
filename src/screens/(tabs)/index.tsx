@@ -69,7 +69,8 @@ import UpcomingAppointmentCard from '../user_components/UpcomingAppointmentCard'
 import QuickActionsGrid from '../user_components/QuickActionsGrid';
 import DoctorCardsContainer from '../user_components/DoctorCardsContainer';
 import SpecialtiesSection from '../user_components/SpecialtiesSection';
-
+import HomeTopAppBar from '../../user_components/HomeTopAppBar';
+import HomeBannerSection from '../../user_components/HomeBannerSection';
 const { width: screenWidth } = Dimensions.get('window');
 
 // Define your stack param list for navigation typing
@@ -122,8 +123,7 @@ const HomeScreen = () => {
     ? (ts ? `${cleanUrl}?t=${ts}` : `${cleanUrl}?t=${new Date().getTime()}`)
     : 'https://randomuser.me/api/portraits/men/4.jpg';
 
-  const [selectedLanguage, setSelectedLanguage] = useState('English');
-  const [showLanguageModal, setShowLanguageModal] = useState(false);
+
 
   useFocusEffect(
     useCallback(() => {
@@ -169,38 +169,11 @@ const HomeScreen = () => {
     }, [accessToken])
   );
 
-  const languages = [
-    { name: 'English', code: 'en' },
-    { name: 'हिंदी', code: 'hi' },
-    { name: 'తెలుగు', code: 'te' },
-    { name: 'தமிழ்', code: 'ta' },
-    { name: 'ಕನ್ನಡ', code: 'kn' },
-    { name: 'മലയാളം', code: 'ml' },
-    { name: 'বাংলা', code: 'bn' },
-    { name: 'ગુજરાતી', code: 'gu' }
-  ];
 
-  const banners = [
-    require('../../assets/images/unnamed.webp'),
-    require('../../assets/images/unnamed-banner.webp'),
-    require('../../assets/images/9786325ef35b05c91053c663067481ff_screen.jpg'),
-    // require('../Images/Banner3.jpg'),
-  ];
 
-  const cityList = [
-    'Bangalore',
-    'Hyderabad',
-    'Delhi',
-    'Mumbai',
-    'Chennai',
-    'Kolkata',
-    'Pune',
-    'Ahmedabad',
-    'Jaipur',
-    'Lucknow',
-  ];
-  const [selectedLocation, setSelectedLocation] = useState('Bangalore');
-  const [showLocationModal, setShowLocationModal] = useState(false);
+
+
+
 
   const bottomBanners = [
     require('../Images/BottomBanner1.jpg'),
@@ -250,13 +223,7 @@ const HomeScreen = () => {
     },
   ];
 
-  const [activeBannerIndex, setActiveBannerIndex] = useState(0);
-  const bannerWidth = screenWidth - 40;
 
-  const onBannerScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const x = event.nativeEvent.contentOffset.x;
-    setActiveBannerIndex(Math.round(x / bannerWidth));
-  };
 
 
 
@@ -270,277 +237,10 @@ const HomeScreen = () => {
       >
 
 
-        {/* old top bar */}
-        {/* <View
-          style={[
-            tw`px-4 pb-4 bg-green-600`,
-            {
-              borderBottomLeftRadius: 35,
-              borderBottomRightRadius: 35,
-              paddingTop: Platform.OS === 'android' ? 35 : 60,
-              height: Platform.OS === 'android' ? 170 : 180,
-            },
-          ]}
-        >
-          <View style={tw`h-full justify-between`}>
-           
-            <View style={tw`flex-row items-center justify-between mt-3`}>
-            
-              <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-                <Image
-                  source={{ uri: profileImageUri }}
-                  style={tw`w-14 h-14 rounded-full border-2 border-green-200`}
-                />
-              </TouchableOpacity>
-
-            
-              <TouchableOpacity
-                onPress={() => setShowLocationModal(true)}
-                style={tw`flex-row items-center mx-3`}
-              >
-                <MapPin size={16} color="white" />
-                <Text style={tw`ml-1 text-white font-medium text-sm`}>
-                  {selectedLocation}
-                </Text>
-                <ChevronDown size={16} color="white" style={tw`ml-1`} />
-              </TouchableOpacity>
-              <Modal isVisible={showLocationModal} onBackdropPress={() => setShowLocationModal(false)}>
-                <View style={tw`bg-white p-6 rounded-2xl items-center`}>
-                  <Text style={tw`text-base font-semibold mb-2`}>Select your city</Text>
-                  {cityList.map((city) => (
-                    <TouchableOpacity
-                      key={city}
-                      style={tw`py-2 w-full items-center`}
-                      onPress={() => {
-                        setSelectedLocation(city);
-                        setShowLocationModal(false);
-                      }}
-                    >
-                      <Text style={tw`text-lg ${selectedLocation === city ? 'text-green-700 font-bold' : 'text-green-800'}`}>{city}</Text>
-                    </TouchableOpacity>
-                  ))}
-                  <TouchableOpacity style={tw`mt-4`} onPress={() => setShowLocationModal(false)}>
-                    <Text style={tw`text-green-700 font-bold`}>Close</Text>
-                  </TouchableOpacity>
-                </View>
-              </Modal>
-
-              <View style={tw`flex-row items-center`}>
-                <TouchableOpacity
-                  onPress={() => setShowLanguageModal(true)}
-                  style={tw`flex-row items-center`}
-                >
-                  <Globe size={18} color="white" />
-                  <Text style={tw`ml-1 text-white text-xs`}>{selectedLanguage.slice(0, 2)}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Notification')} style={tw`ml-3`}>
-                  <View>
-                    <Bell size={20} color="white" />
-                    <View style={tw`absolute top-0 right-0 w-2 h-2 rounded-full bg-emerald-500`} />
-                  </View>
-                </TouchableOpacity>
-              </View>
-
-      
-              <Modal
-                isVisible={showLanguageModal}
-                onBackdropPress={() => setShowLanguageModal(false)}
-                style={tw`m-0 justify-end`}
-              >
-                <View style={tw`bg-white rounded-t-3xl`}>
-                  <View style={tw`p-4 border-b border-green-100`}>
-                    <View style={tw`w-12 h-1 bg-green-200 rounded-full mx-auto mb-4`} />
-                    <Text style={tw`text-xl font-bold text-center`}>Select Language</Text>
-                  </View>
-                  <ScrollView style={tw`max-h-[70%]`}>
-                    {languages.map((lang) => (
-                      <TouchableOpacity
-                        key={lang.code}
-                        style={tw`flex-row items-center justify-between px-6 py-4 border-b border-green-50`}
-                        onPress={() => {
-                          setSelectedLanguage(lang.name);
-                          setShowLanguageModal(false);
-                        }}
-                      >
-                        <Text style={tw`text-base ${selectedLanguage === lang.name ? 'text-green-700 font-bold' : 'text-green-800'}`}>
-                          {lang.name}
-                        </Text>
-                        {selectedLanguage === lang.name && (
-                          <View style={tw`w-6 h-6 rounded-full bg-green-600 items-center justify-center`}>
-                            <Text style={tw`text-white font-bold text-sm`}>✓</Text>
-                          </View>
-                        )}
-                      </TouchableOpacity>
-                    ))}
-                  </ScrollView>
-                  <TouchableOpacity
-                    style={tw`p-4 border-t border-green-100`}
-                    onPress={() => setShowLanguageModal(false)}
-                  >
-                    <Text style={tw`text-center text-green-700 font-bold text-lg`}>Close</Text>
-                  </TouchableOpacity>
-                </View>
-              </Modal>
-            </View>
-
-          
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Searcheverything')}
-              activeOpacity={0.9}
-              style={tw`mt-4 mb-4 flex-row items-center px-4 py-2.5 bg-white rounded-full shadow-sm border border-gray-200`}
-            >
-              <Search size={18} color="#059669" />
-              <Text style={tw`ml-3 text-green-700 text-sm`}>
-                Search doctors, clinics, tests...
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View> */}
 
 
 
-        <View
-          style={[
-            tw`w-full`,
-            {
-              paddingTop: Platform.OS === 'android' ? 20 : 45,
-              paddingBottom: 5,
-              backgroundColor: '#F8F9FF',
-            },
-          ]}
-        >
-          {/* Header - TopAppBar */}
-          <View style={tw`flex-row justify-between items-center pt-4 h-16 w-full`}>
-            {/* App Title Container */}
-            <View style={tw`flex-row items-center h-8`}>
-              <Text style={[tw`text-2xl font-bold tracking-[-0.24px]`, { color: '#124CB8', lineHeight: 32 }]}>
-                DocApp
-              </Text>
-            </View>
-
-            {/* Profile Image Border & Touch Container */}
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Profile')}
-              style={[
-                tw`justify-center items-center rounded-full`,
-                {
-                  width: 40,
-                  height: 40,
-                  borderWidth: 2,
-                  borderColor: '#3766D2',
-                }
-              ]}
-            >
-              <Image
-                key={profileImageUri}
-                source={{ uri: profileImageUri }}
-                style={[
-                  tw`rounded-full`,
-                  {
-                    width: 36,
-                    height: 36,
-                  }
-                ]}
-              />
-            </TouchableOpacity>
-          </View>
-
-          {/* Welcome Text Section */}
-          <View style={[tw`mt-2 w-full gap-1`, { height: 44 }]}>
-            <Text style={[tw`text-[12px] font-semibold tracking-[0.6px]`, { color: '#434653', height: 16, lineHeight: 16 }]}>
-              Welcome back
-            </Text>
-            <Text style={[tw`text-[20px] font-semibold`, { color: '#011D35', height: 28, lineHeight: 28 }]}>
-              Hello, {userData?.username || user?.user?.username || 'User'}!
-            </Text>
-          </View>
-
-          {/* Search Section */}
-          <View style={[tw`mt-4 w-full`, { height: 56 }]}>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Searcheverything')}
-              activeOpacity={0.9}
-              style={[
-                tw`flex-row items-center bg-white border border-[#C3C6D5] rounded-xl px-4 w-full`,
-                {
-                  height: 56,
-                  shadowColor: 'rgba(0, 0, 0, 0.05)',
-                  shadowOffset: { width: 0, height: 1 },
-                  shadowOpacity: 1,
-                  shadowRadius: 2,
-                  elevation: 1,
-                }
-              ]}
-            >
-              <Search size={18} color="#737684" />
-              <Text style={[tw`ml-3 text-[16px] font-normal`, { color: '#737684', lineHeight: 19 }]}>
-                Search doctors, specialties...
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Hidden Modals / Logic preserved exactly as requested */}
-          <Modal isVisible={showLocationModal} onBackdropPress={() => setShowLocationModal(false)}>
-            <View style={tw`bg-white p-6 rounded-2xl items-center`}>
-              <Text style={tw`text-base font-semibold mb-2`}>Select your city</Text>
-              {cityList.map((city) => (
-                <TouchableOpacity
-                  key={city}
-                  style={tw`py-2 w-full items-center`}
-                  onPress={() => {
-                    setSelectedLocation(city);
-                    setShowLocationModal(false);
-                  }}
-                >
-                  <Text style={tw`text-lg ${selectedLocation === city ? 'text-green-700 font-bold' : 'text-green-800'}`}>{city}</Text>
-                </TouchableOpacity>
-              ))}
-              <TouchableOpacity style={tw`mt-4`} onPress={() => setShowLocationModal(false)}>
-                <Text style={tw`text-green-700 font-bold`}>Close</Text>
-              </TouchableOpacity>
-            </View>
-          </Modal>
-
-          <Modal
-            isVisible={showLanguageModal}
-            onBackdropPress={() => setShowLanguageModal(false)}
-            style={tw`m-0 justify-end`}
-          >
-            <View style={tw`bg-white rounded-t-3xl`}>
-              <View style={tw`p-4 border-b border-green-100`}>
-                <View style={tw`w-12 h-1 bg-green-200 rounded-full mx-auto mb-4`} />
-                <Text style={tw`text-xl font-bold text-center`}>Select Language</Text>
-              </View>
-              <ScrollView style={tw`max-h-[70%]`}>
-                {languages.map((lang) => (
-                  <TouchableOpacity
-                    key={lang.code}
-                    style={tw`flex-row items-center justify-between px-6 py-4 border-b border-green-50`}
-                    onPress={() => {
-                      setSelectedLanguage(lang.name);
-                      setShowLanguageModal(false);
-                    }}
-                  >
-                    <Text style={tw`text-base ${selectedLanguage === lang.name ? 'text-green-700 font-bold' : 'text-green-800'}`}>
-                      {lang.name}
-                    </Text>
-                    {selectedLanguage === lang.name && (
-                      <View style={tw`w-6 h-6 rounded-full bg-green-600 items-center justify-center`}>
-                        <Text style={tw`text-white font-bold text-sm`}>✓</Text>
-                      </View>
-                    )}
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-              <TouchableOpacity
-                style={tw`p-4 border-t border-green-100`}
-                onPress={() => setShowLanguageModal(false)}
-              >
-                <Text style={tw`text-center text-green-700 font-bold text-lg`}>Close</Text>
-              </TouchableOpacity>
-            </View>
-          </Modal>
-        </View>
+        <HomeTopAppBar profileImageUri={profileImageUri} username={userData?.username || user?.user?.username || 'User'} />
 
 
 
@@ -615,39 +315,7 @@ const HomeScreen = () => {
 
 
         {/* Banner Section */}
-        <View style={tw`mt-6`}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            onScroll={onBannerScroll}
-            scrollEventThrottle={16}
-            snapToInterval={bannerWidth}
-            decelerationRate="fast"
-            contentContainerStyle={tw`px-0`}
-          >
-            {banners.map((source, index) => (
-              <View
-                key={index}
-                style={tw`w-[${screenWidth - 50}px] h-40 rounded-3xl overflow-hidden mr-4 shadow-sm`}
-              >
-                <Image
-                  source={typeof source === 'string' ? { uri: source } : source}
-                  style={tw`w-full h-full`}
-                  resizeMode="cover"
-                />
-              </View>
-            ))}
-          </ScrollView>
-          <View style={tw`flex-row justify-center mt-3`}>
-            {banners.map((_, index) => (
-              <View
-                key={index}
-                style={tw`w-2 h-2 bg-gray-300 rounded-full mx-1 ${activeBannerIndex === index ? 'bg-[#124CB8] w-4 shadow-sm' : ''
-                  }`}
-              />
-            ))}
-          </View>
-        </View>
+        <HomeBannerSection />
 
 
 

@@ -212,9 +212,8 @@ export default function Onboarding() {
         {onboardingData.map((_, index) => (
           <View
             key={index}
-            style={tw`h-2 w-2 rounded-full mx-1 ${
-              index === currentIndex ? 'bg-green-600' : 'bg-green-200'
-            }`}
+            style={tw`h-2 w-2 rounded-full mx-1 ${index === currentIndex ? 'bg-green-600' : 'bg-green-200'
+              }`}
           />
         ))}
       </View>

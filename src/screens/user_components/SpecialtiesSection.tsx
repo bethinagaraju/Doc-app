@@ -26,23 +26,27 @@ const FeatureCard = ({
 }) => {
   return (
     <TouchableOpacity
-      style={tw`w-[22%] mb-5 items-center`}
+      style={tw`w-[22%] md:w-[11%] mb-5 items-center`}
       onPress={onPress}
       activeOpacity={0.7}
     >
-      {/* Practo-style: Circular soft background with a smaller, crisp icon */}
+      {/* Responsive circle: Scales down on tiny screens, caps at 64px on large screens */}
       <View
-        style={tw`bg-blue-50 w-16 h-16 rounded-full items-center justify-center mb-2`}
+        style={[
+          tw`bg-blue-50 rounded-full items-center justify-center mb-2`,
+          { width: '100%', maxWidth: 64, aspectRatio: 1 }
+        ]}
       >
         <Image
           source={image}
-          style={tw`w-8 h-8`}
-          resizeMode="contain"
+          style={{ width: '50%', height: '50%', resizeMode: 'contain' }}
         />
       </View>
       <Text
-        style={tw`text-[11px] text-center text-gray-700 font-medium leading-tight`}
+        style={tw`text-[11px] md:text-sm text-center text-gray-700 font-medium leading-tight`}
         numberOfLines={2}
+        adjustsFontSizeToFit
+        minimumFontScale={0.8}
       >
         {label}
       </Text>
@@ -54,11 +58,11 @@ export default function SpecialtiesSection() {
   const navigation = useNavigation<any>();
 
   return (
-    <View style={tw`mt-6 px-0`}>
+    <View style={tw`mt-6 w-full max-w-[600px] md:max-w-full md:px-8 self-center`}>
 
       {/* Header section with "See All" inline */}
-      <View style={tw`flex-row justify-between items-center mb-5 px-1`}>
-        <Text style={tw`text-lg font-bold text-gray-900`}>
+      <View style={tw`flex-row justify-between items-center mb-5 px-1 gap-2`}>
+        <Text style={tw`text-lg md:text-2xl font-bold text-gray-900 flex-shrink`} numberOfLines={1}>
           Consult top doctors
         </Text>
         <TouchableOpacity

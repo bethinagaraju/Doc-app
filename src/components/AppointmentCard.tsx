@@ -54,16 +54,16 @@ export default function AppointmentCard({ appointment, children }: AppointmentCa
 
   const profilePic = rawProfilePic
     ? (rawProfilePic.includes('?t=') || rawProfilePic.includes('&t=')
-        ? rawProfilePic
-        : `${rawProfilePic}${rawProfilePic.includes('?') ? '&' : '?'}t=${new Date().getTime()}`)
+      ? rawProfilePic
+      : `${rawProfilePic}${rawProfilePic.includes('?') ? '&' : '?'}t=${new Date().getTime()}`)
     : null;
 
   return (
-    <View style={tw`bg-white p-4 mb-4 rounded-[12px] border border-[#DAE1E7] flex-col relative`}>
+    <View style={tw`bg-white p-4 md:p-6 mb-4 rounded-[12px] border border-[#DAE1E7] flex-col relative w-full max-w-[800px] self-center shadow-sm`}>
       {/* Top Header */}
       <View style={tw`flex-row justify-between items-start mb-3`}>
         {/* Left Side: Icon + Details */}
-        <View style={tw`flex-row items-center gap-3`}>
+        <View style={tw`flex-row items-center gap-3 flex-1 min-w-0 mr-4`}>
           {/* Avatar Background */}
           <View style={tw`w-12 h-12 bg-[#DBE3F1] rounded-lg items-center justify-center overflow-hidden`}>
             {profilePic ? (
@@ -74,8 +74,13 @@ export default function AppointmentCard({ appointment, children }: AppointmentCa
           </View>
 
           {/* Name & Type */}
-          <View style={tw`flex-col justify-center h-12`}>
-            <Text style={tw`text-[#011D35] font-semibold text-[20px] leading-[28px]`}>
+          <View style={tw`flex-col justify-center h-12 flex-1 min-w-0`}>
+            <Text
+              style={tw`text-[#011D35] font-semibold text-[18px] md:text-[22px] leading-tight`}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.8}
+            >
               {displayName}
             </Text>
             {/* Type Badge */}
@@ -88,7 +93,7 @@ export default function AppointmentCard({ appointment, children }: AppointmentCa
         </View>
 
         {/* Right Side: Time */}
-        <Text style={tw`text-[#434653] font-semibold text-[12px] leading-[16px] tracking-[0.6px] mt-2`}>
+        <Text style={tw`text-[#434653] font-semibold text-[12px] md:text-[14px] leading-[16px] tracking-[0.6px] mt-2 flex-shrink-0`}>
           {timeText}
         </Text>
       </View>
@@ -96,7 +101,7 @@ export default function AppointmentCard({ appointment, children }: AppointmentCa
       {/* Date Row */}
       <View style={tw`flex-row items-center gap-2 mb-3`}>
         <CalendarIcon size={16} color="#434653" />
-        <Text style={tw`text-[#434653] text-[16px] leading-[24px]`}>
+        <Text style={tw`text-[#434653] text-[16px] md:text-[18px] leading-tight`}>
           {formattedDate}
         </Text>
       </View>
@@ -105,9 +110,9 @@ export default function AppointmentCard({ appointment, children }: AppointmentCa
         const checkup = appointment.checkupAppointment[0];
         const cDateObj = checkup.checkup_date ? new Date(checkup.checkup_date) : null;
         const formattedCheckupDate = cDateObj && !isNaN(cDateObj.getTime())
-            ? cDateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-            : 'N/A';
-        
+          ? cDateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+          : 'N/A';
+
         const formatTimeLocal = (timeStr?: string) => {
           if (!timeStr) return '';
           const parts = timeStr.split(':');

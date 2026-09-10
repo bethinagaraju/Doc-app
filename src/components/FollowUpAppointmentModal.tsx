@@ -233,18 +233,18 @@ const FollowUpAppointmentModal: React.FC<FollowUpAppointmentModalProps> = ({
             {followUpDate && parentAppointment && (
               <View
                 style={tw`p-2 rounded-lg mb-3 ${getFollowUpPricing(parentAppointment.appointment_date, followUpDate).free
-                    ? "bg-green-100"
-                    : getFollowUpPricing(parentAppointment.appointment_date, followUpDate).eligible
-                      ? "bg-yellow-100"
-                      : "bg-red-100"
+                  ? "bg-green-100"
+                  : getFollowUpPricing(parentAppointment.appointment_date, followUpDate).eligible
+                    ? "bg-yellow-100"
+                    : "bg-red-100"
                   }`}
               >
                 <Text
                   style={tw`text-sm text-center ${getFollowUpPricing(parentAppointment.appointment_date, followUpDate).free
-                      ? "text-green-800"
-                      : getFollowUpPricing(parentAppointment.appointment_date, followUpDate).eligible
-                        ? "text-yellow-800"
-                        : "text-red-800"
+                    ? "text-green-800"
+                    : getFollowUpPricing(parentAppointment.appointment_date, followUpDate).eligible
+                      ? "text-yellow-800"
+                      : "text-red-800"
                     }`}
                 >
                   {getFollowUpPricing(parentAppointment.appointment_date, followUpDate).message}

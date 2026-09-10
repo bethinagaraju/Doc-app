@@ -1,6 +1,6 @@
 
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, NavigationProp, useFocusEffect } from '@react-navigation/native';
 import tw from 'twrnc';
 import {
@@ -28,7 +29,7 @@ import {
 
 import { launchImageLibrary } from 'react-native-image-picker';
 
-import PageLayout from '../../components/PageLayout';
+import ProfileTopBar from '../../components/ProfileTopBar';
 import { useUser } from '../contexts/UserContext';
 import { useAccessToken } from '../contexts/AccessTokenContext';
 import { useUserProfile } from '../../contexts/userProfileContext';
@@ -49,7 +50,7 @@ export default function ProfileScreen() {
   );
 
   const rawProfilePic = (userData as any)?.doctorProfile?.profile_picture || (userData as any)?.generalUser?.profile_picture || user?.generalUser?.profile_picture;
-  const profileImageSource = rawProfilePic ? { uri: rawProfilePic } : undefined;
+  const profileImageSource = useMemo(() => rawProfilePic ? { uri: rawProfilePic } : undefined, [rawProfilePic]);
 
   // ===========================
   // 🚀 Upload Photo Integration
@@ -211,24 +212,15 @@ export default function ProfileScreen() {
   };
 
   return (
-    <PageLayout
-      title="Profile"
-      headerBackgroundColor="#219f4dff"
-      headerRight={
-        <TouchableOpacity style={tw`p-2 rounded-full`} onPress={() => navigation.navigate('Settings')}>
-          <Settings size={24} color="#fff" />
-        </TouchableOpacity>
-      }
-      onBackPress={() => navigation.navigate('Home')}
-      scrollable
-    >
+    <SafeAreaView style={tw`flex-1 bg-white`}>
+      <ProfileTopBar title="Profile" />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={tw`items-center mt-6 mb-8`}>
           {loading ? (
-            <ActivityIndicator size="large" color="#059669" />
+            <ActivityIndicator size="large" color="#124CB8" />
           ) : (
             <>
-              <View style={tw`w-28 h-28 rounded-full mb-4 shadow-md bg-green-100 overflow-hidden`}>
+              <View style={tw`w-28 h-28 rounded-full mb-4 shadow-md bg-[#D8E2FF] overflow-hidden`}>
                 {profileImageSource ? (
                   <Image
                     source={profileImageSource}
@@ -237,7 +229,7 @@ export default function ProfileScreen() {
                   />
                 ) : (userData?.username || user?.username) ? (
                   <View style={tw`w-full h-full items-center justify-center`}>
-                    <Text style={tw`text-green-700 text-4xl font-bold`}>
+                    <Text style={tw`text-[#124CB8] text-4xl font-bold`}>
                       {(userData?.username || user?.username)
                         .split(' ')
                         .map((part: string) => part[0])
@@ -248,21 +240,21 @@ export default function ProfileScreen() {
                   </View>
                 ) : (
                   <View style={tw`w-full h-full items-center justify-center`}>
-                    <User size={96} color="#059669" strokeWidth={1.2} />
+                    <User size={96} color="#124CB8" strokeWidth={1.2} />
                   </View>
                 )}
               </View>
 
               {/* Upload Photo Button */}
-              <TouchableOpacity
-                style={tw`bg-green-600 px-5 py-2 rounded-full mb-3`}
+              {/* <TouchableOpacity
+                style={tw`bg-[#124CB8] px-5 py-2 rounded-full mb-3`}
                 onPress={handlePhotoUpload}
               >
                 <Text style={tw`text-white font-semibold`}>Upload Photo</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
 
               {/* DELETE Photo Button (Visible only when photo exists) */}
-              {(
+              {/* {(
                 (userData as any)?.doctorProfile?.profile_picture ||
                 (userData as any)?.generalUser?.profile_picture ||
                 user?.generalUser?.profile_picture
@@ -274,14 +266,14 @@ export default function ProfileScreen() {
                     <Trash2 size={18} color="red" />
                     <Text style={tw`text-red-600 font-semibold ml-2`}>Delete Photo</Text>
                   </TouchableOpacity>
-                )}
+                )} */}
 
-              <Text style={tw`font-semibold text-xl text-green-800 mb-1`}>
+              <Text style={tw`font-bold text-xl text-[#001A41] mb-1`}>
                 {userData?.username || user?.username || 'Unknown User'}
               </Text>
-              <Text style={tw`font-normal text-sm text-green-500 mb-4`}>
+              {/* <Text style={tw`font-medium text-sm text-[#001A41]/80 mb-4`}>
                 {userData?.email || user?.email || 'No Email'}
-              </Text>
+              </Text> */}
             </>
           )}
         </View>
@@ -289,26 +281,26 @@ export default function ProfileScreen() {
         {/* Menu */}
         <View style={tw`px-4 mb-4`}>
           {[
-            { label: 'Appointments', icon: CalendarCheck, color: '#059669', bg: 'bg-green-100', screen: 'Appointments' },
-            { label: 'Personal Details', icon: User, color: '#10B981', bg: 'bg-emerald-100', screen: 'PersonalDetails' },
-            { label: 'My Medical Records', icon: Folder, color: '#34D399', bg: 'bg-green-200', screen: 'MedicalRecords' },
-            { label: 'Payment Methods', icon: CreditCard, color: '#059669', bg: 'bg-green-100', screen: 'PaymentMethods' },
-            { label: 'Notifications', icon: Bell, color: '#86EFAC', bg: 'bg-green-100', screen: 'Notification' },
-            { label: 'Privacy & Security', icon: Shield, color: '#10B981', bg: 'bg-emerald-100', screen: 'PrivacySecurity' },
-            { label: 'Test Bookings', icon: CalendarCheck, color: '#34D399', bg: 'bg-green-200', screen: 'TestBooking' },
-            { label: 'Help Center', icon: HelpCircle, color: '#059669', bg: 'bg-green-100', screen: 'HelpCenter' },
+            { label: 'Appointments', icon: CalendarCheck, color: '#124CB8', bg: 'bg-[#D8E2FF]', screen: 'Appointments' },
+            { label: 'Personal Details', icon: User, color: '#124CB8', bg: 'bg-[#D8E2FF]', screen: 'PersonalDetails' },
+            { label: 'My Medical Records', icon: Folder, color: '#124CB8', bg: 'bg-[#D8E2FF]', screen: 'MedicalRecords' },
+            { label: 'Payment Methods', icon: CreditCard, color: '#124CB8', bg: 'bg-[#D8E2FF]', screen: 'PaymentMethods' },
+            { label: 'Notifications', icon: Bell, color: '#124CB8', bg: 'bg-[#D8E2FF]', screen: 'Notification' },
+            { label: 'Privacy & Security', icon: Shield, color: '#124CB8', bg: 'bg-[#D8E2FF]', screen: 'PrivacySecurity' },
+            { label: 'Test Bookings', icon: CalendarCheck, color: '#124CB8', bg: 'bg-[#D8E2FF]', screen: 'TestBooking' },
+            { label: 'Help Center', icon: HelpCircle, color: '#124CB8', bg: 'bg-[#D8E2FF]', screen: 'HelpCenter' },
           ].map(({ label, icon: Icon, color, bg, screen }, index) => (
             <TouchableOpacity
               key={index}
-              style={tw`flex-row items-center bg-green-50 rounded-2xl p-4 mb-3 shadow-sm`}
+              style={tw`flex-row items-center bg-[#F1F0F4] rounded-2xl p-4 mb-3 shadow-sm`}
               onPress={() => navigation.navigate(screen)}
             >
               <View style={tw`w-10 h-10 rounded-full ${bg} justify-center items-center mr-4`}>
                 <Icon size={20} color={color} />
               </View>
               <View style={tw`flex-1 flex-row justify-between items-center`}>
-                <Text style={tw`font-medium text-base text-green-800`}>{label}</Text>
-                <ChevronRight size={20} color="#059669" />
+                <Text style={tw`font-bold text-base text-[#1A1B1F]`}>{label}</Text>
+                <ChevronRight size={20} color="#74777F" />
               </View>
             </TouchableOpacity>
           ))}
@@ -320,17 +312,17 @@ export default function ProfileScreen() {
           <Text style={[tw`ml-3 font-semibold text-base`, { color: '#cb1c42ff' }]}>Logout</Text>
         </TouchableOpacity>
 
-        <View style={tw`items-center mb-20 pt-2 border-t border-green-100`}>
-          <Text style={tw`font-normal text-xs text-green-500 mb-2`}>App Version 1.0.0</Text>
+        <View style={tw`items-center mb-20 pt-4 mt-2 border-t border-[#E5E7EB]`}>
+          <Text style={tw`font-medium text-xs text-[#44474F] mb-2`}>App Version 1.0.0</Text>
           <View style={tw`flex-row items-center justify-center`}>
-            <Text style={tw`font-normal text-[10px] text-green-400`}>Developed by </Text>
-            <Text style={tw`font-semibold text-[10px] text-green-700 mx-1`}>ZYNLOGIC</Text>
-            <Text style={tw`font-normal text-[10px] text-green-400`}>
+            <Text style={tw`font-medium text-[10px] text-[#44474F]/80`}>Developed by </Text>
+            <Text style={tw`font-bold text-[10px] text-[#124CB8] mx-1`}>ZYNLOGIC</Text>
+            <Text style={tw`font-medium text-[10px] text-[#44474F]/80`}>
               • © {new Date().getFullYear()} All Rights Reserved
             </Text>
           </View>
         </View>
       </ScrollView>
-    </PageLayout>
+    </SafeAreaView>
   );
 }

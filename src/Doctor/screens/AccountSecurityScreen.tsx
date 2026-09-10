@@ -47,7 +47,6 @@ const AccountSecurityScreen = () => {
 
         {/* Account Security Settings Component */}
         <AccountSecuritySettings
-          onPasswordChangePress={() => navigation.navigate('Account')}
           onTwoFactorPress={() => { }}
         />
 

@@ -575,7 +575,7 @@ const API_ADD_ADDRESS = 'https://api.docapp.co.in/api/address/addAddress';
 const API_GET_ALL_ADDRESS = 'https://api.docapp.co.in/api/address/getAllAddress';
 const API_UPDATE_ADDRESS = 'https://api.docapp.co.in/api/address/updateAddress';
 const API_DELETE_ADDRESS = 'https://api.docapp.co.in/api/address/deleteAddress';
-const API_CHANGE_PASSWORD = 'https://api.docapp.co.in/api/auth/change-password';
+
 
 const PersonalDetailsScreen = () => {
   const [userData, setUserData] = useState(null);
@@ -619,10 +619,7 @@ const PersonalDetailsScreen = () => {
   const [editLoading, setEditLoading] = useState(false);
   const [showEditDatePicker, setShowEditDatePicker] = useState(false);
 
-  // Change Password Modal
-  const [changePasswordVisible, setChangePasswordVisible] = useState(false);
-  const [newPassword, setNewPassword] = useState('');
-  const [passwordLoading, setPasswordLoading] = useState(false);
+
 
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [localPhotoUri, setLocalPhotoUri] = useState<string | null>(null);
@@ -775,37 +772,7 @@ const PersonalDetailsScreen = () => {
   };
 
 
-  // Change Password
-  const handleChangePassword = async () => {
-    if (!newPassword || newPassword.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters');
-      return;
-    }
-    setPasswordLoading(true);
-    try {
-      const response = await fetch(API_CHANGE_PASSWORD, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({ newPassword }),
-      });
 
-      const data = await response.json();
-      if (response.ok) {
-        Alert.alert('Success', data.message || 'Password changed successfully');
-        setChangePasswordVisible(false);
-        setNewPassword('');
-      } else {
-        Alert.alert('Error', data.message || 'Failed to change password');
-      }
-    } catch (error) {
-      Alert.alert('Error', 'Network error while changing password');
-    } finally {
-      setPasswordLoading(false);
-    }
-  };
 
   const handleUploadPhoto = async () => {
     const result = await launchImageLibrary({
@@ -937,10 +904,10 @@ const PersonalDetailsScreen = () => {
 
 
         {/* === SECTION 1: USER PROFILE CARD === */}
-        <View style={[tw`mt-6 items-center p-4 w-[100%] rounded-[24px]`, styles.profileCard]}>
+        <View style={[tw`mt-6 items-center p-4 w-full max-w-[500px] self-center rounded-[24px]`, styles.profileCard]}>
           {/* Edit Button */}
           <TouchableOpacity
-            style={[tw`absolute top-6 right-6 rounded-full justify-center items-center`, styles.editBtn]}
+            style={[tw`absolute top-4 right-4 md:top-6 md:right-6 rounded-full justify-center items-center`, styles.editBtn]}
             onPress={() => {
               setEditGender(general.gender || '');
               setEditDob(general.date_of_birth ? new Date(general.date_of_birth) : new Date(2000, 0, 1));
@@ -961,25 +928,25 @@ const PersonalDetailsScreen = () => {
                   general.profile_picture
                     ? `${general.profile_picture.split('?')[0]}?t=${imageTimestamp}`
                     : (userData?.doctorProfile?.profile_picture
-                        ? `${userData.doctorProfile.profile_picture.split('?')[0]}?t=${imageTimestamp}`
-                        : 'https://res.cloudinary.com/dwshjkk42/image/upload/v1751270760/doctor_8997187_mgopyu.png')
+                      ? `${userData.doctorProfile.profile_picture.split('?')[0]}?t=${imageTimestamp}`
+                      : 'https://res.cloudinary.com/dwshjkk42/image/upload/v1751270760/doctor_8997187_mgopyu.png')
                 )
               }}
-              style={[tw`w-24 h-24 rounded-full`, styles.avatarShadow]}
+              style={[tw`w-24 h-24 md:w-28 md:h-28 rounded-full`, styles.avatarShadow]}
             />
             {uploadingPhoto ? (
-              <View style={[tw`absolute w-24 h-24 rounded-full justify-center items-center`, { backgroundColor: 'rgba(0,0,0,0.5)' }]}>
+              <View style={[tw`absolute w-24 h-24 md:w-28 md:h-28 rounded-full justify-center items-center`, { backgroundColor: 'rgba(0,0,0,0.5)' }]}>
                 <ActivityIndicator color="#FFFFFF" />
               </View>
             ) : null}
-            <View style={styles.activeDot} />
+            <View style={tw`absolute bottom-[5%] right-[5%] w-5 h-5 md:w-6 md:h-6 rounded-full border-2 border-white bg-[#22C55E] z-10`} />
           </TouchableOpacity>
 
           {/* User Info */}
-          <Text style={tw`text-[24px] font-bold text-[#001A41] mt-4 text-center`}>
+          <Text numberOfLines={1} style={tw`text-[20px] md:text-[24px] font-bold text-[#001A41] mt-4 text-center`}>
             {userData.username}
           </Text>
-          <Text style={tw`text-[16px] font-medium text-[#001A41]/80 mt-1 text-center`}>
+          <Text numberOfLines={1} style={tw`text-[14px] md:text-[16px] font-medium text-[#001A41]/80 mt-1 text-center`}>
             {userData.email}
           </Text>
           {general.gender && (
@@ -996,66 +963,8 @@ const PersonalDetailsScreen = () => {
 
 
 
-
-
-
         {/* === SECTION 2: ADDRESS === */}
-        {/* <View style={[tw`mt-4 p-5`, styles.bentoCard]}>
-          <View style={tw`flex-row items-center mb-4`}>
-            <View style={tw`w-10 h-10 bg-[#0066FF]/10 rounded-xl justify-center items-center mr-3`}>
-              <Text style={tw`text-lg`}>📍</Text>
-            </View>
-            <Text style={tw`text-[18px] font-bold text-[#1A1B1F]`}>Address</Text>
-          </View>
-
-          <View style={tw`bg-[#F1F0F4] rounded-2xl p-4 mb-4`}>
-            {currentAddress ? (
-              <>
-                <Text style={tw`text-[14px] font-semibold text-[#1A1B1F] mb-1`}>
-                  {currentAddress.landmark || 'Primary Address'}
-                </Text>
-                <Text style={tw`text-[12px] text-[#44474F] leading-4`}>
-                  {currentAddress.house_no ? `${currentAddress.house_no} ` : ''}
-                  {currentAddress.street}, {currentAddress.city}{'\n'}
-                  {currentAddress.state}, {currentAddress.pincode}
-                </Text>
-              </>
-            ) : (
-              <Text style={tw`text-[12px] text-[#44474F] leading-4`}>No address added yet.</Text>
-            )}
-          </View>
-
-          {currentAddress ? (
-            <TouchableOpacity
-              style={tw`py-2 rounded-xl justify-center items-center`}
-              onPress={() => {
-                setEditForm({
-                  addressId: currentAddress.id.toString(),
-                  country: currentAddress.country || 'India',
-                  state: currentAddress.state,
-                  city: currentAddress.city,
-                  pincode: currentAddress.pincode,
-                  street: currentAddress.street,
-                  landmark: currentAddress.landmark || '',
-                  houseNo: currentAddress.house_no || '',
-                });
-                setEditModalVisible(true);
-              }}
-            >
-              <Text style={tw`text-[14px] font-bold text-[#124CB8]`}>Change Address</Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              style={tw`py-2 rounded-xl justify-center items-center bg-[#124CB8]/10`}
-              onPress={() => setAddressModalVisible(true)}
-            >
-              <Text style={tw`text-[14px] font-bold text-[#124CB8]`}>Add Address</Text>
-            </TouchableOpacity>
-          )}
-        </View> */}
-
-        {/* === SECTION 2: ADDRESS === */}
-        <View style={[tw`p-5 gap-4 mt-6 w-full`]}>
+        <View style={[tw`p-5 gap-4 mt-6 w-full max-w-[600px] self-center`]}>
 
           {/* Header */}
           <View style={tw`flex-row items-center gap-3 w-full`}>
@@ -1064,24 +973,24 @@ const PersonalDetailsScreen = () => {
                 <Path d="M8 10C8.55 10 9.02083 9.80417 9.4125 9.4125C9.80417 9.02083 10 8.55 10 8C10 7.45 9.80417 6.97917 9.4125 6.5875C9.02083 6.19583 8.55 6 8 6C7.45 6 6.97917 6.19583 6.5875 6.5875C6.19583 6.97917 6 7.45 6 8C6 8.55 6.19583 9.02083 6.5875 9.4125C6.97917 9.80417 7.45 10 8 10ZM8 17.35C10.0333 15.4833 11.5417 13.7875 12.525 12.2625C13.5083 10.7375 14 9.38333 14 8.2C14 6.38333 13.4208 4.89583 12.2625 3.7375C11.1042 2.57917 9.68333 2 8 2C6.31667 2 4.89583 2.57917 3.7375 3.7375C2.57917 4.89583 2 6.38333 2 8.2C2 9.38333 2.49167 10.7375 3.475 12.2625C4.45833 13.7875 5.96667 15.4833 8 17.35ZM8 20C5.31667 17.7167 3.3125 15.5958 1.9875 13.6375C0.6625 11.6792 0 9.86667 0 8.2C0 5.7 0.804167 3.70833 2.4125 2.225C4.02083 0.741667 5.88333 0 8 0C10.1167 0 11.9792 0.741667 13.5875 2.225C15.1958 3.70833 16 5.7 16 8.2C16 9.86667 15.3375 11.6792 14.0125 13.6375C12.6875 15.5958 10.6833 17.7167 8 20Z" fill="#124CB8" />
               </Svg>
             </View>
-            <Text style={tw`text-lg font-bold text-[#1A1B1F]`}>Address</Text>
+            <Text style={tw`text-lg md:text-xl font-bold text-[#1A1B1F]`}>Address</Text>
           </View>
 
           {/* Address Details Box */}
-          <View style={tw`w-full bg-[#F1F0F4] rounded-2xl p-3`}>
+          <View style={tw`w-full bg-[#F1F0F4] rounded-2xl p-3 md:p-5`}>
             {currentAddress ? (
               <View style={tw`flex-col gap-1`}>
-                <Text style={tw`text-sm font-semibold text-[#1A1B1F]`}>
+                <Text style={tw`text-sm md:text-base font-semibold text-[#1A1B1F]`}>
                   {currentAddress.landmark || 'Central Medical Plaza'}
                 </Text>
-                <Text style={tw`text-xs text-[#44474F] font-normal leading-4`}>
+                <Text style={tw`text-xs md:text-sm text-[#44474F] font-normal leading-4`}>
                   {currentAddress.house_no ? `${currentAddress.house_no} ` : ''}
                   {currentAddress.street}, {currentAddress.city}{'\n'}
                   {currentAddress.state}, {currentAddress.pincode}
                 </Text>
               </View>
             ) : (
-              <Text style={tw`text-xs text-[#44474F] font-normal leading-4`}>
+              <Text style={tw`text-xs md:text-sm text-[#44474F] font-normal leading-4`}>
                 No address added yet.
               </Text>
             )}
@@ -1090,7 +999,7 @@ const PersonalDetailsScreen = () => {
           {/* Action Button */}
           {currentAddress ? (
             <TouchableOpacity
-              style={tw`w-full py-2 rounded-xl justify-center items-center`}
+              style={tw`w-full py-3 rounded-xl justify-center items-center`}
               onPress={() => {
                 setEditForm({
                   addressId: currentAddress.id.toString(),
@@ -1109,7 +1018,7 @@ const PersonalDetailsScreen = () => {
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
-              style={tw`w-full py-2 rounded-xl justify-center items-center`}
+              style={tw`w-full py-3 rounded-xl justify-center items-center`}
               onPress={() => setAddressModalVisible(true)}
             >
               <Text style={tw`text-sm font-bold text-[#124CB8] text-center`}>Add Address</Text>
@@ -1119,69 +1028,12 @@ const PersonalDetailsScreen = () => {
 
 
 
-        {/* === SECTION 3: SECURITY === */}
-        <View style={[tw`mt-2 p-5 w-100%`]}>
-          <View style={tw`flex-row items-center mb-4`}>
-            <View style={tw`w-10 h-10 bg-[#705573]/10 rounded-xl justify-center items-center mr-3`}>
-              <Text style={tw`text-lg`}>🛡️</Text>
-            </View>
-            <Text style={tw`text-[18px] font-bold text-[#1A1B1F]`}>Security</Text>
-          </View>
 
-          <TouchableOpacity
-            style={tw`bg-[#F1F0F4] rounded-2xl p-4 flex-row justify-between items-center mb-3`}
-            onPress={() => setChangePasswordVisible(true)}
-          >
-            <View>
-              <Text style={tw`text-[12px] font-bold text-[#74777F] tracking-widest uppercase`}>
-                Password
-              </Text>
-              <Text style={tw`text-[14px] text-[#1A1B1F] mt-1 tracking-widest`}>
-                ••••••••••••
-              </Text>
-            </View>
-            <Text style={tw`text-[#74777F] text-xl`}>›</Text>
-          </TouchableOpacity>
-
-          {/* <View style={tw`bg-[#F1F0F4] rounded-2xl p-4 flex-row justify-between items-center`}>
-            <View>
-              <Text style={tw`text-[12px] font-bold text-[#74777F] tracking-widest uppercase`}>
-                2FA
-              </Text>
-              <Text style={tw`text-[14px] font-medium text-[#16A34A] mt-1`}>
-                Enabled
-              </Text>
-            </View>
-            <Text style={tw`text-lg`}>✅</Text>
-          </View> */}
-
-        </View>
 
         {/* ========================================= */}
         {/* MODALS SECTION                            */}
         {/* ========================================= */}
 
-        {/* Change Password Modal */}
-        <Modal visible={changePasswordVisible} transparent animationType="fade">
-          <View style={styles.modalContainer}>
-            <View style={styles.modalBox}>
-              <Text style={tw`text-lg font-bold text-[#001A41] mb-3`}>Change Password</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="New Password"
-                secureTextEntry
-                value={newPassword}
-                onChangeText={setNewPassword}
-              />
-              <TouchableOpacity style={tw`bg-[#124CB8] py-3 rounded-xl mt-3`} onPress={handleChangePassword} disabled={passwordLoading}>
-                <Text style={tw`text-center text-white font-bold`}>{passwordLoading ? 'Saving...' : 'Update Password'}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={tw`bg-gray-200 py-3 rounded-xl mt-2`} onPress={() => setChangePasswordVisible(false)}>
-                <Text style={tw`text-center text-gray-800 font-bold`}>Cancel</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
 
         {/* Add Address Modal */}
         <Modal visible={addressModalVisible} transparent animationType="fade">
@@ -1192,11 +1044,11 @@ const PersonalDetailsScreen = () => {
               <TextInput style={styles.input} placeholder="Pincode" keyboardType="numeric" value={addressForm.pincode} onChangeText={(t) => handleChange('pincode', t)} />
               <TextInput style={styles.input} placeholder="Street" value={addressForm.street} onChangeText={(t) => handleChange('street', t)} />
               <TextInput style={styles.input} placeholder="State" value={addressForm.state} onChangeText={(t) => handleChange('state', t)} />
-              <TouchableOpacity style={tw`bg-[#124CB8] py-3 rounded-xl mt-2`} onPress={handleAddAddress}>
-                <Text style={tw`text-center text-white font-bold`}>Save Address</Text>
+              <TouchableOpacity style={tw`bg-[#124CB8] py-3 md:py-4 rounded-xl mt-2`} onPress={handleAddAddress}>
+                <Text style={tw`text-center text-sm md:text-base text-white font-bold`}>Save Address</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={tw`bg-gray-200 py-3 rounded-xl mt-2`} onPress={() => setAddressModalVisible(false)}>
-                <Text style={tw`text-center text-gray-800 font-bold`}>Cancel</Text>
+              <TouchableOpacity style={tw`bg-gray-200 py-3 md:py-4 rounded-xl mt-2`} onPress={() => setAddressModalVisible(false)}>
+                <Text style={tw`text-center text-sm md:text-base text-gray-800 font-bold`}>Cancel</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -1213,11 +1065,11 @@ const PersonalDetailsScreen = () => {
               <TextInput style={styles.input} placeholder="City" value={editForm.city} onChangeText={(t) => handleEditChange('city', t)} />
               <TextInput style={styles.input} placeholder="State" value={editForm.state} onChangeText={(t) => handleEditChange('state', t)} />
               <TextInput style={styles.input} placeholder="Pincode" value={editForm.pincode} onChangeText={(t) => handleEditChange('pincode', t)} />
-              <TouchableOpacity style={tw`bg-[#124CB8] py-3 rounded-xl mt-3`} onPress={handleUpdateAddress}>
-                <Text style={tw`text-center text-white font-bold`}>Update Address</Text>
+              <TouchableOpacity style={tw`bg-[#124CB8] py-3 md:py-4 rounded-xl mt-3`} onPress={handleUpdateAddress}>
+                <Text style={tw`text-center text-sm md:text-base text-white font-bold`}>Update Address</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={tw`bg-gray-200 py-3 rounded-xl mt-2`} onPress={() => setEditModalVisible(false)}>
-                <Text style={tw`text-center text-gray-800 font-bold`}>Cancel</Text>
+              <TouchableOpacity style={tw`bg-gray-200 py-3 md:py-4 rounded-xl mt-2`} onPress={() => setEditModalVisible(false)}>
+                <Text style={tw`text-center text-sm md:text-base text-gray-800 font-bold`}>Cancel</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -1239,8 +1091,8 @@ const PersonalDetailsScreen = () => {
                         general.profile_picture
                           ? `${general.profile_picture.split('?')[0]}?t=${imageTimestamp}`
                           : (userData?.doctorProfile?.profile_picture
-                              ? `${userData.doctorProfile.profile_picture.split('?')[0]}?t=${imageTimestamp}`
-                              : 'https://res.cloudinary.com/dwshjkk42/image/upload/v1751270760/doctor_8997187_mgopyu.png')
+                            ? `${userData.doctorProfile.profile_picture.split('?')[0]}?t=${imageTimestamp}`
+                            : 'https://res.cloudinary.com/dwshjkk42/image/upload/v1751270760/doctor_8997187_mgopyu.png')
                       )
                     }}
                     style={tw`w-24 h-24 rounded-full border-2 border-[#124CB8]`}
@@ -1316,12 +1168,12 @@ const PersonalDetailsScreen = () => {
                 ))}
               </View>
 
-              <TouchableOpacity style={tw`bg-[#124CB8] py-3 rounded-xl mt-2`} onPress={handleEditProfileSubmit} disabled={editLoading}>
-                <Text style={tw`text-center text-white font-bold`}>{editLoading ? 'Saving...' : 'Save Profile'}</Text>
+              <TouchableOpacity style={tw`bg-[#124CB8] py-3 md:py-4 rounded-xl mt-2`} onPress={handleEditProfileSubmit} disabled={editLoading}>
+                <Text style={tw`text-center text-sm md:text-base text-white font-bold`}>{editLoading ? 'Saving...' : 'Save Profile'}</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={tw`bg-gray-200 py-3 rounded-xl mt-2`} onPress={() => setEditProfileVisible(false)}>
-                <Text style={tw`text-center text-gray-800 font-bold`}>Cancel</Text>
+              <TouchableOpacity style={tw`bg-gray-200 py-3 md:py-4 rounded-xl mt-2`} onPress={() => setEditProfileVisible(false)}>
+                <Text style={tw`text-center text-sm md:text-base text-gray-800 font-bold`}>Cancel</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -1366,7 +1218,6 @@ const styles = {
     zIndex: 1,
   },
   bentoCard: {
-    width: 358,
     backgroundColor: 'rgba(255, 255, 255, 0.7)',
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.8)',
@@ -1394,6 +1245,7 @@ const styles = {
   },
   modalBox: {
     width: '85%',
+    maxWidth: 500,
     backgroundColor: 'white',
     padding: 24,
     borderRadius: 24,

@@ -446,7 +446,7 @@ export default function AppointmentDetailsScreen() {
     <SafeAreaView style={tw`flex-1 bg-white`}>
       <ProfileTopBar />
 
-      <ScrollView contentContainerStyle={tw`p-4 pb-18`}>
+      <ScrollView contentContainerStyle={tw`p-4 pb-18 max-w-[800px] self-center w-full`}>
         {/* <View style={tw`flex-row items-center mb-4`}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={tw`mr-3`}>
             <Text style={tw`text-blue-600 font-bold text-lg`}>← Back</Text>
@@ -555,7 +555,7 @@ export default function AppointmentDetailsScreen() {
             </Text>
 
             {/* Row of 2 buttons */}
-            <View style={tw`flex-row gap-[12px]`}>
+            <View style={tw`flex-row flex-wrap md:flex-nowrap gap-[12px]`}>
 
               {appointment.appointment_status !== "closed" && (
                 <TouchableOpacity
@@ -654,7 +654,7 @@ export default function AppointmentDetailsScreen() {
 
             {/* Row 2: Write Review & Follow-up */}
             {["completed", "closed"].includes(appointment.appointment_status.toLowerCase()) && (
-              <View style={tw`flex-row gap-[12px]`}>
+              <View style={tw`flex-row flex-wrap md:flex-nowrap gap-[12px]`}>
                 <TouchableOpacity
                   onPress={() => {
                     setReviewText("");
@@ -686,8 +686,8 @@ export default function AppointmentDetailsScreen() {
 
       {/* Add Prescription Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
-        <View style={tw`flex-1 justify-center bg-black/60 p-4`}>
-          <View style={tw`bg-white p-6 rounded-[20px] max-h-[85%] border border-[#DAE1E7]`}>
+        <View style={tw`flex-1 justify-center items-center bg-black/60 p-4`}>
+          <View style={tw`w-[92%] max-w-[500px] bg-white p-6 rounded-[20px] max-h-[85%] border border-[#DAE1E7]`}>
             {/* Modal Header */}
             <View style={tw`flex-row justify-between items-center mb-4 pb-3 border-b border-[#F0F3F6]`}>
               <Text style={tw`text-[20px] font-bold text-[#011D35] font-['Inter']`}>
@@ -819,8 +819,8 @@ export default function AppointmentDetailsScreen() {
 
       {/* View Prescription Modal */}
       <Modal visible={viewPrescriptionModal} animationType="slide" transparent={true}>
-        <View style={tw`flex-1 justify-center bg-black/60 p-4`}>
-          <View style={tw`bg-white p-6 rounded-[20px] max-h-[85%] border border-[#DAE1E7]`}>
+        <View style={tw`flex-1 justify-center items-center bg-black/60 p-4`}>
+          <View style={tw`w-[92%] max-w-[500px] bg-white p-6 rounded-[20px] max-h-[85%] border border-[#DAE1E7]`}>
             <View style={tw`flex-row justify-between items-center mb-4 pb-3 border-b border-[#F0F3F6]`}>
               <Text style={tw`text-[20px] font-bold text-[#011D35] font-['Inter']`}>
                 Prescription Details
@@ -880,8 +880,8 @@ export default function AppointmentDetailsScreen() {
 
       {/* Documents Modal */}
       <Modal visible={documentModalVisible} animationType="slide" transparent={true}>
-        <View style={tw`flex-1 bg-black/50 justify-center p-4`}>
-          <View style={tw`bg-white rounded-2xl p-4 max-h-[85%]`}>
+        <View style={tw`flex-1 justify-center items-center bg-black/50 p-4`}>
+          <View style={tw`w-[92%] max-w-[500px] bg-white rounded-2xl p-4 max-h-[85%]`}>
             <Text style={tw`text-xl font-bold mb-3 text-center`}>Uploaded Images</Text>
             {docLoading ? (
               <ActivityIndicator />
@@ -944,8 +944,8 @@ export default function AppointmentDetailsScreen() {
 
       {/* Review Modal */}
       <Modal visible={reviewModalVisible} animationType="slide" transparent={true}>
-        <View style={tw`flex-1 justify-center bg-black/60 p-4`}>
-          <View style={tw`bg-white p-6 rounded-[20px] max-h-[70%] border border-[#DAE1E7]`}>
+        <View style={tw`flex-1 justify-center items-center bg-black/60 p-4`}>
+          <View style={tw`w-[92%] max-w-[500px] bg-white p-6 rounded-[20px] max-h-[70%] border border-[#DAE1E7]`}>
             <View style={tw`flex-row justify-between items-center mb-4 pb-3 border-b border-[#F0F3F6]`}>
               <Text style={tw`text-[20px] font-bold text-[#011D35] font-['Inter']`}>
                 Write Review
