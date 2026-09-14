@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Image,
   Animated,
+  Alert,
 } from 'react-native';
 import {
   UserSquare2,
@@ -18,12 +19,14 @@ import {
   ThumbsUp,
   VerifiedIcon,
   ShieldCheck,
+  LogOut,
 } from 'lucide-react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import tw from 'twrnc';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { DoctorStackParamList } from '../types/navigation';
-import DoctorHeader from '../components/DoctorHeader';
+import ProfileTopBar from '../../components/ProfileTopBar';
 import { useAccessToken } from '../../screens/contexts/AccessTokenContext';
 import { useUser } from '../../screens/contexts/UserContext';
 
@@ -52,8 +55,8 @@ const DoctorProfileSkeleton = () => {
   }, [pulseAnim]);
 
   return (
-    <View style={tw`flex-1 bg-[#F8F9FF]`}>
-      <DoctorHeader title="Profile" showSettings showNotifications />
+    <SafeAreaView style={tw`flex-1 bg-[#F8F9FF]`}>
+      <ProfileTopBar title="Profile" />
       <ScrollView contentContainerStyle={tw`pb-28`} showsVerticalScrollIndicator={false}>
         {/* Profile Card Skeleton */}
         <Animated.View style={[tw`p-4`, { opacity: pulseAnim }]}>
@@ -101,14 +104,14 @@ const DoctorProfileSkeleton = () => {
           ))}
         </Animated.View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const DoctorProfileScreen = () => {
   const navigation = useNavigation<DoctorNavigationProp>();
-  const { accessToken } = useAccessToken();
-  const { user, fetchUserData: refreshGlobalUser } = useUser();
+  const { accessToken, clearAccessToken } = useAccessToken();
+  const { user, fetchUserData: refreshGlobalUser, logout } = useUser();
   const [userData, setUserData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -128,20 +131,20 @@ const DoctorProfileScreen = () => {
       icon: <VerifiedIcon size={24} color="#124CB8" />,
       route: 'Specializations' as const,
     },
-    {
-      id: 3,
-      title: 'Consultation Hours',
-      subtitle: 'Set your availability and consultation slots',
-      icon: <Clock size={24} color="#124CB8" />,
-      route: 'Availability' as const,
-    },
-    {
-      id: 4,
-      title: 'Consultation Fees',
-      subtitle: 'Manage your consultation charges',
-      icon: <BadgeDollarSign size={24} color="#124CB8" />,
-      route: 'ConsultationFees' as const,
-    },
+    // {
+    //   id: 3,
+    //   title: 'Consultation Hours',
+    //   subtitle: 'Set your availability and consultation slots',
+    //   icon: <Clock size={24} color="#124CB8" />,
+    //   route: 'Availability' as const,
+    // },
+    // {
+    //   id: 4,
+    //   title: 'Consultation Fees',
+    //   subtitle: 'Manage your consultation charges',
+    //   icon: <BadgeDollarSign size={24} color="#124CB8" />,
+    //   route: 'ConsultationFees' as const,
+    // },
     {
       id: 5,
       title: 'Security',
@@ -179,6 +182,28 @@ const DoctorProfileScreen = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleLogout = async () => {
+    Alert.alert('Confirm Logout', 'Are you sure you want to logout?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Logout',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await logout();
+            if (clearAccessToken) clearAccessToken();
+            navigation.getParent()?.reset({
+              index: 0,
+              routes: [{ name: 'Login' }],
+            });
+          } catch (error) {
+            Alert.alert('Logout Failed', 'Unable to logout. Please try again.');
+          }
+        },
+      },
+    ]);
   };
 
   useFocusEffect(
@@ -227,9 +252,9 @@ const DoctorProfileScreen = () => {
   }
 
   return (
-    <View style={tw`flex-1 bg-[#F8F9FF]`}>
-      <DoctorHeader title="Profile" showSettings showNotifications />
-      <ScrollView contentContainerStyle={tw`pb-32`} showsVerticalScrollIndicator={false}>
+    <SafeAreaView style={tw`flex-1 bg-[#F8F9FF]`}>
+      <ProfileTopBar title="Profile" />
+      <ScrollView contentContainerStyle={tw`pb-28`} showsVerticalScrollIndicator={false}>
         {/* Profile Card */}
         <View style={tw`p-4`}>
           <View
@@ -329,8 +354,14 @@ const DoctorProfileScreen = () => {
             </TouchableOpacity>
           ))}
         </View>
+
+        {/* Logout */}
+        <TouchableOpacity onPress={handleLogout} style={tw`mx-4 mb-6 mt-4 flex-row items-center`}>
+          <LogOut size={20} color="#cb1c42ff" />
+          <Text style={[tw`ml-3 font-semibold text-base`, { color: '#cb1c42ff' }]}>Logout</Text>
+        </TouchableOpacity>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

@@ -79,7 +79,7 @@ const ClinicInfo: React.FC<ClinicInfoProps> = ({
                             latitude: position.coords.latitude.toString(),
                             longitude: position.coords.longitude.toString(),
                         };
-                        
+
                         console.log('--- Updating Live Location ---');
                         console.log('URL:', url);
                         console.log('RequestBody:', JSON.stringify(bodyData, null, 2));
@@ -92,7 +92,7 @@ const ClinicInfo: React.FC<ClinicInfoProps> = ({
                             },
                             body: JSON.stringify(bodyData),
                         });
-                        
+
                         console.log('Response Status:', response.status);
                         const data = await response.text();
                         console.log('Response Data:', data);
@@ -137,7 +137,7 @@ const ClinicInfo: React.FC<ClinicInfoProps> = ({
                 credentials: 'include',
             });
             const data = await response.json();
-            
+
             console.log('--- getAllAddress Response ---');
             console.log(JSON.stringify(data, null, 2));
 
@@ -225,14 +225,14 @@ const ClinicInfo: React.FC<ClinicInfoProps> = ({
             addresses[0].state,
             addresses[0].country,
             addresses[0].pincode
-          ].filter(Boolean).join(', ')
+        ].filter(Boolean).join(', ')
         : propLocation;
 
     return (
         /* Clinic Info Main Section Card */
         <View
             style={[
-                tw`w-full max-w-[350px] bg-white rounded-[16px] p-[24px] border border-[#C3C6D5]/20 flex-col items-start`,
+                tw`w-full bg-white rounded-2xl p-5 border border-[#C3C6D5]/20 flex-col items-start`,
                 {
                     shadowColor: '#102A43',
                     shadowOffset: { width: 0, height: 4 },
@@ -254,55 +254,49 @@ const ClinicInfo: React.FC<ClinicInfoProps> = ({
             {/* Info Items Stack Container */}
             <View style={tw`w-full flex-col gap-[24px]`}>
                 {isEditing ? (
-                    <View style={tw`w-full gap-3`}>
-                        <View style={tw`flex-row gap-2`}>
-                            <TextInput
-                                style={tw`flex-1 border border-gray-300 rounded-md p-2 text-[14px]`}
-                                placeholder="House No."
-                                value={editForm.houseNo}
-                                onChangeText={(t) => setEditForm({ ...editForm, houseNo: t })}
-                            />
-                            <TextInput
-                                style={tw`flex-[2] border border-gray-300 rounded-md p-2 text-[14px]`}
-                                placeholder="Street"
-                                value={editForm.street}
-                                onChangeText={(t) => setEditForm({ ...editForm, street: t })}
-                            />
-                        </View>
+                    <View style={tw`w-full flex-col gap-3`}>
                         <TextInput
-                            style={tw`border border-gray-300 rounded-md p-2 text-[14px]`}
+                            style={tw`w-full border border-gray-300 rounded-md p-2 text-[14px]`}
+                            placeholder="House No."
+                            value={editForm.houseNo}
+                            onChangeText={(t) => setEditForm({ ...editForm, houseNo: t })}
+                        />
+                        <TextInput
+                            style={tw`w-full border border-gray-300 rounded-md p-2 text-[14px]`}
+                            placeholder="Street"
+                            value={editForm.street}
+                            onChangeText={(t) => setEditForm({ ...editForm, street: t })}
+                        />
+                        <TextInput
+                            style={tw`w-full border border-gray-300 rounded-md p-2 text-[14px]`}
                             placeholder="Landmark"
                             value={editForm.landmark}
                             onChangeText={(t) => setEditForm({ ...editForm, landmark: t })}
                         />
-                        <View style={tw`flex-row gap-2`}>
-                            <TextInput
-                                style={tw`flex-1 border border-gray-300 rounded-md p-2 text-[14px]`}
-                                placeholder="City"
-                                value={editForm.city}
-                                onChangeText={(t) => setEditForm({ ...editForm, city: t })}
-                            />
-                            <TextInput
-                                style={tw`flex-1 border border-gray-300 rounded-md p-2 text-[14px]`}
-                                placeholder="State"
-                                value={editForm.state}
-                                onChangeText={(t) => setEditForm({ ...editForm, state: t })}
-                            />
-                        </View>
-                        <View style={tw`flex-row gap-2`}>
-                            <TextInput
-                                style={tw`flex-1 border border-gray-300 rounded-md p-2 text-[14px]`}
-                                placeholder="Country"
-                                value={editForm.country}
-                                onChangeText={(t) => setEditForm({ ...editForm, country: t })}
-                            />
-                            <TextInput
-                                style={tw`flex-1 border border-gray-300 rounded-md p-2 text-[14px]`}
-                                placeholder="Pincode"
-                                value={editForm.pincode}
-                                onChangeText={(t) => setEditForm({ ...editForm, pincode: t })}
-                            />
-                        </View>
+                        <TextInput
+                            style={tw`w-full border border-gray-300 rounded-md p-2 text-[14px]`}
+                            placeholder="City"
+                            value={editForm.city}
+                            onChangeText={(t) => setEditForm({ ...editForm, city: t })}
+                        />
+                        <TextInput
+                            style={tw`w-full border border-gray-300 rounded-md p-2 text-[14px]`}
+                            placeholder="State"
+                            value={editForm.state}
+                            onChangeText={(t) => setEditForm({ ...editForm, state: t })}
+                        />
+                        <TextInput
+                            style={tw`w-full border border-gray-300 rounded-md p-2 text-[14px]`}
+                            placeholder="Country"
+                            value={editForm.country}
+                            onChangeText={(t) => setEditForm({ ...editForm, country: t })}
+                        />
+                        <TextInput
+                            style={tw`w-full border border-gray-300 rounded-md p-2 text-[14px]`}
+                            placeholder="Pincode"
+                            value={editForm.pincode}
+                            onChangeText={(t) => setEditForm({ ...editForm, pincode: t })}
+                        />
                         <View style={tw`flex-row gap-2 mt-2`}>
                             <TouchableOpacity
                                 style={tw`flex-1 bg-gray-200 rounded-md p-3 items-center`}
@@ -353,11 +347,12 @@ const ClinicInfo: React.FC<ClinicInfoProps> = ({
                     <TouchableOpacity
                         activeOpacity={0.7}
                         onPress={handleEditPress}
-                        style={tw`w-full h-[44px] bg-[#DBE3F1] rounded-[16px] flex-row justify-center items-center gap-[8px]`}
+                        style={tw`w-full min-h-[44px] py-2 px-4 bg-[#DBE3F1] rounded-[16px] flex-row justify-center items-center gap-[8px]`}
                     >
                         <Edit2 size={15} color="#5D6571" />
                         <Text
-                            style={tw`text-[14px] font-normal text-[#5D6571] font-['Inter'] leading-[20px] text-center`}
+                            style={tw`text-[14px] font-normal text-[#5D6571] font-['Inter'] leading-[20px] text-center flex-shrink`}
+                            numberOfLines={2}
                         >
                             Edit Quick Info
                         </Text>
@@ -370,10 +365,13 @@ const ClinicInfo: React.FC<ClinicInfoProps> = ({
                                 activeOpacity={0.7}
                                 onPress={handleUpdateLocation}
                                 disabled={updatingLocation}
-                                style={[tw`w-full h-[44px] rounded-[16px] flex-row justify-center items-center gap-[8px]`, isLocationUpdated ? tw`bg-[#124CB8]` : tw`bg-[#DC2626]`]}
+                                style={[tw`w-full min-h-[44px] py-2 px-4 rounded-[16px] flex-row justify-center items-center gap-[8px]`, isLocationUpdated ? tw`bg-[#124CB8]` : tw`bg-[#DC2626]`]}
                             >
                                 <MapPin size={15} color="#FFFFFF" />
-                                <Text style={tw`text-[14px] font-normal text-[#FFFFFF] font-['Inter'] leading-[20px] text-center`}>
+                                <Text
+                                    style={tw`text-[13px] font-normal text-[#FFFFFF] font-['Inter'] leading-[20px] text-center flex-shrink`}
+                                    numberOfLines={2}
+                                >
                                     {updatingLocation ? 'Updating...' : (isLocationUpdated ? 'Update Live Location' : 'Set Live Location (Required)')}
                                 </Text>
                             </TouchableOpacity>

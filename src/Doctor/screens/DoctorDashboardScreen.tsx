@@ -41,82 +41,82 @@ type DoctorNavigationProp = NativeStackNavigationProp<DoctorStackParamList>;
 const DoctorDashboardScreen = () => {
   const navigation = useNavigation<DoctorNavigationProp>();
 
-  const menuItems = [
-    {
-      id: 1,
-      title: 'Profile',
-      icon: <UserSquare2 size={24} color="#16a34a" />,
-      route: 'DoctorProfile' as const,
-    },
-    {
-      id: 2,
-      title: 'Reach',
-      icon: <MessageSquare size={24} color="#16a34a" />,
-      route: 'DoctorReach' as const,
-      count: '1.9K',
-    },
-    {
-      id: 3,
-      title: 'Patient Stories',
-      icon: <ThumbsUp size={24} color="#16a34a" />,
-      route: 'PatientStories' as const,
-      count: '24',
-    },
-    {
-      id: 4,
-      title: 'Consult',
-      icon: <Stethoscope size={24} color="#16a34a" />,
-      route: 'DoctorConsult' as const,
-    },
-    {
-      id: 5,
-      title: 'Appointments',
-      icon: <FileText size={24} color="#16a34a" />,
-      route: 'Healthfeed' as const,
-    },
-    {
-      id: 6,
-      title: 'Earnings',
-      icon: <BadgeDollarSign size={24} color="#16a34a" />,
-      route: 'DoctorEarnings' as const,
-    },
-    {
-      id: 7,
-      title: 'Prime',
-      icon: <Crown size={24} color="#16a34a" />,
-      route: 'DoctorPrime' as const,
-    },
-    {
-      id: 8,
-      title: 'Reports',
-      icon: <BarChart2 size={24} color="#16a34a" />,
-      route: 'DoctorReports' as const,
-    },
-    {
-      id: 9,
-      title: 'Calendar',
-      icon: <Calendar size={24} color="#16a34a" />,
-      route: 'DoctorCalendar' as const,
-    },
-    {
-      id: 10,
-      title: 'Patients',
-      icon: <Users size={24} color="#16a34a" />,
-      route: 'DoctorPatients' as const,
-    },
-    {
-      id: 11,
-      title: 'Appointment Management',
-      icon: <Calendar size={24} color="#16a34a" />,
-      route: 'AppointmentManagement' as const,
-    },
-    {
-      id: 12,
-      title: 'Live Location',
-      icon: <MapPin size={24} color="#16a34a" />,
-      route: 'LiveLocation' as const,
-    },
-  ];
+  // const menuItems = [
+  //   {
+  //     id: 1,
+  //     title: 'Profile',
+  //     icon: <UserSquare2 size={24} color="#16a34a" />,
+  //     route: 'DoctorProfile' as const,
+  //   },
+  //   {
+  //     id: 2,
+  //     title: 'Reach',
+  //     icon: <MessageSquare size={24} color="#16a34a" />,
+  //     route: 'DoctorReach' as const,
+  //     count: '1.9K',
+  //   },
+  //   {
+  //     id: 3,
+  //     title: 'Patient Stories',
+  //     icon: <ThumbsUp size={24} color="#16a34a" />,
+  //     route: 'PatientStories' as const,
+  //     count: '24',
+  //   },
+  //   {
+  //     id: 4,
+  //     title: 'Consult',
+  //     icon: <Stethoscope size={24} color="#16a34a" />,
+  //     route: 'DoctorConsult' as const,
+  //   },
+  //   {
+  //     id: 5,
+  //     title: 'Appointments',
+  //     icon: <FileText size={24} color="#16a34a" />,
+  //     route: 'Healthfeed' as const,
+  //   },
+  //   {
+  //     id: 6,
+  //     title: 'Earnings',
+  //     icon: <BadgeDollarSign size={24} color="#16a34a" />,
+  //     route: 'DoctorEarnings' as const,
+  //   },
+  //   {
+  //     id: 7,
+  //     title: 'Prime',
+  //     icon: <Crown size={24} color="#16a34a" />,
+  //     route: 'DoctorPrime' as const,
+  //   },
+  //   {
+  //     id: 8,
+  //     title: 'Reports',
+  //     icon: <BarChart2 size={24} color="#16a34a" />,
+  //     route: 'DoctorReports' as const,
+  //   },
+  //   {
+  //     id: 9,
+  //     title: 'Calendar',
+  //     icon: <Calendar size={24} color="#16a34a" />,
+  //     route: 'DoctorCalendar' as const,
+  //   },
+  //   {
+  //     id: 10,
+  //     title: 'Patients',
+  //     icon: <Users size={24} color="#16a34a" />,
+  //     route: 'DoctorPatients' as const,
+  //   },
+  //   {
+  //     id: 11,
+  //     title: 'Appointment Management',
+  //     icon: <Calendar size={24} color="#16a34a" />,
+  //     route: 'AppointmentManagement' as const,
+  //   },
+  //   {
+  //     id: 12,
+  //     title: 'Live Location',
+  //     icon: <MapPin size={24} color="#16a34a" />,
+  //     route: 'LiveLocation' as const,
+  //   },
+  // ];
 
   return (
     <>
@@ -170,7 +170,7 @@ const DoctorDashboardScreen = () => {
             <TodaysAppointments />
           </View>
 
-          <View style={tw`flex-row flex-wrap justify-between`}>
+          {/* <View style={tw`flex-row flex-wrap justify-between`}>
             {menuItems.map((item) => (
               <TouchableOpacity
                 key={item.id}
@@ -190,10 +190,10 @@ const DoctorDashboardScreen = () => {
                 </View>
               </TouchableOpacity>
             ))}
-          </View>
+          </View> */}
 
           {/* Quick Stats */}
-          <View style={tw`mt-4`}>
+          {/* <View style={tw`mt-4`}>
             <Text style={tw`text-lg font-bold text-green-700 mb-4`}>Quick Stat</Text>
             <View style={tw`bg-green-100 rounded-2xl p-4 shadow-sm`}>
 
@@ -221,10 +221,10 @@ const DoctorDashboardScreen = () => {
                 </View>
               </View>
             </View>
-          </View>
+          </View> */}
 
           {/* Recent Activities */}
-          <View style={tw`mt-6 mb-6`}>
+          {/* <View style={tw`mt-6 mb-6`}>
             <Text style={tw`text-lg font-bold text-green-700 mb-4`}>Recent Activities</Text>
             <View style={tw`bg-green-100 rounded-2xl p-4 shadow-sm`}>
               <View style={tw`border-l-4 border-green-600 pl-3 mb-4`}>
@@ -238,7 +238,9 @@ const DoctorDashboardScreen = () => {
                 <Text style={tw`text-xs text-green-400 mt-1`}>1 hour ago</Text>
               </View>
             </View>
-          </View>
+          </View> */}
+
+
         </ScrollView>
       </SafeAreaView>
     </>

@@ -283,11 +283,8 @@ export default function ProfileScreen() {
           {[
             { label: 'Appointments', icon: CalendarCheck, color: '#124CB8', bg: 'bg-[#D8E2FF]', screen: 'Appointments' },
             { label: 'Personal Details', icon: User, color: '#124CB8', bg: 'bg-[#D8E2FF]', screen: 'PersonalDetails' },
-            { label: 'My Medical Records', icon: Folder, color: '#124CB8', bg: 'bg-[#D8E2FF]', screen: 'MedicalRecords' },
-            { label: 'Payment Methods', icon: CreditCard, color: '#124CB8', bg: 'bg-[#D8E2FF]', screen: 'PaymentMethods' },
-            { label: 'Notifications', icon: Bell, color: '#124CB8', bg: 'bg-[#D8E2FF]', screen: 'Notification' },
+            // { label: 'Payment Methods', icon: CreditCard, color: '#124CB8', bg: 'bg-[#D8E2FF]', screen: 'PaymentMethods' },
             { label: 'Privacy & Security', icon: Shield, color: '#124CB8', bg: 'bg-[#D8E2FF]', screen: 'PrivacySecurity' },
-            { label: 'Test Bookings', icon: CalendarCheck, color: '#124CB8', bg: 'bg-[#D8E2FF]', screen: 'TestBooking' },
             { label: 'Help Center', icon: HelpCircle, color: '#124CB8', bg: 'bg-[#D8E2FF]', screen: 'HelpCenter' },
           ].map(({ label, icon: Icon, color, bg, screen }, index) => (
             <TouchableOpacity

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react'
+import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react'
 import { Alert } from 'react-native'
 
 type DoctorProfile = {
@@ -48,7 +48,7 @@ const UserProfileContext = createContext<UserProfileContextType | undefined>(und
 export const UserProfileProvider = ({ children }: { children: ReactNode }) => {
   const [userData, setUserData] = useState<UserData | null>(null)
 
-  const fetchAndStoreUserData = async (token: string): Promise<UserData | null> => {
+  const fetchAndStoreUserData = useCallback(async (token: string): Promise<UserData | null> => {
     const res = await fetch('https://api.docapp.co.in/api/auth/get-user-data', {
       method: 'GET',
       headers: {
@@ -68,9 +68,9 @@ export const UserProfileProvider = ({ children }: { children: ReactNode }) => {
     }
 
     throw new Error(json?.message || 'Failed to fetch user data')
-  }
+  }, [])
 
-  const clearUserData = () => setUserData(null)
+  const clearUserData = useCallback(() => setUserData(null), [])
 
   return (
     <UserProfileContext.Provider value={{ userData, setUserData, fetchAndStoreUserData, clearUserData }}>

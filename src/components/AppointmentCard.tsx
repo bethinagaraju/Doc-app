@@ -59,13 +59,13 @@ export default function AppointmentCard({ appointment, children }: AppointmentCa
     : null;
 
   return (
-    <View style={tw`bg-white p-4 md:p-6 mb-4 rounded-[12px] border border-[#DAE1E7] flex-col relative w-full max-w-[800px] self-center shadow-sm`}>
+    <View style={tw`w-full bg-white p-4 mb-4 rounded-xl border border-[#DAE1E7] self-center shadow-sm flex-col relative`}>
       {/* Top Header */}
-      <View style={tw`flex-row justify-between items-start mb-3`}>
+      <View style={tw`w-full flex-row items-start mb-3`}>
         {/* Left Side: Icon + Details */}
-        <View style={tw`flex-row items-center gap-3 flex-1 min-w-0 mr-4`}>
+        <View style={tw`flex-1 flex-row items-center min-w-0`}>
           {/* Avatar Background */}
-          <View style={tw`w-12 h-12 bg-[#DBE3F1] rounded-lg items-center justify-center overflow-hidden`}>
+          <View style={tw`w-12 h-12 bg-[#DBE3F1] rounded-lg items-center justify-center overflow-hidden flex-shrink-0`}>
             {profilePic ? (
               <Image key={profilePic} source={{ uri: profilePic }} style={tw`w-full h-full`} resizeMode="cover" />
             ) : (
@@ -74,18 +74,17 @@ export default function AppointmentCard({ appointment, children }: AppointmentCa
           </View>
 
           {/* Name & Type */}
-          <View style={tw`flex-col justify-center h-12 flex-1 min-w-0`}>
+          <View style={tw`flex-1 ml-3 min-w-0`}>
             <Text
-              style={tw`text-[#011D35] font-semibold text-[18px] md:text-[22px] leading-tight`}
+              style={tw`text-[16px] md:text-[18px] font-semibold text-[#011D35]`}
               numberOfLines={1}
-              adjustsFontSizeToFit
-              minimumFontScale={0.8}
+              ellipsizeMode="tail"
             >
               {displayName}
             </Text>
             {/* Type Badge */}
             <View style={tw`bg-[#3766D2]/10 rounded-[4px] px-2 py-0.5 mt-0.5 self-start`}>
-              <Text style={tw`text-[#124CB8] font-semibold text-[12px] leading-[16px] tracking-[0.6px] capitalize`}>
+              <Text style={tw`text-[#124CB8] font-semibold text-[12px] md:text-[13px] leading-[16px] tracking-[0.6px] capitalize`}>
                 {appointment.appointment_type || 'General'}
               </Text>
             </View>
@@ -93,15 +92,17 @@ export default function AppointmentCard({ appointment, children }: AppointmentCa
         </View>
 
         {/* Right Side: Time */}
-        <Text style={tw`text-[#434653] font-semibold text-[12px] md:text-[14px] leading-[16px] tracking-[0.6px] mt-2 flex-shrink-0`}>
-          {timeText}
-        </Text>
+        <View style={tw`ml-2 flex-shrink-0`}>
+          <Text style={tw`text-[12px] md:text-[14px] font-semibold text-[#434653]`} numberOfLines={1}>
+            {timeText}
+          </Text>
+        </View>
       </View>
 
       {/* Date Row */}
-      <View style={tw`flex-row items-center gap-2 mb-3`}>
+      <View style={tw`flex-row items-center mb-3`}>
         <CalendarIcon size={16} color="#434653" />
-        <Text style={tw`text-[#434653] text-[16px] md:text-[18px] leading-tight`}>
+        <Text style={tw`ml-2 text-[14px] md:text-[16px] text-[#434653]`}>
           {formattedDate}
         </Text>
       </View>
@@ -132,17 +133,17 @@ export default function AppointmentCard({ appointment, children }: AppointmentCa
           <View style={tw`bg-orange-50 border border-orange-200 rounded-lg p-3 mb-3 flex-col gap-1`}>
             <View style={tw`flex-row items-center gap-1.5`}>
               <View style={tw`w-2 h-2 rounded-full bg-orange-500`} />
-              <Text style={tw`text-orange-800 font-bold text-[14px] font-['Inter']`}>
+              <Text style={tw`flex-1 text-orange-800 font-bold text-[14px] md:text-[15px] font-['Inter']`}>
                 Follow-up Appointment Booked
               </Text>
             </View>
-            <Text style={tw`text-[#434653] text-[13px] font-['Inter']`}>
+            <Text style={tw`text-[#434653] text-[13px] md:text-[14px] font-['Inter']`}>
               Date: <Text style={tw`font-semibold text-[#011D35]`}>{formattedCheckupDate}</Text>
             </Text>
-            <Text style={tw`text-[#434653] text-[13px] font-['Inter']`}>
+            <Text style={tw`text-[#434653] text-[13px] md:text-[14px] font-['Inter']`}>
               Time: <Text style={tw`font-semibold text-[#011D35]`}>{checkupTimeFormatted}</Text>
             </Text>
-            <Text style={tw`text-[#434653] text-[13px] font-['Inter']`}>
+            <Text style={tw`text-[#434653] text-[13px] md:text-[14px] font-['Inter']`}>
               Status: <Text style={tw`font-semibold capitalize text-[#011D35]`}>{checkup.checkup_status}</Text>
             </Text>
           </View>
@@ -150,16 +151,19 @@ export default function AppointmentCard({ appointment, children }: AppointmentCa
       })()}
 
       {/* Footer / Status Row */}
-      <View style={tw`flex-row justify-between items-center pt-3 border-t border-[#DAE1E7]`}>
+      <View style={tw`w-full flex-row items-center pt-3 border-t border-[#DAE1E7]`}>
         {/* Status Pill */}
-        <View style={tw`bg-[#CEE5FF] px-3 py-1 rounded-full items-center justify-center h-6`}>
-          <Text style={tw`text-[#2E4962] font-semibold text-[12px] leading-[16px] tracking-[0.6px] capitalize`}>
+        <View style={tw`flex-shrink-0 bg-[#CEE5FF] px-3 py-1 rounded-full items-center justify-center h-6`}>
+          <Text style={tw`text-[#2E4962] font-semibold text-[12px] md:text-[13px] leading-[16px] tracking-[0.6px] capitalize`}>
             {appointment.appointment_status}
           </Text>
         </View>
 
-        {/* Action Button (Children) */}
-        {children && <View>{children}</View>}
+        {children && (
+          <View style={tw`ml-auto max-w-[65%]`}>
+            {children}
+          </View>
+        )}
       </View>
     </View>
   );
@@ -186,34 +190,34 @@ export function AppointmentCardSkeleton() {
   }, [opacity]);
 
   return (
-    <View style={tw`bg-white p-4 mb-4 rounded-[12px] border border-[#DAE1E7] flex-col relative`}>
+    <View style={tw`w-full bg-white p-4 mb-4 rounded-xl border border-[#DAE1E7] self-center flex-col relative`}>
       {/* Top Header */}
-      <View style={tw`flex-row justify-between items-start mb-3`}>
+      <View style={tw`w-full flex-row items-start mb-3`}>
         {/* Left Side: Icon + Details */}
-        <View style={tw`flex-row items-center gap-3`}>
+        <View style={tw`flex-row items-center flex-1`}>
           {/* Avatar Background */}
-          <Animated.View style={[tw`w-12 h-12 bg-gray-200 rounded-lg`, { opacity }]} />
+          <Animated.View style={[tw`w-12 h-12 bg-gray-200 rounded-lg flex-shrink-0`, { opacity }]} />
 
           {/* Name & Type */}
-          <View style={tw`flex-col justify-center h-12 gap-2`}>
-            <Animated.View style={[tw`w-32 h-5 bg-gray-200 rounded`, { opacity }]} />
+          <View style={tw`flex-1 ml-3 gap-2`}>
+            <Animated.View style={[tw`w-full max-w-[140px] h-4 bg-gray-200 rounded`, { opacity }]} />
             <Animated.View style={[tw`w-16 h-4 bg-gray-200 rounded`, { opacity }]} />
           </View>
         </View>
 
         {/* Right Side: Time */}
-        <Animated.View style={[tw`w-12 h-4 bg-gray-200 rounded mt-2`, { opacity }]} />
+        <Animated.View style={[tw`w-12 h-4 bg-gray-200 rounded ml-2 mt-1`, { opacity }]} />
       </View>
 
       {/* Date Row */}
-      <View style={tw`flex-row items-center gap-2 mb-3`}>
+      <View style={tw`flex-row items-center mb-3`}>
         <Animated.View style={[tw`w-24 h-4 bg-gray-200 rounded`, { opacity }]} />
       </View>
 
       {/* Footer / Status Row */}
-      <View style={tw`flex-row justify-between items-center pt-3 border-t border-[#DAE1E7]`}>
+      <View style={tw`w-full flex-row items-center pt-3 border-t border-[#DAE1E7]`}>
         {/* Status Pill */}
-        <Animated.View style={[tw`w-20 h-6 bg-gray-200 rounded-full`, { opacity }]} />
+        <Animated.View style={[tw`w-20 h-6 bg-gray-200 rounded-full flex-shrink-0`, { opacity }]} />
       </View>
     </View>
   );

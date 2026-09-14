@@ -98,7 +98,7 @@ const AllHospitalsScreen = () => {
   return (
     <PageLayout
       title="All Hospitals"
-        headerBackgroundColor="#16a34a"
+      headerBackgroundColor="#16a34a"
       scrollable={false}
     >
       {/* Search Bar */}

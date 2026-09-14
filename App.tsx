@@ -19,7 +19,6 @@ import HomeScreen from './src/screens/(tabs)/index';
 import AllHospitalsScreen from './src/screens/(tabs)/AllHospitalsScreen';
 import AllPharmaciesScreen from './src/screens/(tabs)/AllPharmaciesScreen';
 import ProfileScreen from './src/screens/(tabs)/profile';
-import NotificationScreen from './src/screens/(tabs)/Notification';
 import AllSpecialtiesScreen from './src/screens/(tabs)/AllSpecialtiesScreen';
 import LabTestCategoriesScreen from './src/screens/(tabs)/LabTestCategoriesScreen';
 import PharmacyTestCategoriesScreen from './src/screens/(tabs)/pharmacycategorieslist';
@@ -37,13 +36,11 @@ import DoctorLoginScreen from './src/screens/(auth)/doctor-login';
 import CompleteProfileScreen from './src/screens/(auth)/CompleteProfile';
 import TabsLayout from './src/screens/(tabs)/_layout';
 import VideoConsultationTab from './src/screens/(tabs)/videoconsultation';
-import TestBookingScreen from './src/screens/(tabs)/TestBooking';
 import SettingsScreen from './src/screens/(tabs)/Settings';
 import PrivacySecurityScreen from './src/screens/(tabs)/PrivacySecurity';
 import PharmacyScreen from './src/screens/(tabs)/pharmacy';
 import PersonalDetailsScreen from './src/screens/(tabs)/PersonalDetails';
-import PaymentMethodsScreen from './src/screens/(tabs)/PaymentMethods';
-import MedicalRecordsScreen from './src/screens/(tabs)/MedicalRecords';
+
 import AIPatientChat from './src/screens/AIPatientChat';
 import LabTestsListScreen from './src/screens/(tabs)/LabTestsListScreen';
 import LabTestScreen from './src/screens/(tabs)/LabTestScreen';
@@ -80,10 +77,10 @@ import DoctorBottomBar from './src/Doctor/components/DoctorBottomBar';
 
 const Stack = createStackNavigator();
 
-const NO_FOOTER_SCREENS = [
+const AUTH_SCREENS = [
   'AuthLayout', 'Signup', 'Login', 'DoctorLogin', 'CompleteProfile',
   'AppointmentBooking', 'DoctorProfile', 'AppoinmentPaymentScreen',
-  'DoctorNavigator', 'VideoCall', 'PatientVideoCall', 'VideoConsultationScreen', 'CallCompleted'
+  'DoctorNavigator'
 ];
 
 const DOCTOR_BOTTOM_BAR_SCREENS = [
@@ -165,7 +162,6 @@ function RootNavigator() {
         <Stack.Screen name="PatientVideoCall" component={PatientVideoCallScreen} />
         <Stack.Screen name="CallCompleted" component={CallCompletedScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="Notification" component={NotificationScreen} />
         <Stack.Screen name="AllSpecialtiesScreen" component={AllSpecialtiesScreen} />
         <Stack.Screen name="LabTestCategoriesScreen" component={LabTestCategoriesScreen} />
         <Stack.Screen name="pharmacytestcategories" component={PharmacyTestCategoriesScreen} />
@@ -183,13 +179,12 @@ function RootNavigator() {
         <Stack.Screen name="CompleteProfile" component={CompleteProfileScreen} />
         <Stack.Screen name="TabsLayout" component={TabsLayout} />
         <Stack.Screen name="VideoConsultationTab" component={VideoConsultationTab} />
-        <Stack.Screen name="TestBooking" component={TestBookingScreen} />
         <Stack.Screen name="Settings" component={SettingsScreen} />
         <Stack.Screen name="PrivacySecurity" component={PrivacySecurityScreen} />
         <Stack.Screen name="Pharmacy" component={PharmacyScreen} />
         <Stack.Screen name="PersonalDetails" component={PersonalDetailsScreen} />
-        <Stack.Screen name="PaymentMethods" component={PaymentMethodsScreen} />
-        <Stack.Screen name="MedicalRecords" component={MedicalRecordsScreen} />
+
+
         <Stack.Screen name="AIPatientChat" component={AIPatientChat} />
         <Stack.Screen name="LabTestsList" component={LabTestsListScreen} />
         <Stack.Screen name="LabTest" component={LabTestScreen} />
@@ -217,11 +212,12 @@ function RootNavigator() {
         <Stack.Screen name="DoctorManagement" component={DoctorManagementScreen} />
         <Stack.Screen name="ViewDoctors" component={ViewDoctorsScreen} />
         <Stack.Screen name="AddDoctor" component={AddDoctorScreen} />
+
       </Stack.Navigator>
 
       <IncomingCallOverlay />
-      
-      {!isDoctorNavigatorActive() && !NO_FOOTER_SCREENS.includes(currentRoute || '') && !isKeyboardVisible && <Footer />}
+
+      {!isDoctorNavigatorActive() && !AUTH_SCREENS.includes(currentRoute || '') && !isKeyboardVisible && <Footer />}
       {isDoctorBottomBarVisible() && <DoctorBottomBar />}
     </NavigationContainer>
   );

@@ -367,9 +367,11 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView
+  Keyboard
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import tw from 'twrnc';
+import ProfileTopBar from '../components/ProfileTopBar';
 
 const INTAKE_API = 'http://ai.docapp.co.in/api/patient/symptom-intake';
 const CHAT_API = 'http://ai.docapp.co.in/api/patient/chat';
@@ -380,6 +382,27 @@ const AIPatientChat = () => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [isIntakeDone, setIsIntakeDone] = useState(false);
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true);
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false);
+      }
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
 
   const [conversation, setConversation] = useState([
     {
@@ -468,11 +491,7 @@ const AIPatientChat = () => {
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
       >
         {/* Header */}
-        <View style={tw`bg-green-700 p-4`}>
-          <Text style={tw`text-white text-lg font-bold text-center`}>
-            AI Patient Chat
-          </Text>
-        </View>
+        <ProfileTopBar title="AI Patient Chat" />
 
         {/* Chat */}
         <ScrollView
@@ -489,14 +508,14 @@ const AIPatientChat = () => {
             >
               <View
                 style={tw`px-4 py-3 rounded-2xl max-w-[80%] ${msg.role === 'user'
-                    ? 'bg-green-600 rounded-br-none'
-                    : 'bg-gray-200 rounded-bl-none'
+                  ? 'bg-[#124CB8] rounded-br-none'
+                  : 'bg-[#F1F0F4] rounded-bl-none'
                   }`}
               >
                 <Text
                   style={tw`${msg.role === 'user'
-                      ? 'text-white'
-                      : 'text-gray-900'
+                    ? 'text-white'
+                    : 'text-[#1A1B1F]'
                     }`}
                 >
                   {msg.content}
@@ -506,25 +525,26 @@ const AIPatientChat = () => {
           ))}
 
           {loading && (
-            <View style={tw`items-start`}>
-              <View style={tw`bg-gray-200 px-4 py-2 rounded-2xl`}>
-                <ActivityIndicator size="small" />
+            <View style={tw`items-start mt-2`}>
+              <View style={tw`bg-[#F1F0F4] px-4 py-3 rounded-2xl rounded-bl-none`}>
+                <ActivityIndicator size="small" color="#124CB8" />
               </View>
             </View>
           )}
         </ScrollView>
 
         {/* Input Bar */}
-        <View style={tw`flex-row items-center p-3 border-t border-gray-300 mb-16`}>
+        <View style={tw`flex-row items-center p-4 border-t border-[#E5E7EB] bg-white ${isKeyboardVisible ? 'mb-0' : 'mb-16'}`}>
           <TextInput
             value={message}
             onChangeText={setMessage}
             placeholder="Type your symptoms..."
-            style={tw`flex-1 border border-gray-300 rounded-full px-4 py-2`}
+            placeholderTextColor="#74777F"
+            style={tw`flex-1 bg-[#F1F0F4] rounded-full px-5 py-3 text-[#1A1B1F]`}
           />
           <TouchableOpacity
             onPress={sendMessage}
-            style={tw`ml-2 bg-green-700 px-5 py-2 rounded-full`}
+            style={tw`ml-3 bg-[#124CB8] px-6 py-3 rounded-full shadow-sm`}
           >
             <Text style={tw`text-white font-bold`}>Send</Text>
           </TouchableOpacity>

@@ -15,7 +15,7 @@ const VideoConsultationScreen = () => {
 
   return (
     <SafeAreaView style={tw`flex-1 bg-gray-100`}>
-      
+
       {/* Top Header with Back Arrow */}
       <View style={tw`bg-green-600 p-5 pt-12`}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={tw`absolute top-12 left-5`}>
@@ -38,7 +38,7 @@ const VideoConsultationScreen = () => {
         </TouchableOpacity>
 
         <View style={tw`mt-5 bg-green-100 rounded-xl p-4 w-full`}>
-          <Text style={tw`text-green-800 text-sm text-center`}> 
+          <Text style={tw`text-green-800 text-sm text-center`}>
             Note: Ensure a stable internet connection before joining the call.
           </Text>
         </View>

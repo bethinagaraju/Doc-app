@@ -3,8 +3,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { DoctorStackParamList } from '../types/navigation';
 import DoctorDashboardScreen from '../screens/DoctorDashboardScreen';
 import DoctorProfileScreen from '../screens/DoctorProfileScreen';
-import DoctorSettingsScreen from '../screens/DoctorSettingsScreen';
-import DoctorNotificationsScreen from '../screens/DoctorNotificationsScreen';
 import DoctorReachScreen from '../screens/DoctorReachScreen';
 import PatientStoriesScreen from '../screens/PatientStoriesScreen';
 import DoctorConsultScreen from '../screens/DoctorConsultScreen';
@@ -23,11 +21,6 @@ import ConsultationFeesScreen from '../screens/ConsultationFeesScreen';
 import EditDoctorProfile from '../screens/EditDoctorProfileScreen';
 import AddSpecialization from '../screens/AddSpecializationScreen';
 import AddTimeSlotScreen from '../screens/AddTimeSlotScreen';
-import RayScreen from '../screens/RayScreen';
-import AccountScreen from '../screens/AccountScreen';
-import CashlessSettingsScreen from '../screens/CashlessSettingsScreen';
-import PrivacyPolicyScreen from '../screens/PrivacyPolicyScreen';
-import OpenSourceLicensesScreen from '../screens/OpenSourceLicensesScreen';
 import LiveLocationScreen from '../screens/LiveLocationScreen';
 import AIDoctorChatScreen from '../screens/AIDoctorChatScreen';
 import AccountSecurityScreen from '../screens/AccountSecurityScreen';
@@ -61,8 +54,6 @@ const DoctorNavigator = () => {
     >
       <Stack.Screen name="DoctorDashboard" component={DoctorDashboardScreen} />
       <Stack.Screen name="DoctorProfile" component={DoctorProfileScreen} />
-      <Stack.Screen name="DoctorSettings" component={DoctorSettingsScreen} />
-      <Stack.Screen name="DoctorNotifications" component={DoctorNotificationsScreen} />
       <Stack.Screen name="DoctorReach" component={DoctorReachScreen} />
       <Stack.Screen name="PatientStories" component={PatientStoriesScreen} />
       <Stack.Screen name="DoctorConsult" component={DoctorConsultScreen} />
@@ -80,11 +71,6 @@ const DoctorNavigator = () => {
       <Stack.Screen name="Certifications" component={CertificationsScreen} />
       <Stack.Screen name="ConsultationFees" component={ConsultationFeesScreen} />
       <Stack.Screen name="AccountSecurity" component={AccountSecurityScreen} />
-      <Stack.Screen name="Ray" component={RayScreen} />
-      <Stack.Screen name="Account" component={AccountScreen} />
-      <Stack.Screen name="CashlessSettings" component={CashlessSettingsScreen} />
-      <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
-      <Stack.Screen name="OpenSourceLicenses" component={OpenSourceLicensesScreen} />
       <Stack.Screen name="AddSpecialization" component={AddSpecialization} />
       <Stack.Screen name="AddTimeSlot" component={AddTimeSlotScreen} />
       <Stack.Screen name="LiveLocation" component={LiveLocationScreen} />

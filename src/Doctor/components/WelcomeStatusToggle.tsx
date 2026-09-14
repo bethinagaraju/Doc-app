@@ -109,20 +109,20 @@ const WelcomeStatusToggle: React.FC<WelcomeStatusToggleProps> = ({
             </View>
 
             {/* Status Toggle Container */}
-            <View style={tw`w-full items-start justify-center mt-2`}>
+            {/* <View style={tw`w-full items-start justify-center mt-2`}>
 
-                {/* Pill Background with Border */}
+            
                 <View
                     style={tw`w-[250.83px] h-[50px] bg-[#EEF4FF] border border-[#C3C6D5]/30 rounded-[24px] flex-row items-center px-[9px] relative`}
                 >
-                    {/* Label: AVAILABILITY */}
+                  
                     <Text
                         style={tw`text-[12px] font-semibold text-[#434653] font-['Inter'] tracking-[0.6px] uppercase`}
                     >
                         AVAILABILITY
                     </Text>
 
-                    {/* Toggle Switch Component */}
+                 
                     <TouchableOpacity
                         activeOpacity={0.8}
                         onPress={toggleStatus}
@@ -146,7 +146,7 @@ const WelcomeStatusToggle: React.FC<WelcomeStatusToggleProps> = ({
                         />
                     </TouchableOpacity>
 
-                    {/* Label: ONLINE / OFFLINE */}
+                  
                     <Text
                         style={[
                             tw`text-[12px] font-semibold font-['Inter'] tracking-[0.6px] uppercase`,
@@ -158,7 +158,7 @@ const WelcomeStatusToggle: React.FC<WelcomeStatusToggleProps> = ({
 
                 </View>
 
-            </View>
+            </View> */}
 
         </View>
     );

@@ -14,7 +14,9 @@ import {
   ScrollView,
   Dimensions,
   Modal,
+  useWindowDimensions,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import {
   Mic,
@@ -96,6 +98,9 @@ export default function VideoCall({
   const { accessToken } = useAccessToken();
 
   const pc = useRef<RTCPeerConnection | null>(null);
+  const snapshotUnsubsRef = useRef<(() => void)[]>([]);
+  const { width: windowWidth } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
 
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
@@ -105,6 +110,7 @@ export default function VideoCall({
   const [logs, setLogs] = useState<string[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isMuted, setIsMuted] = useState(false);
+  const [callDuration, setCallDuration] = useState(0);
 
   // 📄 Split Screen Document States
   const [isSplitView, setIsSplitView] = useState(false);
@@ -207,6 +213,9 @@ export default function VideoCall({
   const endCall = async () => {
     addLog('[User] Ended call');
 
+    snapshotUnsubsRef.current.forEach(unsub => unsub());
+    snapshotUnsubsRef.current = [];
+
     if (callId) {
       try {
         const callDoc = doc(db, 'call_history', callId);
@@ -239,10 +248,48 @@ export default function VideoCall({
     setLogs(prev => [...prev, msg].slice(-15)); // keep last 15 logs
   };
 
+  /* ---------------- TIMER ---------------- */
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (status === 'connected') {
+      interval = setInterval(() => {
+        setCallDuration(prev => prev + 1);
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [status]);
+
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const s = (seconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  };
+
   /* ---------------- DEBUG ---------------- */
 
   useEffect(() => {
     addLog(`[VideoCall INIT] Role: ${userRole}, Appt: ${appointmentId}`);
+  }, []);
+
+  // Hardware cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (localStream) {
+        localStream.getTracks().forEach(t => t.stop());
+      }
+      if (remoteStream) {
+        remoteStream.getTracks().forEach(t => t.stop());
+      }
+      if (pc.current) {
+        pc.current.close();
+        pc.current = null;
+      }
+      snapshotUnsubsRef.current.forEach(unsub => unsub());
+      snapshotUnsubsRef.current = [];
+    };
   }, []);
 
   /* ---------------- 🔔 REGISTER FCM TOKEN (TEMP) ---------------- */
@@ -366,7 +413,7 @@ export default function VideoCall({
 
     const callDoc = doc(db, 'call_history', data.call_id);
 
-    onSnapshot(callDoc, snap => {
+    const unsubCallDoc = onSnapshot(callDoc, snap => {
       const d = snap.data();
 
       if (d?.callStatus === 'declined') {
@@ -390,8 +437,9 @@ export default function VideoCall({
         );
       }
     });
+    snapshotUnsubsRef.current.push(unsubCallDoc);
 
-    onSnapshot(collection(callDoc, 'answerCandidates'), snap => {
+    const unsubCandidates = onSnapshot(collection(callDoc, 'answerCandidates'), snap => {
       snap.docChanges().forEach(c => {
         if (c.type === 'added') {
           pc.current?.addIceCandidate(
@@ -400,6 +448,7 @@ export default function VideoCall({
         }
       });
     });
+    snapshotUnsubsRef.current.push(unsubCandidates);
   };
 
   /* ---------------- PATIENT ACCEPT ---------------- */
@@ -449,7 +498,22 @@ export default function VideoCall({
         }),
       });
     });
+    snapshotUnsubsRef.current.push(unsub);
   };
+
+  /* ---------------- AUTO-START ---------------- */
+  const autoStartRef = useRef(false);
+  useEffect(() => {
+    if (!autoStartRef.current) {
+      if (userRole === 'doctor' && status === 'idle') {
+        autoStartRef.current = true;
+        startCall();
+      } else if (userRole === 'patient' && status === 'incoming') {
+        autoStartRef.current = true;
+        acceptCall();
+      }
+    }
+  }, [userRole, status]);
 
   /* ---------------- UI ---------------- */
 
@@ -534,7 +598,7 @@ export default function VideoCall({
                 maxScale={5.0}
                 controlledScale={modalZoom}
                 onScaleChange={setModalZoom}
-                style={styles.modalImage}
+                style={[styles.modalImage, { width: windowWidth - 32 }]}
                 resizeMode="contain"
               />
             ) : (
@@ -832,10 +896,12 @@ export default function VideoCall({
         />
 
         {/* Top Status Bar */}
-        <View style={[styles.topBar, isSplitView && styles.splitTopBar]}>
+        <View style={[styles.topBar, isSplitView && styles.splitTopBar, { top: Math.max(insets.top, 16) }]}>
           <View style={styles.statusPill}>
             <View style={styles.redDot} />
-            <Text style={styles.statusText}>Consultation</Text>
+            <Text style={styles.statusText}>
+              {status === 'connected' ? formatTime(callDuration) : 'Consultation'}
+            </Text>
           </View>
 
           <TouchableOpacity
@@ -903,15 +969,7 @@ export default function VideoCall({
           </View>
         </View>
 
-        {/* Action Buttons (For testing/dev flow) */}
-        <View style={styles.devActions}>
-          {userRole === 'doctor' && status === 'idle' && (
-            <Button title="Start Call" onPress={startCall} />
-          )}
-          {userRole === 'patient' && status === 'incoming' && (
-            <Button title="Accept Call" onPress={acceptCall} />
-          )}
-        </View>
+
       </View>
     </View>
   );
@@ -1064,16 +1122,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(15, 23, 42, 0.85)',
     borderColor: 'rgba(255, 255, 255, 0.15)',
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderRadius: 32,
-    padding: 10,
-    width: 310,
+    padding: 12,
     height: 74,
   },
   splitMainControlBar: {
     height: 64,
     padding: 8,
-    width: 280,
   },
   iconButton: {
     width: 44,
@@ -1428,8 +1484,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   modalImage: {
-    width: Dimensions.get('window').width - 32,
-    height: Dimensions.get('window').height * 0.72,
+    height: '72%',
   },
   modalFloatingZoomBar: {
     position: 'absolute',

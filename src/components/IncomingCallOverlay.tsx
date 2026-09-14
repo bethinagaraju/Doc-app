@@ -6,6 +6,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { Phone, PhoneOff } from 'lucide-react-native';
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getFirestore, doc, updateDoc } from 'firebase/firestore';
+import { useUser } from '../screens/contexts/UserContext';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyCE6uu63O91LA5eCfKKIz6n5_dHWm4nwpw',
@@ -27,12 +28,18 @@ interface IncomingCallData {
 const IncomingCallOverlay = () => {
   const [incomingCall, setIncomingCall] = useState<IncomingCallData | null>(null);
   const navigation = useNavigation<any>();
+  const { user } = useUser();
 
   useEffect(() => {
     // Listen for FCM messages while app is in foreground
     const unsubscribe = messaging().onMessage(async msg => {
       console.log('[GLOBAL FCM] Action:', msg.data?.action);
       
+      // Doctors should not see the incoming call overlay for their own outgoing calls
+      if (user?.role === 'doctor') {
+        return;
+      }
+
       if (msg.data?.action === 'INCOMING_CALL') {
         setIncomingCall({
           call_id: msg.data.call_id as string,
@@ -43,7 +50,7 @@ const IncomingCallOverlay = () => {
     });
 
     return unsubscribe;
-  }, []);
+  }, [user?.role]);
 
   if (!incomingCall) return null;
 

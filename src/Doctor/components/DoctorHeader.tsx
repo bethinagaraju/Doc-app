@@ -172,11 +172,6 @@ const DoctorHeader: React.FC<DoctorHeaderProps> = ({
 
         {/* Settings / Notifications */}
         <View style={tw`flex-row items-center`}>
-          {showSettings && (
-            <TouchableOpacity style={tw`mr-4`} onPress={() => navigation.navigate('DoctorSettings')}>
-              <Settings size={24} color="white" />
-            </TouchableOpacity>
-          )}
           {showNotifications && (
             <TouchableOpacity onPress={() => navigation.navigate('DoctorNotifications')}>
               <View>
