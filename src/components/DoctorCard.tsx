@@ -5,7 +5,7 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, Image, TouchableOpacity, Animated } from 'react-native';
 import tw from 'twrnc';
-import { MapPin, Star } from 'lucide-react-native';
+import { MapPin, Star, Building } from 'lucide-react-native';
 
 interface DoctorCardProps {
   item: any;
@@ -90,6 +90,7 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ item, onPress }) => {
             <Text style={tw`text-[12px] font-medium text-[#124CB8]`}>
               {item.specialization} • {experience} yrs exp
             </Text>
+
           </View>
 
 
@@ -99,6 +100,14 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ item, onPress }) => {
 
         {/* Bottom Section: Location and Book Now Button */}
         <View style={tw`gap-2`}>
+          {item.organisation?.organisation_name && (
+            <View style={tw`flex-row items-center mt-1`}>
+              <Building size={12} color="#42474E" />
+              <Text style={tw`ml-1 text-[12px] text-[#42474E] font-medium`} numberOfLines={1}>
+                {item.organisation.organisation_name}
+              </Text>
+            </View>
+          )}
           <View style={tw`flex-row items-center`}>
             <MapPin size={12} color="#42474E" />
             <Text style={tw`ml-1 text-[12px] text-[#42474E]`} numberOfLines={1}>

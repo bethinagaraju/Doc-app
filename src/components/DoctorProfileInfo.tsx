@@ -78,7 +78,8 @@ const DoctorProfileInfo: React.FC<DoctorProfileInfoProps> = ({ doctor }) => {
 
         {/* Subtitle / Specialization */}
         <Text style={tw`text-base font-semibold text-[#124CB8] text-center font-['Public Sans'] mb-2`}>
-          {doctor.specialization || 'Senior Cardiologist'}
+          {doctor.specialization || 'NA'}
+          {doctor.organisation?.organisation_name ? ` | ${doctor.organisation.organisation_name}` : ''}
         </Text>
 
         {/* Stats Row Container */}

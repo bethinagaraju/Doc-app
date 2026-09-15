@@ -74,6 +74,7 @@ import AppointmentDetailsScreen from './src/screens/(tabs)/AppointmentDetailsScr
 import PatientVideoCallScreen from './src/screens/PatientVideoCall';
 import CallCompletedScreen from './src/screens/CallCompletedScreen';
 import DoctorBottomBar from './src/Doctor/components/DoctorBottomBar';
+import HospitalDoctorsScreen from './src/screens/HospitalDoctorsScreen';
 
 const Stack = createStackNavigator();
 
@@ -212,6 +213,7 @@ function RootNavigator() {
         <Stack.Screen name="DoctorManagement" component={DoctorManagementScreen} />
         <Stack.Screen name="ViewDoctors" component={ViewDoctorsScreen} />
         <Stack.Screen name="AddDoctor" component={AddDoctorScreen} />
+        <Stack.Screen name="HospitalDoctors" component={HospitalDoctorsScreen} />
 
       </Stack.Navigator>
 

@@ -10,11 +10,12 @@ import {
   Switch,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { X } from 'lucide-react-native';
+import { X, Building2 } from 'lucide-react-native';
 import Geolocation from 'react-native-geolocation-service';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import tw from 'twrnc';
 import DoctorCard, { DoctorCardSkeleton } from '../../components/DoctorCard';
+import HospitalCard, { HospitalCardSkeleton } from '../../components/HospitalCard';
 import UsersearchFilter from '../../components/UsersearchFilter';
 import { useAccessToken } from '../contexts/AccessTokenContext';
 import { useUser } from '../contexts/UserContext';
@@ -70,6 +71,9 @@ const FindDoctorsScreen = () => {
 
   const [doctors, setDoctors] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const [hospitals, setHospitals] = useState<any[]>([]);
+  const [loadingHospitals, setLoadingHospitals] = useState(false);
 
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
@@ -189,7 +193,32 @@ const FindDoctorsScreen = () => {
     }
   };
 
-  /* ================= LOAD DOCTORS ================= */
+  /* ================= FETCH HOSPITALS ================= */
+
+  const fetchHospitals = async () => {
+    if (!accessToken) return;
+
+    setLoadingHospitals(true);
+
+    try {
+      let url = `https://api.docapp.co.in/api/filter/filter-hospitals?type=hospital`;
+      const res = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const json = await res.json();
+      console.log('Fetched Hospitals:', json?.organisations);
+      setHospitals(json?.organisations || []);
+    } catch (error) {
+      console.log('Fetch Hospitals Error:', error);
+    } finally {
+      setLoadingHospitals(false);
+    }
+  };
+
+  /* ================= LOAD DOCTORS AND HOSPITALS ================= */
 
   useFocusEffect(
     useCallback(() => {
@@ -200,6 +229,7 @@ const FindDoctorsScreen = () => {
       } else {
         fetchGeneral();
       }
+      fetchHospitals();
     }, [accessToken, selectedCity, selectedDepartment, useLiveLocation])
   );
 
@@ -262,6 +292,39 @@ const FindDoctorsScreen = () => {
               <FeaturedBentoSection />
             </View>
 
+            {/* Hospitals Section */}
+            {(hospitals.length > 0 || loadingHospitals) && (
+              <>
+                <View style={tw`flex-row justify-between items-center mt-4 mb-3 px-1`}>
+                  <View style={tw`flex-row items-center`}>
+                    <Building2 size={20} color="#0F9D58" />
+                    <Text style={tw`ml-2 text-[18px] font-bold text-[#191C1E]`} numberOfLines={1}>
+                      Nearby Hospitals
+                    </Text>
+                  </View>
+                  <TouchableOpacity>
+                    <Text style={tw`text-[14px] font-medium text-[#737684]`}>See all {">"}</Text>
+                  </TouchableOpacity>
+                </View>
+
+                {loadingHospitals && (
+                  <View style={tw`py-2`}>
+                    <HospitalCardSkeleton />
+                    <HospitalCardSkeleton />
+                  </View>
+                )}
+
+                {!loadingHospitals && hospitals.map((hospital) => (
+                  <HospitalCard
+                    key={`hospital-${hospital.id}`}
+                    item={hospital}
+                    onPress={() => navigation.navigate('HospitalDoctors', { hospitalId: hospital.user_id })}
+                  />
+                ))}
+              </>
+            )}
+
+            {/* Doctors Section Header */}
             <View style={tw`flex-row justify-between items-center mt-4 mb-2 px-1`}>
               <Text style={tw`flex-1 text-[18px] font-bold text-[#191C1E] mr-2`} numberOfLines={2}>
                 {useLiveLocation ? 'Top Specialists Near You' : 'All Specialists'}
