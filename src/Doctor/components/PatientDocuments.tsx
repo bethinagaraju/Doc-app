@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
-import { Image as ImageIcon, Eye, RefreshCw, Trash2, Plus } from 'lucide-react-native';
+import { Image as ImageIcon, Eye, RefreshCw, Trash2, Plus, FileText } from 'lucide-react-native';
 import tw from 'twrnc';
 
 export interface DocumentItem {
@@ -28,8 +28,10 @@ const PatientDocuments: React.FC<PatientDocumentsProps> = ({
     onReplace,
     onDelete,
 }) => {
-    // Filter to include JPG / JPEG / PNG / image documents only
-    const imageDocuments = documents.filter((doc) => {
+    // Display all documents regardless of type
+    const allDocuments = documents;
+
+    const isImage = (doc: DocumentItem) => {
         const url = (doc.document_url || '').toLowerCase();
         const name = (doc.document_name || '').toLowerCase();
         const type = (doc.document_type || '').toLowerCase();
@@ -42,7 +44,7 @@ const PatientDocuments: React.FC<PatientDocumentsProps> = ({
             name.includes('.png') ||
             type.includes('image')
         );
-    });
+    };
 
     return (
         /* Section - Documents Card Container */
@@ -73,7 +75,7 @@ const PatientDocuments: React.FC<PatientDocumentsProps> = ({
                         <Text
                             style={tw`text-[12px] font-semibold text-[#124CB8] font-['Inter'] tracking-[0.6px] leading-[16px]`}
                         >
-                            {imageDocuments.length} {imageDocuments.length === 1 ? 'File' : 'Files'}
+                            {allDocuments.length} {allDocuments.length === 1 ? 'File' : 'Files'}
                         </Text>
                     </View>
 
@@ -92,19 +94,20 @@ const PatientDocuments: React.FC<PatientDocumentsProps> = ({
             </View>
 
             {/* Documents Item List */}
-            {imageDocuments.length === 0 ? (
+            {allDocuments.length === 0 ? (
                 <View style={tw`py-4 items-center justify-center`}>
                     <Text style={tw`text-[14px] text-[#434653] font-['Inter']`}>
-                        No JPG/Image files uploaded for this appointment.
+                        No files uploaded for this appointment.
                     </Text>
                 </View>
             ) : (
                 <View style={tw`w-full flex-col gap-[12px]`}>
-                    {imageDocuments.map((doc) => {
-                        const fileName = doc.document_name || `Document #${doc.id}.jpg`;
+                    {allDocuments.map((doc) => {
+                        const fileName = doc.document_name || `Document #${doc.id}`;
                         const uploadDate = doc.uploaded_at
                             ? new Date(doc.uploaded_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
                             : 'Uploaded file';
+                        const isImg = isImage(doc);
 
                         return (
                             <View
@@ -113,7 +116,7 @@ const PatientDocuments: React.FC<PatientDocumentsProps> = ({
                             >
                                 {/* Left Image Thumbnail / Icon */}
                                 <TouchableOpacity onPress={() => onView?.(doc)} style={tw`justify-center items-center flex-shrink-0`}>
-                                    {doc.document_url ? (
+                                    {isImg && doc.document_url ? (
                                         <Image
                                             source={{ uri: doc.document_url }}
                                             style={tw`w-[40px] h-[40px] rounded-[6px] bg-[#DBE9FF] flex-shrink-0`}
@@ -121,7 +124,7 @@ const PatientDocuments: React.FC<PatientDocumentsProps> = ({
                                         />
                                     ) : (
                                         <View style={tw`w-[40px] h-[40px] rounded-[6px] bg-[#EEF4FF] justify-center items-center flex-shrink-0`}>
-                                            <ImageIcon size={20} color="#124CB8" />
+                                            {isImg ? <ImageIcon size={20} color="#124CB8" /> : <FileText size={20} color="#124CB8" />}
                                         </View>
                                     )}
                                 </TouchableOpacity>

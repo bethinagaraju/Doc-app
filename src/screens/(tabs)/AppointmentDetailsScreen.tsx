@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import tw from "twrnc";
 import { launchImageLibrary } from "react-native-image-picker";
+import { pick, types, isErrorWithCode, errorCodes } from '@react-native-documents/picker';
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { useAccessToken } from "../contexts/AccessTokenContext";
 import { useUser } from "../contexts/UserContext";
@@ -252,55 +253,55 @@ export default function AppointmentDetailsScreen() {
     }
   };
 
-  // PICK image and upload immediately
-  const pickAndUploadImage = () => {
-    launchImageLibrary(
-      { mediaType: "photo", quality: 0.8, selectionLimit: 1 },
-      async (res: any) => {
-        if (res.didCancel) return;
-        if (res.errorCode) {
-          Alert.alert("Error", res.errorMessage || "Image picker error");
-          return;
-        }
+  // PICK file and upload immediately
+  const pickAndUploadImage = async () => {
+    try {
+      console.log('pickAndUploadImage called!');
+      const resArray = await pick({
+        type: [types.images, types.pdf, types.doc, types.docx],
+      });
+      console.log('DocumentPicker response:', resArray);
+      const res = resArray[0];
 
-        const asset = res.assets && res.assets.length ? res.assets[0] : null;
-        if (!asset || !asset.uri) {
-          Alert.alert("Error", "No image selected");
-          return;
-        }
-
-        setPreviewImageUri(asset.uri);
-        const formData = new FormData();
-        formData.append("appointment_id", String(appointment.id));
-        formData.append("document", {
-          uri: Platform.OS === "android" ? asset.uri : asset.uri.replace("file://", ""),
-          name: asset.fileName || `image-${Date.now()}.jpg`,
-          type: asset.type || "image/jpeg",
-        } as any);
-
-        try {
-          const response = await fetch(
-            "https://api.docapp.co.in/api/appointment/upload-appointment-document",
-            {
-              method: "POST",
-              credentials: "include",
-              headers: { 'Authorization': `Bearer ${accessToken}` },
-              body: formData,
-            }
-          );
-          const data = await response.json();
-          if (data.message?.toLowerCase().includes("uploaded")) {
-            Alert.alert("Success", "Image uploaded successfully");
-            setPreviewImageUri(null);
-            fetchAppointmentDocuments(true);
-          } else {
-            throw new Error(data.message || "Upload failed");
-          }
-        } catch (err: any) {
-          Alert.alert("Error", err.message || "Failed to upload image");
-        }
+      if (!res || !res.uri) {
+        Alert.alert("Error", "No file selected");
+        return;
       }
-    );
+
+      setPreviewImageUri(res.type?.includes('image') ? res.uri : null);
+      const formData = new FormData();
+      formData.append("appointment_id", String(appointment.id));
+      formData.append("document", {
+        uri: Platform.OS === "android" ? res.uri : res.uri.replace("file://", ""),
+        name: res.name || `doc-${Date.now()}`,
+        type: res.type || "application/octet-stream",
+      } as any);
+
+      const response = await fetch(
+        "https://api.docapp.co.in/api/appointment/upload-appointment-document",
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { 'Authorization': `Bearer ${accessToken}` },
+          body: formData,
+        }
+      );
+      const data = await response.json();
+      if (data.message?.toLowerCase().includes("uploaded")) {
+        Alert.alert("Success", "File uploaded successfully");
+        setPreviewImageUri(null);
+        fetchAppointmentDocuments(true);
+      } else {
+        throw new Error(data.message || "Upload failed");
+      }
+    } catch (err: any) {
+      console.error('Error picking document:', err);
+      if (isErrorWithCode(err) && err.code === errorCodes.OPERATION_CANCELED) {
+        console.log('Operation canceled by user');
+        return;
+      }
+      Alert.alert("Error", err?.message || "Failed to upload file");
+    }
   };
 
   // Fetch documents for appointment
@@ -330,39 +331,39 @@ export default function AppointmentDetailsScreen() {
   };
 
   // Replace document
-  const replaceDocument = (docId: number) => {
-    launchImageLibrary(
-      { mediaType: "photo", quality: 0.8, selectionLimit: 1 },
-      async (res: any) => {
-        if (res.didCancel) return;
-        if (res.errorCode) return;
-        const asset = res.assets && res.assets.length ? res.assets[0] : null;
-        if (!asset || !asset.uri) return;
+  const replaceDocument = async (docId: number) => {
+    try {
+      const resArray = await pick({
+        type: [types.images, types.pdf, types.doc, types.docx],
+      });
+      const res = resArray[0];
 
-        const formData = new FormData();
-        formData.append("document", {
-          uri: Platform.OS === "android" ? asset.uri : asset.uri.replace("file://", ""),
-          name: asset.fileName || `image-${Date.now()}.jpg`,
-          type: asset.type || "image/jpeg",
-        } as any);
+      if (!res || !res.uri) return;
 
-        try {
-          const response = await fetch(
-            `https://api.docapp.co.in/api/appointment/replace-document/${docId}`,
-            { method: "PUT", credentials: "include", body: formData }
-          );
-          const data = await response.json();
-          if (data.message?.toLowerCase().includes("updated")) {
-            Alert.alert("Success", "Document replaced successfully");
-            fetchAppointmentDocuments(false);
-          } else {
-            throw new Error(data.message || "Replace failed");
-          }
-        } catch (err: any) {
-          Alert.alert("Error", err.message || "Failed to replace document");
-        }
+      const formData = new FormData();
+      formData.append("document", {
+        uri: Platform.OS === "android" ? res.uri : res.uri.replace("file://", ""),
+        name: res.name || `doc-${Date.now()}`,
+        type: res.type || "application/octet-stream",
+      } as any);
+
+      const response = await fetch(
+        `https://api.docapp.co.in/api/appointment/replace-document/${docId}`,
+        { method: "PUT", credentials: "include", headers: { 'Authorization': `Bearer ${accessToken}` }, body: formData }
+      );
+      const data = await response.json();
+      if (data.message?.toLowerCase().includes("updated")) {
+        Alert.alert("Success", "Document replaced successfully");
+        fetchAppointmentDocuments(false);
+      } else {
+        throw new Error(data.message || "Replace failed");
       }
-    );
+    } catch (err: any) {
+      if (isErrorWithCode(err) && err.code === errorCodes.OPERATION_CANCELED) {
+        return;
+      }
+      Alert.alert("Error", err.message || "Failed to replace document");
+    }
   };
 
   // Delete document
@@ -370,7 +371,7 @@ export default function AppointmentDetailsScreen() {
     try {
       const response = await fetch(
         `https://api.docapp.co.in/api/appointment/delete-document/${docId}`,
-        { method: "DELETE", credentials: "include" }
+        { method: "DELETE", credentials: "include", headers: { 'Authorization': `Bearer ${accessToken}` } }
       );
       const data = await response.json();
       if (data.message?.toLowerCase().includes("deleted")) {

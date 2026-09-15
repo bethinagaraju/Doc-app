@@ -391,7 +391,7 @@ const LoginScreen = () => {
                   </Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   style={[styles.roleButton, role === 'admin' && styles.selectedRoleButton]}
                   activeOpacity={0.8}
                   onPress={() => setRole('admin')}
@@ -399,9 +399,9 @@ const LoginScreen = () => {
                   <Text style={[styles.roleText, role === 'admin' && styles.selectedRoleText]}>
                     Admin
                   </Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
 
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   style={[styles.roleButton, role === 'hospital_organisation' && styles.selectedRoleButton]}
                   activeOpacity={0.8}
                   onPress={() => setRole('hospital_organisation')}
@@ -409,7 +409,7 @@ const LoginScreen = () => {
                   <Text style={[styles.roleText, role === 'hospital_organisation' && styles.selectedRoleText]}>
                     Hospital
                   </Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
 
               <View style={{ height: 20 }} />
@@ -419,20 +419,21 @@ const LoginScreen = () => {
                 onPress={isLoginMode ? handleLogin : handleRegister}
               />
 
-              {isLoginMode && (
+              {/* {isLoginMode && (
                 <>
-                  {/* Divider Line */}
+               
                   <View style={styles.dividerLine} />
 
-                  {/* Or sign in with text */}
+                 
                   <Text style={styles.orText}>Or sign in with</Text>
 
-                  {/* Fingerprint */}
+                 
                   <TouchableOpacity style={styles.bioButton} activeOpacity={0.8}>
                     <Icon name="finger-print" size={32} color="#124CB8" />
                   </TouchableOpacity>
                 </>
-              )}
+              )} */}
+
             </View>
 
             {/* Bottom Switch */}

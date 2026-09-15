@@ -12,14 +12,26 @@ const getLocalDateString = (dateObj: Date) => {
 const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-const formatDayLabel = (dateObj: Date, index: number) => {
+const formatDayLabel = (dateObj: Date) => {
+    const today = new Date();
+    const tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1);
+
+    const isToday = dateObj.getDate() === today.getDate() && 
+                    dateObj.getMonth() === today.getMonth() && 
+                    dateObj.getFullYear() === today.getFullYear();
+                    
+    const isTomorrow = dateObj.getDate() === tomorrow.getDate() && 
+                       dateObj.getMonth() === tomorrow.getMonth() && 
+                       dateObj.getFullYear() === tomorrow.getFullYear();
+
     const dayName = weekdays[dateObj.getDay()];
     const dayNum = dateObj.getDate();
     const monthName = months[dateObj.getMonth()];
 
-    if (index === 0) {
+    if (isToday) {
         return `Today, ${dayNum} ${monthName}`;
-    } else if (index === 1) {
+    } else if (isTomorrow) {
         return `Tomorrow, ${dayNum} ${monthName}`;
     } else {
         return `${dayName}, ${dayNum} ${monthName}`;
@@ -46,9 +58,10 @@ export default function DateSelector({ slotsByDate, selectedDate, setSelectedDat
         });
     }
 
-    // 2. Add any dates from slotsByDate that are outside the 10 days range
+    // 2. Add any dates from slotsByDate that are outside the 10 days range (ignore past dates)
+    const todayStr = getLocalDateString(today);
     Object.keys(slotsByDate).sort().forEach(dateStr => {
-        if (!datesToDisplay.some(d => d.dateString === dateStr)) {
+        if (dateStr >= todayStr && !datesToDisplay.some(d => d.dateString === dateStr)) {
             datesToDisplay.push({
                 dateString: dateStr,
                 dateObj: new Date(dateStr),
@@ -76,7 +89,7 @@ export default function DateSelector({ slotsByDate, selectedDate, setSelectedDat
                         ? matchingKey.substring(0, 10) === selectedDate.substring(0, 10)
                         : item.dateString === selectedDate;
 
-                    const label = formatDayLabel(item.dateObj, index);
+                    const label = formatDayLabel(item.dateObj);
 
                     return (
                         <TouchableOpacity

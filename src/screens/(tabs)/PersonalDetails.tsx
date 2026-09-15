@@ -1,549 +1,3 @@
-
-
-
-
-// import React, { useEffect, useState } from 'react';
-// import {
-//   View,
-//   Text,
-//   ActivityIndicator,
-//   Alert,
-//   Image,
-//   ScrollView,
-//   TextInput,
-//   TouchableOpacity,
-//   Modal,
-// } from 'react-native';
-// import tw from 'twrnc';
-// import PageLayout from '../../components/PageLayout';
-// import { sendEmailOtp, verifyEmailOtp } from '../../api/verify';
-// import { completeGeneralUserProfile } from '../../api/profile';
-// import { useAccessToken } from '../contexts/AccessTokenContext';
-
-// const API_GET_USER = 'https://api.docapp.co.in/api/auth/get-user-data';
-// const API_ADD_ADDRESS = 'https://api.docapp.co.in/api/address/addAddress';
-// const API_GET_ALL_ADDRESS = 'https://api.docapp.co.in/api/address/getAllAddress';
-// const API_UPDATE_ADDRESS = 'https://api.docapp.co.in/api/address/updateAddress';
-// const API_DELETE_ADDRESS = 'https://api.docapp.co.in/api/address/deleteAddress';
-
-// const PersonalDetailsScreen = () => {
-//   const [userData, setUserData] = useState(null);
-//   const [loading, setLoading] = useState(true);
-
-//   const [allAddresses, setAllAddresses] = useState([]);
-
-//   const { accessToken } = useAccessToken();
-
-//   // Address Form
-//   const [addressForm, setAddressForm] = useState({
-//     city: '',
-//     pincode: '',
-//     street: '',
-//     state: '',
-//   });
-
-//   // Update Modal
-//   const [editModalVisible, setEditModalVisible] = useState(false);
-//   const [editForm, setEditForm] = useState({
-//     addressId: '',
-//     country: 'India',
-//     state: '',
-//     city: '',
-//     pincode: '',
-//     street: '',
-//     landmark: '',
-//     houseNo: '',
-//   });
-//   // Email OTP states
-//   const [otpModalVisible, setOtpModalVisible] = useState(false);
-//   const [otpValue, setOtpValue] = useState('');
-//   const [isOtpSending, setIsOtpSending] = useState(false);
-//   // Edit profile modal
-//   const [editProfileVisible, setEditProfileVisible] = useState(false);
-//   const [editDob, setEditDob] = useState<Date | undefined>();
-//   const [editGender, setEditGender] = useState<'Male' | 'Female' | 'Others' | ''>('');
-//   const [editLoading, setEditLoading] = useState(false);
-//   const [showEditDatePicker, setShowEditDatePicker] = useState(false);
-
-//   const handleChange = (field, value) => {
-//     setAddressForm({ ...addressForm, [field]: value });
-//   };
-
-//   const handleEditChange = (field, value) => {
-//     setEditForm({ ...editForm, [field]: value });
-//   };
-
-//   // Fetch User
-//   const fetchUserData = async () => {
-//     try {
-//       const response = await fetch(API_GET_USER, {
-//         method: 'GET',
-//         headers: {
-//           'Content-Type': 'application/json',
-//           'Authorization': `Bearer ${accessToken}`,
-//         },
-//       });
-
-//       const data = await response.json();
-//       if (response.ok) {
-//         setUserData(data.userData);
-//       } else {
-//         Alert.alert('Error', data.message);
-//       }
-//     } catch (error) {
-//       Alert.alert('Error', 'Failed to fetch user data');
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   // Fetch Addresses
-//   const fetchAllAddresses = async () => {
-//     try {
-//       const response = await fetch(API_GET_ALL_ADDRESS, {
-//         method: 'GET',
-//         headers: {
-//           'Authorization': `Bearer ${accessToken}`,
-//         },
-//       });
-
-//       const data = await response.json();
-//       if (response.ok) {
-//         setAllAddresses(data.addresses || []);
-//       } else {
-//         Alert.alert('Error', data.message);
-//       }
-//     } catch (error) {
-//       Alert.alert('Error', 'Failed to load addresses');
-//     }
-//   };
-
-//   // Add Address
-//   const handleAddAddress = async () => {
-//     if (!addressForm.city || !addressForm.pincode || !addressForm.street || !addressForm.state) {
-//       Alert.alert('Error', 'Please fill all fields');
-//       return;
-//     }
-
-//     try {
-//       const response = await fetch(API_ADD_ADDRESS, {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//           'Authorization': `Bearer ${accessToken}`,
-//         },
-//         body: JSON.stringify(addressForm),
-//       });
-
-//       const data = await response.json();
-//       if (response.ok) {
-//         Alert.alert('Success', data.message);
-//         setAddressForm({ city: '', pincode: '', street: '', state: '' });
-//         fetchAllAddresses();
-//       } else {
-//         Alert.alert('Error', data.message);
-//       }
-//     } catch (error) {
-//       Alert.alert('Error', 'Network error');
-//     }
-//   };
-
-//   // Update Address
-//   const handleUpdateAddress = async () => {
-//     try {
-//       const response = await fetch(API_UPDATE_ADDRESS, {
-//         method: 'PUT',
-//         headers: {
-//           'Content-Type': 'application/json',
-//           'Authorization': `Bearer ${accessToken}`,
-//         },
-//         body: JSON.stringify(editForm),
-//       });
-
-//       const data = await response.json();
-
-//       if (response.ok) {
-//         Alert.alert('Success', data.message);
-//         setEditModalVisible(false);
-//         fetchAllAddresses();
-//       } else {
-//         Alert.alert('Error', data.message);
-//       }
-//     } catch (error) {
-//       Alert.alert('Error', 'Failed to update address');
-//     }
-//   };
-
-//   // Delete Address
-//   const handleDeleteAddress = async (addressId) => {
-//     Alert.alert(
-//       "Delete Address",
-//       "Are you sure you want to delete this address?",
-//       [
-//         { text: "Cancel", style: "cancel" },
-//         {
-//           text: "Delete",
-//           style: "destructive",
-//           onPress: async () => {
-//             try {
-//               const response = await fetch(API_DELETE_ADDRESS, {
-//                 method: 'DELETE',
-//                 headers: {
-//                   'Content-Type': 'application/json',
-//                   'Authorization': `Bearer ${accessToken}`,
-//                 },
-//                 body: JSON.stringify({ addressId }),
-//               });
-
-//               const data = await response.json();
-
-//               if (response.ok) {
-//                 Alert.alert('Success', data.message || 'Address deleted successfully');
-//                 fetchAllAddresses();
-//               } else {
-//                 Alert.alert('Error', data.message || 'Failed to delete address');
-//               }
-//             } catch (error) {
-//               Alert.alert('Error', 'Network error while deleting address');
-//             }
-//           }
-//         }
-//       ]
-//     );
-//   };
-
-//   // Send Email OTP
-//   const handleSendEmailOtp = async () => {
-//     setIsOtpSending(true);
-//     try {
-//       const res = await sendEmailOtp(accessToken);
-//       if (res.ok) {
-//         Alert.alert('Success', res.data?.message || 'OTP sent to your email');
-//         setOtpModalVisible(true);
-//       } else {
-//         Alert.alert('Error', res.data?.message || 'Failed to send OTP');
-//       }
-//     } catch (err) {
-//       Alert.alert('Error', 'Network error while sending OTP');
-//     } finally {
-//       setIsOtpSending(false);
-//     }
-//   };
-
-//   // Verify Email OTP
-//   const handleVerifyEmailOtp = async () => {
-//     if (!otpValue) {
-//       Alert.alert('Error', 'Please enter the OTP');
-//       return;
-//     }
-//     try {
-//       const res = await verifyEmailOtp(otpValue, userData.email, accessToken);
-//       if (res.ok) {
-//         Alert.alert('Success', res.data?.message || 'Email verified');
-//         setOtpModalVisible(false);
-//         setOtpValue('');
-//         fetchUserData();
-//       } else {
-//         Alert.alert('Error', res.data?.message || 'Invalid OTP');
-//       }
-//     } catch (err) {
-//       Alert.alert('Error', 'Network error while verifying OTP');
-//     }
-//   };
-
-//   // Edit profile submit
-//   const handleEditProfileSubmit = async () => {
-//     // basic validation
-//     if (!editDob || !editGender) {
-//       Alert.alert('Error', 'Please provide date of birth and gender');
-//       return;
-//     }
-
-//     setEditLoading(true);
-//     try {
-//       const payload = {
-//         date_of_birth: editDob.toISOString().split('T')[0],
-//         gender: editGender,
-//       };
-
-//       const res = await completeGeneralUserProfile(payload, accessToken);
-//       if (res.ok) {
-//         Alert.alert('Success', res.data?.message || 'Profile updated');
-//         setEditProfileVisible(false);
-//         fetchUserData();
-//       } else {
-//         Alert.alert('Error', res.data?.message || 'Failed to update profile');
-//       }
-//     } catch (err) {
-//       Alert.alert('Error', 'Network error while updating profile');
-//     } finally {
-//       setEditLoading(false);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchUserData();
-//     fetchAllAddresses();
-//   }, []);
-
-//   if (loading) {
-//     return (
-//       <PageLayout title="Personal Details" headerBackgroundColor="bg-green-600">
-//         <View style={tw`flex-1 justify-center items-center`}>
-//           <ActivityIndicator size="large" color="#16a34a" />
-//           <Text style={tw`text-green-700 mt-2`}>Loading...</Text>
-//         </View>
-//       </PageLayout>
-//     );
-//   }
-
-//   if (!userData) {
-//     return (
-//       <PageLayout title="Personal Details" headerBackgroundColor="bg-green-600">
-//         <View style={tw`flex-1 justify-center items-center`}>
-//           <Text style={tw`text-red-500`}>No user data found</Text>
-//         </View>
-//       </PageLayout>
-//     );
-//   }
-
-//   const general = userData.generalUser || {};
-
-//   return (
-//     <PageLayout title="Personal Details" headerBackgroundColor="bg-green-600" scrollable={true}>
-//       <ScrollView contentContainerStyle={tw`pb-10`}>
-
-//         {/* USER DETAILS CARD */}
-//         <View
-//           style={[
-//             tw`bg-white rounded-xl p-4 mx-4 mt-6`,
-//             { elevation: 3, borderWidth: 1, borderColor: '#d1d5db' },
-//           ]}
-//         >
-//           <View style={tw`items-center`}>
-//             <Image
-//               source={{ uri: general.profile_picture }}
-//               style={tw`w-28 h-28 rounded-full`}
-//             />
-//             <Text style={tw`text-xl font-bold text-green-900 mt-3`}>{userData.username}</Text>
-//             <Text style={tw`text-sm text-green-700`}>{userData.role?.toUpperCase()}</Text>
-//           </View>
-
-//           <View style={tw`mt-4`}>
-//             <Detail label="Email" value={userData.email} />
-//             <View style={tw`mt-2`}>
-//               <TouchableOpacity
-//                 style={tw`bg-blue-600 py-2 px-4 rounded-lg self-start`}
-//                 onPress={handleSendEmailOtp}
-//                 disabled={isOtpSending}
-//               >
-//                 <Text style={tw`text-white font-semibold`}>{isOtpSending ? 'Sending...' : 'Send Email OTP'}</Text>
-//               </TouchableOpacity>
-//             </View>
-//             <Detail label="Phone" value={userData.phone_number} />
-//             <Detail label="Gender" value={general.gender} />
-//             <Detail label="Date of Birth" value={general.date_of_birth?.split("T")[0]} />
-//             <Detail label="Created At" value={general.createdAt?.split("T")[0]} />
-//             <Detail label="Updated At" value={general.updatedAt?.split("T")[0]} />
-//           </View>
-//         </View>
-
-//         {/* ----------------------------- */}
-//         {/* ADD ADDRESS — SHOW ONLY IF NO ADDRESS */}
-//         {/* ----------------------------- */}
-//         {allAddresses.length === 0 && (
-//           <View style={[tw`bg-white rounded-xl p-4 mx-4 mt-6`, { elevation: 2 }]}>
-//             <Text style={tw`text-lg font-bold text-green-800 mb-4`}>Add Address</Text>
-
-//             <TextInput style={styles.input} placeholder="City" value={addressForm.city} onChangeText={(t) => handleChange('city', t)} />
-//             <TextInput style={styles.input} placeholder="Pincode" keyboardType="numeric" value={addressForm.pincode} onChangeText={(t) => handleChange('pincode', t)} />
-//             <TextInput style={styles.input} placeholder="Street" value={addressForm.street} onChangeText={(t) => handleChange('street', t)} />
-//             <TextInput style={styles.input} placeholder="State" value={addressForm.state} onChangeText={(t) => handleChange('state', t)} />
-
-//             <TouchableOpacity style={tw`bg-green-600 py-3 rounded-lg mt-2`} onPress={handleAddAddress}>
-//               <Text style={tw`text-center text-white font-bold`}>Add Address</Text>
-//             </TouchableOpacity>
-//           </View>
-//         )}
-
-//         {/* ----------------------------- */}
-//         {/* SHOW ADDRESSES — ONLY IF EXISTS */}
-//         {/* ----------------------------- */}
-//         {allAddresses.length > 0 && (
-//           <View style={[tw`bg-green-50 rounded-xl p-4 mx-4 mt-6`, { elevation: 1 }]}>
-//             <Text style={tw`text-lg font-bold text-green-900 mb-3`}>Your Addresss</Text>
-
-//             {allAddresses.map((item) => (
-//               <View key={item.id} style={tw`p-3 bg-white rounded-lg mb-3 border`}>
-//                 <Text style={tw`text-green-900 font-bold`}>{item.street}, {item.city}</Text>
-//                 <Text style={tw`text-green-700`}>{item.state} - {item.pincode}</Text>
-
-//                 <View style={tw`flex-row mt-2`}>
-//                   <TouchableOpacity
-//                     style={tw`bg-blue-600 py-2 px-4 rounded-lg mr-2 self-start`}
-//                     onPress={() => {
-//                       setEditForm({
-//                         addressId: item.id.toString(),
-//                         country: item.country || 'India',
-//                         state: item.state,
-//                         city: item.city,
-//                         pincode: item.pincode,
-//                         street: item.street,
-//                         landmark: item.landmark || '',
-//                         houseNo: item.house_no || '',
-//                       });
-//                       setEditModalVisible(true);
-//                     }}
-//                   >
-//                     <Text style={tw`text-white font-bold`}>Edit</Text>
-//                   </TouchableOpacity>
-
-//                   <TouchableOpacity
-//                     style={tw`bg-red-600 py-2 px-4 rounded-lg self-start`}
-//                     onPress={() => handleDeleteAddress(item.id.toString())}
-//                   >
-//                     <Text style={tw`text-white font-bold`}>Delete</Text>
-//                   </TouchableOpacity>
-//                 </View>
-//               </View>
-//             ))}
-//           </View>
-//         )}
-
-//         {/* ----------------------------- */}
-//         {/* EDIT MODAL */}
-//         {/* ----------------------------- */}
-//         <Modal visible={editModalVisible} transparent animationType="slide">
-//           <View style={styles.modalContainer}>
-//             <View style={styles.modalBox}>
-//               <Text style={tw`text-lg font-bold text-green-800 mb-3`}>Edit Address</Text>
-
-//               <TextInput style={styles.input} placeholder="City" value={editForm.city} onChangeText={(t) => handleEditChange('city', t)} />
-//               <TextInput style={styles.input} placeholder="State" value={editForm.state} onChangeText={(t) => handleEditChange('state', t)} />
-//               <TextInput style={styles.input} placeholder="Pincode" value={editForm.pincode} onChangeText={(t) => handleEditChange('pincode', t)} />
-//               <TextInput style={styles.input} placeholder="Street" value={editForm.street} onChangeText={(t) => handleEditChange('street', t)} />
-//               <TextInput style={styles.input} placeholder="Landmark" value={editForm.landmark} onChangeText={(t) => handleEditChange('landmark', t)} />
-//               <TextInput style={styles.input} placeholder="House No." value={editForm.houseNo} onChangeText={(t) => handleEditChange('houseNo', t)} />
-
-//               <TouchableOpacity style={tw`bg-green-600 py-3 rounded-lg mt-3`} onPress={handleUpdateAddress}>
-//                 <Text style={tw`text-center text-white font-bold`}>Update Address</Text>
-//               </TouchableOpacity>
-
-//               <TouchableOpacity style={tw`bg-red-600 py-3 rounded-lg mt-2`} onPress={() => setEditModalVisible(false)}>
-//                 <Text style={tw`text-center text-white font-bold`}>Cancel</Text>
-//               </TouchableOpacity>
-//             </View>
-//           </View>
-//         </Modal>
-
-//         {/* OTP VERIFY MODAL */}
-//         <Modal visible={otpModalVisible} transparent animationType="slide">
-//           <View style={styles.modalContainer}>
-//             <View style={styles.modalBox}>
-//               <Text style={tw`text-lg font-bold text-green-800 mb-3`}>Enter OTP</Text>
-//               <TextInput
-//                 style={styles.input}
-//                 placeholder="Enter OTP"
-//                 keyboardType="numeric"
-//                 value={otpValue}
-//                 onChangeText={setOtpValue}
-//               />
-//               <TouchableOpacity style={tw`bg-green-600 py-3 rounded-lg mt-3`} onPress={handleVerifyEmailOtp}>
-//                 <Text style={tw`text-center text-white font-bold`}>Verify OTP</Text>
-//               </TouchableOpacity>
-
-//               <TouchableOpacity style={tw`bg-red-600 py-3 rounded-lg mt-2`} onPress={() => { setOtpModalVisible(false); setOtpValue(''); }}>
-//                 <Text style={tw`text-center text-white font-bold`}>Cancel</Text>
-//               </TouchableOpacity>
-//             </View>
-//           </View>
-//         </Modal>
-
-//         {/* EDIT PROFILE MODAL */}
-//         <Modal visible={editProfileVisible} transparent animationType="slide">
-//           <View style={styles.modalContainer}>
-//             <View style={styles.modalBox}>
-//               <Text style={tw`text-lg font-bold text-green-800 mb-3`}>Edit Profile</Text>
-
-//               <TouchableOpacity
-//                 onPress={() => setShowEditDatePicker(true)}
-//                 style={tw`bg-white px-4 py-3 rounded-lg border border-gray-200 mb-3`}
-//               >
-//                 <Text>{editDob ? editDob.toDateString() : 'Select Date of Birth'}</Text>
-//               </TouchableOpacity>
-//               {showEditDatePicker && (
-//                 <DateTimePicker
-//                   value={editDob || new Date(2000, 0, 1)}
-//                   mode="date"
-//                   maximumDate={new Date()}
-//                   display={Platform.OS === 'ios' ? 'inline' : 'default'}
-//                   onChange={(e, d) => {
-//                     setShowEditDatePicker(Platform.OS === 'ios');
-//                     if (d) setEditDob(d);
-//                   }}
-//                 />
-//               )}
-
-//               <View style={tw`flex-row justify-between mb-3`}>
-//                 {['Male', 'Female', 'Others'].map((g) => (
-//                   <TouchableOpacity
-//                     key={g}
-//                     onPress={() => setEditGender(g as any)}
-//                     style={tw`flex-1 mx-1 py-2 rounded-lg border ${editGender === g ? 'bg-green-600 border-green-600' : 'bg-white border-gray-200'}`}
-//                   >
-//                     <Text style={tw`${editGender === g ? 'text-white' : 'text-gray-700'} text-center`}>{g}</Text>
-//                   </TouchableOpacity>
-//                 ))}
-//               </View>
-
-//               <TouchableOpacity style={tw`bg-green-600 py-3 rounded-lg mt-1`} onPress={handleEditProfileSubmit} disabled={editLoading}>
-//                 <Text style={tw`text-center text-white font-bold`}>{editLoading ? 'Saving...' : 'Save'}</Text>
-//               </TouchableOpacity>
-
-//               <TouchableOpacity style={tw`bg-red-600 py-3 rounded-lg mt-2`} onPress={() => setEditProfileVisible(false)}>
-//                 <Text style={tw`text-center text-white font-bold`}>Cancel</Text>
-//               </TouchableOpacity>
-//             </View>
-//           </View>
-//         </Modal>
-
-//       </ScrollView>
-//     </PageLayout>
-//   );
-// };
-
-// const Detail = ({ label, value }) => (
-//   <View style={tw`mb-3`}>
-//     <Text style={tw`text-xs text-gray-600`}>{label}</Text>
-//     <Text style={tw`text-base text-green-900 font-semibold`}>{value || 'N/A'}</Text>
-//   </View>
-// );
-
-// const styles = {
-//   input: {
-//     borderWidth: 1,
-//     borderColor: '#ccc',
-//     padding: 10,
-//     borderRadius: 8,
-//     marginBottom: 10,
-//   },
-//   modalContainer: {
-//     flex: 1,
-//     backgroundColor: '#00000099',
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   modalBox: {
-//     width: '85%',
-//     backgroundColor: 'white',
-//     padding: 20,
-//     borderRadius: 12,
-//   },
-// };
-
-// export default PersonalDetailsScreen;
-
-
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -556,25 +10,28 @@ import {
   TouchableOpacity,
   Modal,
   Platform,
+  PermissionsAndroid,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import tw from 'twrnc';
 import Svg, { Path } from 'react-native-svg';
 import { launchImageLibrary } from 'react-native-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import Geolocation from 'react-native-geolocation-service';
 
-import { sendEmailOtp, verifyEmailOtp } from '../../api/verify';
+import { sendEmailOtp, verifyEmailOtp, sendMobileOtp, verifyMobileOtp } from '../../api/verify';
 import { completeGeneralUserProfile } from '../../api/profile';
 import { useAccessToken } from '../contexts/AccessTokenContext';
 import { useUser } from '../contexts/UserContext';
 import ProfileTopBar from '../../components/ProfileTopBar';
-import { Camera, Trash2 } from 'lucide-react-native';
+import { Camera, Trash2, CheckCircle, AlertCircle } from 'lucide-react-native';
 
 const API_GET_USER = 'https://api.docapp.co.in/api/auth/get-user-data';
 const API_ADD_ADDRESS = 'https://api.docapp.co.in/api/address/addAddress';
 const API_GET_ALL_ADDRESS = 'https://api.docapp.co.in/api/address/getAllAddress';
 const API_UPDATE_ADDRESS = 'https://api.docapp.co.in/api/address/updateAddress';
 const API_DELETE_ADDRESS = 'https://api.docapp.co.in/api/address/deleteAddress';
+const API_UPDATE_LOCATION = 'https://api.docapp.co.in/api/address/update-location';
 
 
 const PersonalDetailsScreen = () => {
@@ -607,10 +64,11 @@ const PersonalDetailsScreen = () => {
     houseNo: '',
   });
 
-  // Email OTP states
+  // OTP states
   const [otpModalVisible, setOtpModalVisible] = useState(false);
   const [otpValue, setOtpValue] = useState('');
   const [isOtpSending, setIsOtpSending] = useState(false);
+  const [otpType, setOtpType] = useState<'email' | 'mobile'>('email');
 
   // Edit profile modal
   const [editProfileVisible, setEditProfileVisible] = useState(false);
@@ -624,6 +82,7 @@ const PersonalDetailsScreen = () => {
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [localPhotoUri, setLocalPhotoUri] = useState<string | null>(null);
   const [imageTimestamp, setImageTimestamp] = useState(Date.now());
+  const [updatingLocation, setUpdatingLocation] = useState(false);
 
   const handleChange = (field, value) => {
     setAddressForm({ ...addressForm, [field]: value });
@@ -733,6 +192,44 @@ const PersonalDetailsScreen = () => {
     }
   };
 
+  // Delete Address
+  const handleDeleteAddress = () => {
+    if (!currentAddress) return;
+    Alert.alert(
+      'Delete Address',
+      'Are you sure you want to delete this address?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const response = await fetch(API_DELETE_ADDRESS, {
+                method: 'DELETE',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${accessToken}`,
+                },
+                body: JSON.stringify({ addressId: currentAddress.id.toString() }),
+              });
+
+              const data = await response.json();
+              if (response.ok) {
+                Alert.alert('Success', data.message || 'Address deleted successfully');
+                fetchAllAddresses();
+              } else {
+                Alert.alert('Error', data.message || 'Failed to delete address');
+              }
+            } catch (error) {
+              Alert.alert('Error', 'Failed to delete address');
+            }
+          },
+        },
+      ]
+    );
+  };
+
   // Edit Profile (Patient / General User)
   const handleEditProfileSubmit = async () => {
     if (!editDob || !editGender) {
@@ -768,6 +265,68 @@ const PersonalDetailsScreen = () => {
       Alert.alert('Error', 'Network error while updating profile');
     } finally {
       setEditLoading(false);
+    }
+  };
+
+  const handleUpdateLocation = async () => {
+    try {
+      if (Platform.OS === 'android') {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          {
+            title: 'Location Permission',
+            message: 'App needs access to your location.',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          Alert.alert('Permission Denied', 'Location permission is required to update your live location.');
+          return;
+        }
+      } else {
+        Geolocation.requestAuthorization('whenInUse');
+      }
+
+      setUpdatingLocation(true);
+      Geolocation.getCurrentPosition(
+        async (position) => {
+          try {
+            const bodyData = {
+              latitude: position.coords.latitude.toString(),
+              longitude: position.coords.longitude.toString(),
+            };
+
+            const response = await fetch(API_UPDATE_LOCATION, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`,
+              },
+              body: JSON.stringify(bodyData),
+            });
+
+            if (response.ok) {
+              Alert.alert('Success', 'Live location updated successfully!');
+              fetchAllAddresses();
+            } else {
+              Alert.alert('Error', 'Failed to update live location on server.');
+            }
+          } catch (error) {
+            Alert.alert('Error', 'Network error while updating location.');
+          } finally {
+            setUpdatingLocation(false);
+          }
+        },
+        (error) => {
+          Alert.alert('Location Error', 'Unable to get your current location.');
+          setUpdatingLocation(false);
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+      );
+    } catch (error) {
+      setUpdatingLocation(false);
     }
   };
 
@@ -873,6 +432,54 @@ const PersonalDetailsScreen = () => {
     );
   };
 
+  const handleSendOtp = async (type: 'email' | 'mobile') => {
+    setIsOtpSending(true);
+    setOtpType(type);
+    try {
+      const res = type === 'email'
+        ? await sendEmailOtp(accessToken, userData.email)
+        : await sendMobileOtp(accessToken);
+
+      if (res.ok || res.data?.success || res.data?.message?.toLowerCase().includes('sent')) {
+        Alert.alert('Success', `OTP sent to your ${type === 'email' ? 'email' : 'mobile number'}`);
+        setOtpModalVisible(true);
+      } else {
+        Alert.alert('Error', res.data?.message || `Failed to send OTP to ${type}`);
+      }
+    } catch (e) {
+      Alert.alert('Error', 'Network error while sending OTP');
+    } finally {
+      setIsOtpSending(false);
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    if (!otpValue) {
+      Alert.alert('Error', 'Please enter the OTP');
+      return;
+    }
+
+    setIsOtpSending(true);
+    try {
+      const res = otpType === 'email'
+        ? await verifyEmailOtp(otpValue, userData.email, accessToken)
+        : await verifyMobileOtp(otpValue, userData.phone_number, accessToken);
+
+      if (res.ok || res.data?.success || res.data?.message?.includes('verified') || res.data?.message?.includes('Verified')) {
+        Alert.alert('Success', `${otpType === 'email' ? 'Email' : 'Mobile number'} verified successfully`);
+        setOtpModalVisible(false);
+        setOtpValue('');
+        fetchUserData();
+      } else {
+        Alert.alert('Error', res.data?.message || 'Invalid OTP');
+      }
+    } catch (e) {
+      Alert.alert('Error', 'Network error while verifying OTP');
+    } finally {
+      setIsOtpSending(false);
+    }
+  };
+
   useEffect(() => {
     fetchUserData();
     fetchAllAddresses();
@@ -946,9 +553,34 @@ const PersonalDetailsScreen = () => {
           <Text numberOfLines={1} style={tw`text-[20px] md:text-[24px] font-bold text-[#001A41] mt-4 text-center`}>
             {userData.username}
           </Text>
-          <Text numberOfLines={1} style={tw`text-[14px] md:text-[16px] font-medium text-[#001A41]/80 mt-1 text-center`}>
-            {userData.email}
-          </Text>
+          <View style={tw`flex-row items-center justify-center mt-1 gap-1.5`}>
+            <Text numberOfLines={1} style={tw`text-[14px] md:text-[16px] font-medium text-[#001A41]/80`}>
+              {userData.email}
+            </Text>
+            {userData.is_email_verified ? (
+              <CheckCircle size={16} color="#22C55E" />
+            ) : (
+              <TouchableOpacity onPress={() => handleSendOtp('email')} disabled={isOtpSending}>
+                <AlertCircle size={16} color="#EF4444" />
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {userData.phone_number && (
+            <View style={tw`flex-row items-center justify-center mt-1 gap-1.5`}>
+              <Text numberOfLines={1} style={tw`text-[14px] md:text-[16px] font-medium text-[#001A41]/80`}>
+                {userData.phone_number}
+              </Text>
+              {userData.is_phone_verified ? (
+                <CheckCircle size={16} color="#22C55E" />
+              ) : (
+                <TouchableOpacity onPress={() => handleSendOtp('mobile')} disabled={isOtpSending}>
+                  <AlertCircle size={16} color="#EF4444" />
+                </TouchableOpacity>
+              )}
+            </View>
+          )}
+
           {general.gender && (
             <Text style={tw`text-[14px] font-medium text-[#001A41]/60 mt-1 text-center`}>
               Gender: {general.gender}
@@ -998,24 +630,47 @@ const PersonalDetailsScreen = () => {
 
           {/* Action Button */}
           {currentAddress ? (
-            <TouchableOpacity
-              style={tw`w-full py-3 rounded-xl justify-center items-center`}
-              onPress={() => {
-                setEditForm({
-                  addressId: currentAddress.id.toString(),
-                  country: currentAddress.country || 'India',
-                  state: currentAddress.state,
-                  city: currentAddress.city,
-                  pincode: currentAddress.pincode,
-                  street: currentAddress.street,
-                  landmark: currentAddress.landmark || '',
-                  houseNo: currentAddress.house_no || '',
-                });
-                setEditModalVisible(true);
-              }}
-            >
-              <Text style={tw`text-sm font-bold text-[#124CB8] text-center`}>Change Address</Text>
-            </TouchableOpacity>
+            <View style={tw`w-full flex-col gap-2 mt-2`}>
+              <View style={tw`w-full flex-row gap-2`}>
+                <TouchableOpacity
+                  style={tw`flex-1 py-3 bg-[#EEF4FF] rounded-xl justify-center items-center`}
+                  onPress={() => {
+                    setEditForm({
+                      addressId: currentAddress.id.toString(),
+                      country: currentAddress.country || 'India',
+                      state: currentAddress.state,
+                      city: currentAddress.city,
+                      pincode: currentAddress.pincode,
+                      street: currentAddress.street,
+                      landmark: currentAddress.landmark || '',
+                      houseNo: currentAddress.house_no || '',
+                    });
+                    setEditModalVisible(true);
+                  }}
+                >
+                  <Text style={tw`text-sm font-bold text-[#124CB8] text-center`}>Change Address</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={tw`flex-1 py-3 bg-[#FEE2E2] rounded-xl justify-center items-center`}
+                  onPress={handleDeleteAddress}
+                >
+                  <Text style={tw`text-sm font-bold text-[#DC2626] text-center`}>Delete</Text>
+                </TouchableOpacity>
+              </View>
+
+              <TouchableOpacity
+                style={tw`w-full py-3 bg-[#124CB8] rounded-xl justify-center items-center flex-row gap-2`}
+                onPress={handleUpdateLocation}
+                disabled={updatingLocation}
+              >
+                {updatingLocation ? (
+                  <ActivityIndicator size="small" color="#FFF" />
+                ) : (
+                  <Text style={tw`text-sm font-bold text-white text-center`}>Update Live Location</Text>
+                )}
+              </TouchableOpacity>
+            </View>
           ) : (
             <TouchableOpacity
               style={tw`w-full py-3 rounded-xl justify-center items-center`}
@@ -1173,6 +828,34 @@ const PersonalDetailsScreen = () => {
               </TouchableOpacity>
 
               <TouchableOpacity style={tw`bg-gray-200 py-3 md:py-4 rounded-xl mt-2`} onPress={() => setEditProfileVisible(false)}>
+                <Text style={tw`text-center text-sm md:text-base text-gray-800 font-bold`}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
+        {/* OTP Modal */}
+        <Modal visible={otpModalVisible} transparent animationType="fade">
+          <View style={styles.modalContainer}>
+            <View style={styles.modalBox}>
+              <Text style={tw`text-lg font-bold text-[#001A41] mb-3`}>
+                Verify {otpType === 'email' ? 'Email' : 'Mobile'}
+              </Text>
+              <Text style={tw`text-sm text-gray-500 mb-4`}>
+                Please enter the OTP sent to your {otpType === 'email' ? 'email address' : 'mobile number'}.
+              </Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter OTP"
+                keyboardType="numeric"
+                value={otpValue}
+                onChangeText={setOtpValue}
+                maxLength={6}
+              />
+              <TouchableOpacity style={tw`bg-[#124CB8] py-3 md:py-4 rounded-xl mt-3`} onPress={handleVerifyOtp} disabled={isOtpSending}>
+                <Text style={tw`text-center text-sm md:text-base text-white font-bold`}>{isOtpSending ? 'Verifying...' : 'Verify OTP'}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={tw`bg-gray-200 py-3 md:py-4 rounded-xl mt-2`} onPress={() => { setOtpModalVisible(false); setOtpValue(''); }}>
                 <Text style={tw`text-center text-sm md:text-base text-gray-800 font-bold`}>Cancel</Text>
               </TouchableOpacity>
             </View>
